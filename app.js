@@ -14,6 +14,7 @@ const {
    logoutHandler,
    forgetPasswordHandler,
    resetPasswordHandler,
+   deleteUserHandler,
 } = require('./controllers/auth.contoller');
 require('./middlewares/passport');
 const {
@@ -26,7 +27,6 @@ const {
 const passport = require('passport');
 const isAuthenticated = require('./middlewares/authenticated');
 const errorHandlerMiddleware = require('./controllers/error.controller');
-const { body } = require('express-validator');
 
 const app = express();
 
@@ -50,6 +50,7 @@ function build() {
    app.post('/logout', isAuthenticated, logoutHandler);
    app.post('/forget', forgetPasswordValidator(), validate, forgetPasswordHandler);
    app.post('/reset/:token', resetPasswordValidator(), validate, resetPasswordHandler);
+   app.delete('/profile', isAuthenticated, deleteUserHandler);
 
    app.get('/', (req, res) => {
       req.session.views ? req.session.views++ : (req.session.views = 1);
@@ -57,7 +58,10 @@ function build() {
    });
 
    app.get('/protected', isAuthenticated, (req, res) => {
-      res.send('protected page');
+      res.json({
+         protected: true,
+         user: req.user,
+      });
    });
 
    app.all('*', (req, res, next) => {

@@ -1,7 +1,7 @@
 const AppError = require('../utils/app.error');
 
 function handleError(err, req, res, next) {
-   req.log.error(err.message);
+   req.log.error(err);
    const code = err.code || 500;
    if (err instanceof AppError) {
       return res.status(code).json({

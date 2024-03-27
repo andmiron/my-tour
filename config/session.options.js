@@ -10,5 +10,6 @@ module.exports = {
    cookie: {
       maxAge: 360000,
       secure: false,
+      httpOnly: true,
    },
 };

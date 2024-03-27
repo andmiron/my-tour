@@ -1,28 +1,21 @@
 const catchAsync = require('../utils/catch.async');
 const User = require('../models/user.model');
+const crypto = require('crypto');
 
 exports.signupHandler = catchAsync(async (req, res) => {
    const { email, password } = req.body;
    const user = await User.create({ email, password });
-   res.status(201).send({
-      status: 'signed up',
-      email: user.email,
-   });
+   res.status(201).send(user);
 });
 
-exports.loginHandler = catchAsync(async (req, res) => {
-   res.status(200).send({
-      status: 'logged in',
-      user: req.user,
-   });
-});
+exports.loginHandler = (req, res) => {
+   res.status(200).send(req.user);
+};
 
 exports.logoutHandler = catchAsync(async (req, res, next) => {
    req.logout((err) => {
       if (err) return next(err);
-   });
-   res.status(200).send({
-      status: 'logged out',
+      res.status(200).clearCookie(process.env.SESSION_NAME).send();
    });
 });
 
@@ -30,23 +23,25 @@ exports.forgetPasswordHandler = catchAsync(async (req, res) => {
    const user = await User.findOne({ email: req.body.email });
    const resetToken = user.createResetToken();
    await user.save({ validateBeforeSave: false });
-   res.status(200).json({
-      status: 'success',
-      resetToken: resetToken,
-   });
+   res.status(200).send(resetToken);
 });
 
-exports.resetPasswordHandler = catchAsync(async (req, res) => {
-   const user = await User.findOne({ passwordResetToken: req.params.token });
+exports.resetPasswordHandler = catchAsync(async (req, res, next) => {
+   const hashedToken = crypto.createHash('sha256').update(req.params.token).digest('hex');
+   const user = await User.findOne({ passwordResetToken: hashedToken }).select('+password');
    user.password = req.body.password;
    user.passwordResetToken = undefined;
    user.passwordResetExpires = undefined;
    await user.save();
-   req.login();
-   res.status(200).json({
-      status: 'success',
-      user: req.user,
-   });
+   res.status(200).send(user);
 });
 
-// exports.updatePasswordHandler = catchAsync(async (req, res, next) => {});
+exports.deleteUserHandler = catchAsync(async (req, res, next) => {
+   await User.findByIdAndDelete(req.user.id);
+   req.logout((err) => {
+      if (err) return next(err);
+      req.session.destroy(() => {
+         res.clearCookie(process.env.SESSION_NAME).status(204).send();
+      });
+   });
+});

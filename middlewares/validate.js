@@ -6,28 +6,33 @@ const crypto = require('node:crypto');
 exports.validate = (req, res, next) => {
    const validationErrors = validationResult(req);
    if (validationErrors.isEmpty()) return next();
-   const errorMessage = validationErrors.formatWith((err) => err.msg).array();
-   return next(AppError.badRequest(errorMessage.join(', ')));
+   const errorMessage = validationErrors.formatWith((err) => err.msg).array({ onlyFirstError: true });
+   return next(AppError.badRequest(errorMessage[0]));
 };
 
 exports.signupValidator = () => {
    return [
       body('email')
          .exists()
+         .withMessage('Provide an email!')
          .isEmail()
          .withMessage('Email is not valid!')
          .custom(async (email) => {
             const user = await User.findOne({ email });
             if (user) return Promise.reject('User already exists!');
          }),
-      body('password').exists().notEmpty().isLength({ min: 4 }).withMessage('Password must be longer!'),
+      body('password')
+         .exists()
+         .withMessage('Provide a password!')
+         .isLength({ min: 4 })
+         .withMessage('Password must be longer!'),
    ];
 };
 
 exports.loginValidator = () => {
    return [
-      body('email').exists().isEmail().withMessage('Email is not valid!'),
-      body('password').exists().notEmpty().withMessage('Password must not be empty!'),
+      body('email').exists().withMessage('Provide an email!').isEmail().withMessage('Email is not valid!'),
+      body('password').exists().withMessage('Provide a password!'),
    ];
 };
 
@@ -35,6 +40,7 @@ exports.forgetPasswordValidator = () => {
    return [
       body('email')
          .exists()
+         .withMessage('Provide an email!')
          .isEmail()
          .withMessage('Email is not valid!')
          .custom(async (email) => {
@@ -49,8 +55,8 @@ exports.resetPasswordValidator = () => {
       param('token')
          .exists()
          .isString()
-         .notEmpty()
          .isLength({ min: 64, max: 64 })
+         .withMessage('Provide a valid token!')
          .custom(async (token) => {
             const user = await User.findOne({
                passwordResetToken: crypto.createHash('sha256').update(token).digest('hex'),
