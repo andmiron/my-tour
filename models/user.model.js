@@ -1,16 +1,30 @@
+const crypto = require('node:crypto');
 const mongoose = require('mongoose');
 const argon = require('argon2');
 
 const userSchema = new mongoose.Schema({
-   username: {
+   provider: {
+      type: String,
+      enum: ['local', 'google'],
+      default: 'local',
+   },
+   email: {
       type: String,
       unique: true,
-      required: [true, 'Username is required!'],
+      required: [true, 'Email is required!'],
       lowercase: true,
    },
    password: {
       type: String,
-      required: [true, 'Password is required!'],
+      required: [() => this.provider === 'local', 'Password is required!'],
+      select: false,
+   },
+   passwordResetToken: {
+      type: String,
+      select: false,
+   },
+   passwordResetExpires: {
+      type: Number,
       select: false,
    },
    photo: {
@@ -19,7 +33,7 @@ const userSchema = new mongoose.Schema({
    },
    role: {
       type: String,
-      enum: ['user', 'guide', 'lead-guide', 'admin'],
+      enum: ['user', 'admin'],
       default: 'user',
    },
 });
@@ -30,8 +44,15 @@ userSchema.pre('save', async function (next) {
    next();
 });
 
-userSchema.methods.isValidPassword = async function (userPassword, givenPassword) {
-   return argon.verify(userPassword, givenPassword);
+userSchema.methods.isValidPassword = async function (validPassword, givenPassword) {
+   return argon.verify(validPassword, givenPassword);
+};
+
+userSchema.methods.createResetToken = function () {
+   const hashData = crypto.randomBytes(32).toString('hex');
+   this.passwordResetToken = crypto.createHash('sha256').update(hashData).digest('hex');
+   this.passwordResetExpires = Date.now() + 10 * 60 * 1000;
+   return hashData;
 };
 
 const User = mongoose.model('User', userSchema);
