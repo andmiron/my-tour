@@ -25,7 +25,7 @@ const {
    resetPasswordValidator,
 } = require('./middlewares/validate');
 const passport = require('passport');
-const isAuthenticated = require('./middlewares/authenticated');
+const { isAuthenticated } = require('./middlewares/authenticated');
 const errorHandlerMiddleware = require('./controllers/error.controller');
 
 const app = express();
@@ -43,6 +43,10 @@ function build() {
    app.use(passport.initialize());
    app.use(passport.session());
 
+   app.get('/', (req, res) => res.render('home', { title: 'Home' }));
+   app.get('/login', (req, res) => res.render('login', { title: 'Login' }));
+   app.get('/signup', (req, res) => res.render('signup', { title: 'Sign up' }));
+
    app.post('/signup', signupValidator(), validate, signupHandler);
    app.post('/login', loginValidator(), validate, passport.authenticate('local'), loginHandler);
    app.get('/login/google', passport.authenticate('google', { scope: ['email', 'profile'] }));
@@ -51,18 +55,6 @@ function build() {
    app.post('/forget', forgetPasswordValidator(), validate, forgetPasswordHandler);
    app.post('/reset/:token', resetPasswordValidator(), validate, resetPasswordHandler);
    app.delete('/profile', isAuthenticated, deleteUserHandler);
-
-   app.get('/', (req, res) => {
-      req.session.views ? req.session.views++ : (req.session.views = 1);
-      res.status(200).send(`home page: views ${req.session.views}`);
-   });
-
-   app.get('/protected', isAuthenticated, (req, res) => {
-      res.json({
-         protected: true,
-         user: req.user,
-      });
-   });
 
    app.all('*', (req, res, next) => {
       next(AppError.notFound('Resource not found!'));
