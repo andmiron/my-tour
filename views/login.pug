@@ -1,19 +1,17 @@
 extends base
 
 block content
-    .d-flex.align-items-center.py-4.my-4
-        .form-signin.w-25.m-auto
-            form.d-flex.flex-column
-                h1.h3.mb-3.fw-normal Log in
-                .form-floating
-                    input.form-control(type='email' id='floatingInput' placeholder='name@example.com')
-                    label(for='floatingInput') Email address
-                .form-floating
-                    input.form-control(type='password' id='floatingPassword' placeholder='Password')
-                    label(for='floatingPassword') Password
-                .form-check.text-start.my-3
-                    input.form-check-input(type='checkbox' value='remember-me' id='flexCheckDefault')
-                    label.form-check-label(for='flexCheckDefault') Remember me
-                button.btn.btn-primary.w-100.py-2(type='submit') Log in
-                a.btn.btn-outline-dark.w-100.p-2.mt-2(href='/login/google' role='button' style='text-transform:none') Login with Google
-                p.mt-5.mb-3.text-body-secondary.text-center &copy; 2024
+    .form-signin.w-25.m-auto.p-4
+        form.d-flex.flex-column
+            h1.h3.mb-3.fw-normal.text-center Log in
+            .form-floating
+                input.form-control(type='email' id='floatingInput' placeholder='name@example.com')
+                label(for='floatingInput') Email address
+            .form-floating
+                input.form-control(type='password' id='floatingPassword' placeholder='Password')
+                label(for='floatingPassword') Password
+            .form-check.text-start.my-3
+                input.form-check-input(type='checkbox' value='remember-me' id='flexCheckDefault')
+                label.form-check-label(for='flexCheckDefault') Remember me
+            button.btn.btn-primary.w-100.py-2(type='submit') Log in
+            a.btn.btn-outline-dark.w-100.p-2.mt-2(href='/login/google' role='button' style='text-transform:none') Login with Google

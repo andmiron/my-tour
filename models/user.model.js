@@ -2,41 +2,44 @@ const crypto = require('node:crypto');
 const mongoose = require('mongoose');
 const argon = require('argon2');
 
-const userSchema = new mongoose.Schema({
-   provider: {
-      type: String,
-      enum: ['local', 'google'],
-      default: 'local',
+const userSchema = new mongoose.Schema(
+   {
+      provider: {
+         type: String,
+         enum: ['local', 'google'],
+         default: 'local',
+      },
+      email: {
+         type: String,
+         unique: true,
+         required: [true, 'Email is required!'],
+         lowercase: true,
+      },
+      password: {
+         type: String,
+         required: [() => this.provider === 'local', 'Password is required!'],
+         select: false,
+      },
+      passwordResetToken: {
+         type: String,
+         select: false,
+      },
+      passwordResetExpires: {
+         type: Number,
+         select: false,
+      },
+      photo: {
+         type: String,
+         default: 'default.jpg',
+      },
+      role: {
+         type: String,
+         enum: ['user', 'admin'],
+         default: 'user',
+      },
    },
-   email: {
-      type: String,
-      unique: true,
-      required: [true, 'Email is required!'],
-      lowercase: true,
-   },
-   password: {
-      type: String,
-      required: [() => this.provider === 'local', 'Password is required!'],
-      select: false,
-   },
-   passwordResetToken: {
-      type: String,
-      select: false,
-   },
-   passwordResetExpires: {
-      type: Number,
-      select: false,
-   },
-   photo: {
-      type: String,
-      default: 'default.jpg',
-   },
-   role: {
-      type: String,
-      enum: ['user', 'admin'],
-      default: 'user',
-   },
-});
+   { timestamps: true },
+);
 
 userSchema.pre('save', async function (next) {
    if (!this.isModified('password')) return next();
