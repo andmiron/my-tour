@@ -2,13 +2,13 @@ extends base
 
 block content
     .form-signin.w-25.m-auto.p-4
-        form.d-flex.flex-column
+        form.d-flex.flex-column.signup-form
             h1.h3.mb-3.fw-normal.text-center Sign up
-            .form-floating
-                input.form-control(type='email' id='floatingInput' placeholder='name@example.com')
-                label(for='floatingInput') Email address
-            .form-floating
-                input.form-control(type='password' id='floatingPassword' placeholder='Password')
+            .form-floating.mb-2
+                input.form-control(type='email' id='floatingEmail' placeholder='name@example.com' name='email')
+                label(for='floatingEmail') Email address
+            .form-floating.mb-4
+                input.form-control(type='password' id='floatingPassword' placeholder='Password' name='password')
                 label(for='floatingPassword') Password
             button.btn.btn-primary.w-100.py-2.mt-2(type='submit') Sign up
             a.btn.btn-outline-dark.w-100.p-2.mt-2(href='/login/google' role='button' style='text-transform:none') Login with Google

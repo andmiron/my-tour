@@ -46,6 +46,7 @@ function build() {
    app.get('/', (req, res) => res.render('home', { title: 'Home' }));
    app.get('/login', (req, res) => res.render('login', { title: 'Login' }));
    app.get('/signup', (req, res) => res.render('signup', { title: 'Sign up' }));
+   app.get('/protected', isAuthenticated, (req, res) => res.send('protected'));
 
    app.post('/signup', signupValidator(), validate, signupHandler);
    app.post('/login', loginValidator(), validate, passport.authenticate('local'), loginHandler);

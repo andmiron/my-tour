@@ -23,6 +23,7 @@ module.exports = {
          method: req.method,
          url: req.url,
          user: req.user,
+         body: req.body,
       }),
    },
 };

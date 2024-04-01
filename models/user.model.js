@@ -1,14 +1,10 @@
 const crypto = require('node:crypto');
 const mongoose = require('mongoose');
 const argon = require('argon2');
+const { faker } = require('@faker-js/faker');
 
 const userSchema = new mongoose.Schema(
    {
-      provider: {
-         type: String,
-         enum: ['local', 'google'],
-         default: 'local',
-      },
       email: {
          type: String,
          unique: true,
@@ -28,9 +24,14 @@ const userSchema = new mongoose.Schema(
          type: Number,
          select: false,
       },
+      provider: {
+         type: String,
+         enum: ['local', 'google'],
+         default: 'local',
+      },
       photo: {
          type: String,
-         default: 'default.jpg',
+         default: () => faker.image.avatarLegacy(),
       },
       role: {
          type: String,

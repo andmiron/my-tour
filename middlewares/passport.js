@@ -44,7 +44,6 @@ passport.serializeUser((user, done) => {
 passport.deserializeUser((userId, done) => {
    process.nextTick(() => {
       User.findById(userId).then((user) => {
-         console.log(user);
          if (!user) return done(AppError.badRequest('Log in with valid user!'));
          return done(null, user);
       });
