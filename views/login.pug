@@ -5,10 +5,14 @@ block content
         form.d-flex.flex-column.login-form
             h1.h3.mb-3.fw-normal.text-center Log in
             .form-floating.mb-2
-                input.form-control(type='email' id='floatingEmail' placeholder='name@example.com' name='email')
+                input.form-control(type='email' id='floatingEmail' placeholder='name@example.com' name='email' required)
                 label(for='floatingEmail') Email address
             .form-floating.mb-4
-                input.form-control(type='password' id='floatingPassword' placeholder='Password' name='password')
+                input.form-control(type='password' id='floatingPassword' placeholder='Password' name='password' required minLength='4')
                 label(for='floatingPassword') Password
             button.btn.btn-primary.w-100.py-2(type='submit') Log in
-            a.btn.btn-outline-dark.w-100.p-2.mt-2(href='/login/google' role='button' style='text-transform:none') Login with Google
+            button.btn.btn-outline-dark.w-100.p-2.mt-2.login-btn-google(type='button')
+                i.bi.bi-google.p-2
+                span Login with google
+            a.btn.btn-link.text-secondary.align-self-end(type='button' href='/forget') Forget password?
+

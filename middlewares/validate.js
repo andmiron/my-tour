@@ -45,6 +45,7 @@ exports.forgetPasswordValidator = () => {
          .withMessage('Email is not valid!')
          .custom(async (email) => {
             const user = await User.findOne({ email });
+            if (user.provider === 'google') return Promise.reject('Try login with google!');
             if (!user) return Promise.reject('No user with this email!');
          }),
    ];

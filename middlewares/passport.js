@@ -12,6 +12,7 @@ const localVerify = (email, password, done) => {
    User.findOne({ email })
       .select('+password -__v')
       .then((user) => {
+         if (user.provider === 'google') return done(AppError.unauthorized('Try log in with google!'));
          if (!user) return done(AppError.unauthorized('There is no such user!'));
          user.isValidPassword(user.password, password).then((isValid) => {
             return isValid ? done(null, user) : done(AppError.unauthorized('Try another password!'));

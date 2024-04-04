@@ -31,7 +31,7 @@ const userSchema = new mongoose.Schema(
       },
       photo: {
          type: String,
-         default: () => faker.image.avatarLegacy(),
+         default: () => faker.image.avatarLegacy({}),
       },
       role: {
          type: String,

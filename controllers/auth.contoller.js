@@ -1,20 +1,21 @@
+const crypto = require('crypto');
 const catchAsync = require('../utils/catch.async');
 const User = require('../models/user.model');
-const crypto = require('crypto');
+const { sendMail } = require('../controllers/email.controller');
+const AppError = require('../utils/app.error');
 
 exports.signupHandler = catchAsync(async (req, res) => {
    const { email, password } = req.body;
    const user = await User.create({ email, password });
    res.status(201).send({
-      status: 'created',
+      message: 'Signed up',
       user,
    });
 });
 
 exports.loginHandler = (req, res) => {
-   res.locals.user = req.user;
    res.status(200).send({
-      status: 'logged in',
+      message: 'Logged in',
       user: req.user,
    });
 };
@@ -23,20 +24,30 @@ exports.logoutHandler = catchAsync(async (req, res, next) => {
    req.logout((err) => {
       if (err) return next(err);
       res.status(200).clearCookie(process.env.SESSION_NAME).send({
-         status: 'logged out',
+         message: 'Logged out',
          user: null,
       });
    });
 });
 
-exports.forgetPasswordHandler = catchAsync(async (req, res) => {
-   const user = await User.findOne({ email: req.body.email });
+exports.forgetPasswordHandler = catchAsync(async (req, res, next) => {
+   const { email } = req.body;
+   const user = await User.findOne({ email });
    const resetToken = user.createResetToken();
    await user.save({ validateBeforeSave: false });
-   res.status(200).send({
-      status: 'reset token created',
-      token: resetToken,
-   });
+   try {
+      const resetLink = `${req.protocol}://${req.get('host')}/reset/${resetToken}`;
+      await sendMail(email, 'Reset password link', resetLink);
+      res.status(200).json({
+         message: 'Token created and sent to email',
+         resetToken,
+      });
+   } catch (err) {
+      user.passwordResetToken = undefined;
+      user.passwordResetExpires = undefined;
+      await user.save({ validateBeforeSave: false });
+      return next(AppError.internal('Sending email error! Try again.'));
+   }
 });
 
 exports.resetPasswordHandler = catchAsync(async (req, res, next) => {
@@ -47,7 +58,7 @@ exports.resetPasswordHandler = catchAsync(async (req, res, next) => {
    user.passwordResetExpires = undefined;
    await user.save();
    res.status(200).send({
-      status: 'password reset',
+      message: 'Password reset',
       user: user,
    });
 });
@@ -58,7 +69,7 @@ exports.deleteUserHandler = catchAsync(async (req, res, next) => {
       if (err) return next(err);
       req.session.destroy(() => {
          res.clearCookie(process.env.SESSION_NAME).status(200).send({
-            status: 'user deleted',
+            message: 'User deleted',
             user: null,
          });
       });

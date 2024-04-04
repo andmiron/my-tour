@@ -42,16 +42,25 @@ function build() {
    app.use(session(sessionOptions));
    app.use(passport.initialize());
    app.use(passport.session());
+   app.use((req, res, next) => {
+      if (req.user) res.locals.user = req.user;
+      next();
+   });
 
    app.get('/', (req, res) => res.render('home', { title: 'Home' }));
-   app.get('/login', (req, res) => res.render('login', { title: 'Login' }));
    app.get('/signup', (req, res) => res.render('signup', { title: 'Sign up' }));
+   app.get('/login', (req, res) => res.render('login', { title: 'Login' }));
+   app.get('/forget', (req, res) => res.render('forgetPassword', { title: 'Forget password' }));
+   app.get('/reset/:token', (req, res) => res.render('resetPassword', { title: 'Reset password' }));
    app.get('/protected', isAuthenticated, (req, res) => res.send('protected'));
 
    app.post('/signup', signupValidator(), validate, signupHandler);
    app.post('/login', loginValidator(), validate, passport.authenticate('local'), loginHandler);
    app.get('/login/google', passport.authenticate('google', { scope: ['email', 'profile'] }));
-   app.get('/auth/google/callback', passport.authenticate('google'), loginHandler);
+   app.get(
+      '/auth/google/callback',
+      passport.authenticate('google', { successRedirect: '/', failureRedirect: '/login' }),
+   );
    app.post('/logout', isAuthenticated, logoutHandler);
    app.post('/forget', forgetPasswordValidator(), validate, forgetPasswordHandler);
    app.post('/reset/:token', resetPasswordValidator(), validate, resetPasswordHandler);
