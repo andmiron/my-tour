@@ -1,7 +1,6 @@
 const crypto = require('node:crypto');
 const mongoose = require('mongoose');
 const argon = require('argon2');
-const { faker } = require('@faker-js/faker');
 
 const userSchema = new mongoose.Schema(
    {
@@ -10,6 +9,19 @@ const userSchema = new mongoose.Schema(
          unique: true,
          required: [true, 'Email is required!'],
          lowercase: true,
+      },
+      emailConfirmed: {
+         type: Boolean,
+         default: false,
+      },
+      firstName: {
+         type: String,
+      },
+      lastName: {
+         type: String,
+      },
+      birthDate: {
+         type: Date,
       },
       password: {
          type: String,
@@ -31,16 +43,20 @@ const userSchema = new mongoose.Schema(
       },
       photo: {
          type: String,
-         default: () => faker.image.avatarLegacy({}),
+         default: '/img/default_user.jpg',
       },
       role: {
          type: String,
-         enum: ['user', 'admin'],
+         enum: ['user', 'admin', 'guide'],
          default: 'user',
       },
    },
    { timestamps: true },
 );
+
+userSchema.virtual('fullName').get(function () {
+   return this.firstName + ' ' + this.lastName;
+});
 
 userSchema.pre('save', async function (next) {
    if (!this.isModified('password')) return next();

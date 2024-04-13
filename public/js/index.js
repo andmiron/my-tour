@@ -89,12 +89,13 @@ async function postJSON(url, data) {
 function showAlert(type, message) {
    hideAlert();
    const markup = [
-      `<div class="alert alert-${type} alert-dismissible position-absolute top-0 start-50 translate-middle" role="alert">`,
+      `<div class="alert alert-${type} alert-dismissible position-absolute translate-middle" style="top: 11%; left: 50%" role="alert">`,
       `   <div>${message}</div>`,
       '   <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>',
       '</div>',
    ].join('');
-   document.querySelector('footer').insertAdjacentHTML('afterbegin', markup);
+
+   document.querySelector('body').insertAdjacentHTML('afterbegin', markup);
    window.setTimeout(hideAlert, 5000);
 }
 

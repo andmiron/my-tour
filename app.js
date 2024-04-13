@@ -27,6 +27,7 @@ const {
 const passport = require('passport');
 const { isAuthenticated } = require('./middlewares/authenticated');
 const errorHandlerMiddleware = require('./controllers/error.controller');
+const { createRandomTourHandler } = require('./controllers/tour.controller');
 
 const app = express();
 
@@ -52,7 +53,7 @@ function build() {
    app.get('/login', (req, res) => res.render('login', { title: 'Login' }));
    app.get('/forget', (req, res) => res.render('forgetPassword', { title: 'Forget password' }));
    app.get('/reset/:token', (req, res) => res.render('resetPassword', { title: 'Reset password' }));
-   app.get('/protected', isAuthenticated, (req, res) => res.send('protected'));
+   app.get('/profile', (req, res) => res.render('profile', { title: 'Profile', user: req.user }));
 
    app.post('/signup', signupValidator(), validate, signupHandler);
    app.post('/login', loginValidator(), validate, passport.authenticate('local'), loginHandler);
@@ -65,6 +66,8 @@ function build() {
    app.post('/forget', forgetPasswordValidator(), validate, forgetPasswordHandler);
    app.post('/reset/:token', resetPasswordValidator(), validate, resetPasswordHandler);
    app.delete('/profile', isAuthenticated, deleteUserHandler);
+
+   app.post('/tour/random', createRandomTourHandler);
 
    app.all('*', (req, res, next) => {
       next(AppError.notFound('Resource not found!'));

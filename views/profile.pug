@@ -1,0 +1,67 @@
+extends base
+
+block content
+    .container
+        h3.my-3 Profile
+        hr
+        .row.g-5
+            .col-4
+                .d-flex.flex-column.p-3.my-3.border.rounded.bg-body-secondary
+                    form.d-flex.flex-column.gap-2
+                        h5.mb-4 Change basic information
+                        .input-group.mb-3
+                            label(for='inputFirstName')
+                                span.input-group-text First name
+                            input.form-control(id='inputFirstName' type='text')
+                        .input-group.mb-3
+                            label(for='inputLastName')
+                                span.input-group-text Last name
+                            input.form-control(id='inputLastName' type='text')
+                        .input-group.mb-3
+                            label(for='inputBirthdate')
+                                span.input-group-text Birthdate
+                            input.form-control(id='inputBirthdate' type='date' min='1950-01-01')
+                        button.btn.btn-primary.align-self-end(id='updateInfo') Save changes
+            .col-4
+                .d-flex.flex-column.p-3.my-3.border.rounded.bg-body-secondary.gap-3
+                    h5 Change photo
+                    img.img-fluid.rounded-circle(src=`${user.photo}` alt=`User photo`)
+                    .row
+                        .col
+                            label.form-label(for='inputFile') Your photo
+                            input.form-control.form-control-lg(id='inputFile' type='file')
+                    .row
+                        .col-4
+                            button.btn.btn-secondary Generate random
+                        .col-4
+                            button.btn.btn-success Upload photo
+                        .col-4
+                            button.btn.btn-danger Delete photo
+            .col-4.d-flex.flex-column.gap-3
+                .p-3.my-3.border.rounded.bg-body-secondary
+                    form
+                        h5.mb-4 Confirm email
+                        .row
+                            .col
+                                label.visually-hidden(for='staticEmail')
+                                input.form-control-plaintext(readonly type='text' value=`${user.email}` id='staticEmail')
+                            .col-auto
+                                button.btn.btn-primary(type='submit') Confirm email
+                .d-flex.flex-column.p-3.my-3.border.rounded.bg-body-secondary
+                    form.d-flex.flex-column.gap-2
+                        h5.mb-4 Change password
+                        .input-group.mb-3
+                            label(for='inputOldPassword')
+                                span.input-group-text Old password
+                            input.form-control(id='inputOldPassword' type='password')
+                        .input-group.mb-3
+                            label(for='inputNewPassword')
+                                span.input-group-text New Password
+                            input.form-control(id='inputNewPassword' type='password')
+                        .input-group.mb-3
+                            label(for='inputConfirmNewPassword')
+                                span.input-group-text Confirm new password
+                            input.form-control(id='inputConfirmNewPassword' type='password')
+                        button.btn.btn-primary.align-self-end(id='changePassword') Change password
+
+

@@ -1,9 +1,9 @@
 extends base
 
 block content
-    .form-signin.w-25.m-auto.p-4
+    .form-signin.w-300px.p-4.border.rounded-5.bg-light.shadow.m-auto
         form.d-flex.flex-column.login-form
-            h1.h3.mb-3.fw-normal.text-center Log in
+            h1.h3.mb-5.fw-normal.text-center Log in
             .form-floating.mb-2
                 input.form-control(type='email' id='floatingEmail' placeholder='name@example.com' name='email' required)
                 label(for='floatingEmail') Email address
@@ -14,5 +14,5 @@ block content
             button.btn.btn-outline-dark.w-100.p-2.mt-2.login-btn-google(type='button')
                 i.bi.bi-google.p-2
                 span Login with google
-            a.btn.btn-link.text-secondary.align-self-end(type='button' href='/forget') Forget password?
+            a.btn.btn-link.text-secondary.align-self-end.mt-2(type='button' href='/forget') Forgot password?
 

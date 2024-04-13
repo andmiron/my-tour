@@ -1,4 +1,3 @@
-// review / rating / createdAt / ref to the tour / ref to User
 const mongoose = require('mongoose');
 const Tour = require('./tour.model');
 
@@ -6,16 +5,13 @@ const reviewSchema = new mongoose.Schema(
    {
       review: {
          type: String,
-         required: [true, 'review cannot be empty'],
+         required: [true, 'Review cannot be empty'],
       },
       rating: {
          type: Number,
          min: 1,
          max: 5,
-      },
-      createdAt: {
-         type: Date,
-         default: Date.now(),
+         required: [true, 'Leave a review 1 to 5'],
       },
       tour: {
          type: mongoose.Schema.ObjectId,
@@ -31,10 +27,9 @@ const reviewSchema = new mongoose.Schema(
    {
       toJSON: { virtuals: true },
       toObject: { virtuals: true },
+      timestamps: true,
    },
 );
-
-reviewSchema.index({ tour: 1, user: 1 }, { unique: true });
 
 reviewSchema.pre(/^find/, function (next) {
    this.populate({

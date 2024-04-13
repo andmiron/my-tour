@@ -1,0 +1,35 @@
+header.position-relative
+
+    nav.navbar.navbar-expand-lg.border-bottom.sticky-top.bg-light
+        .container-lg
+            a.navbar-brand(href='/') My Tour
+            button.navbar-toggler(type="button", data-bs-toggle="collapse", data-bs-target="#navbarNav", aria-controls="navbarNav", aria-expanded="false", aria-label="Toggle navigation")
+                span.navbar-toggler-icon
+            #navbarNav.collapse.navbar-collapse
+                ul.navbar-nav.mx-auto
+                    li.nav-item
+                        a.nav-link(href="#") Home
+                    li.nav-item
+                        a.nav-link(href="#") Tours
+                    li.nav-item
+                        a.nav-link(href="#") Guides
+                ul.navbar-nav.ml-auto.d-flex.align-items-center
+                    if user
+                        .nav-item.dropdown
+                            button.btn.btn-link.dropdown-toggle(data-bs-toggle="dropdown", aria-expanded="false")
+                                img.img-fluid.rounded-circle(src=`${user.photo}` alt=`User photo` style="height:2em")
+                            ul.dropdown-menu
+                                li
+                                    a.dropdown-item(href="/profile") Profile
+                                    a.dropdown-item(href="/profile") Billing
+                                    a.dropdown-item(href="/profile") My tours
+                                    a.dropdown-item(href="/profile") My bookings
+                                    a.dropdown-item(href="/profile") My reviews
+                                hr
+                                li
+                                    btn.btn.btn-secondary.dropdown-item.logout-btn Log out
+                    else
+                        li.nav-item.mx-1
+                            a.nav-link.btn.btn-primary(href="/login" role='button') Login
+                        li.nav-item.mx-1
+                            a.nav-link.btn.btn-primary(href="/signup" role='button') Sign Up
