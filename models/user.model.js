@@ -10,10 +10,6 @@ const userSchema = new mongoose.Schema(
          required: [true, 'Email is required!'],
          lowercase: true,
       },
-      emailConfirmed: {
-         type: Boolean,
-         default: false,
-      },
       firstName: {
          type: String,
       },

@@ -1,67 +1,82 @@
 extends base
 
+mixin navItem(path, text)
+    li.nav-item
+        a.nav-link(href=`/${path}`)= text
+
+mixin inputGroup(groupId, type, text)
+    .input-group.mb-3
+        label(for=groupId)
+            span.input-group-text= text
+        input.form-control(id=groupId type=type)
+
 block content
     .container
-        h3.my-3 Profile
-        hr
-        .row.g-5
-            .col-4
-                .d-flex.flex-column.p-3.my-3.border.rounded.bg-body-secondary
-                    form.d-flex.flex-column.gap-2
-                        h5.mb-4 Change basic information
-                        .input-group.mb-3
-                            label(for='inputFirstName')
-                                span.input-group-text First name
-                            input.form-control(id='inputFirstName' type='text')
-                        .input-group.mb-3
-                            label(for='inputLastName')
-                                span.input-group-text Last name
-                            input.form-control(id='inputLastName' type='text')
-                        .input-group.mb-3
-                            label(for='inputBirthdate')
-                                span.input-group-text Birthdate
-                            input.form-control(id='inputBirthdate' type='date' min='1950-01-01')
-                        button.btn.btn-primary.align-self-end(id='updateInfo') Save changes
-            .col-4
-                .d-flex.flex-column.p-3.my-3.border.rounded.bg-body-secondary.gap-3
-                    h5 Change photo
-                    img.img-fluid.rounded-circle(src=`${user.photo}` alt=`User photo`)
-                    .row
-                        .col
-                            label.form-label(for='inputFile') Your photo
-                            input.form-control.form-control-lg(id='inputFile' type='file')
-                    .row
-                        .col-4
-                            button.btn.btn-secondary Generate random
-                        .col-4
-                            button.btn.btn-success Upload photo
-                        .col-4
-                            button.btn.btn-danger Delete photo
-            .col-4.d-flex.flex-column.gap-3
-                .p-3.my-3.border.rounded.bg-body-secondary
-                    form
-                        h5.mb-4 Confirm email
+        .row.p-3.g-5
+            .col-2.d-flex.flex-column
+                h4.my-3 My account
+                ul.nav.nav-pills.flex-column
+                    +navItem('profile', 'Profile')
+                    +navItem('billing', 'Billing')
+                    +navItem('my-tours', 'My tours')
+                    +navItem('my-bookings', 'My bookings')
+                    +navItem('my-reviews', 'My reviews')
+            .col-4.p-3
+                .d-flex.flex-column.justify-content-between.mb-5
+                    .d-flex.flex-column.gap-3
+                        h5 Change photo
                         .row
-                            .col
-                                label.visually-hidden(for='staticEmail')
-                                input.form-control-plaintext(readonly type='text' value=`${user.email}` id='staticEmail')
-                            .col-auto
-                                button.btn.btn-primary(type='submit') Confirm email
-                .d-flex.flex-column.p-3.my-3.border.rounded.bg-body-secondary
-                    form.d-flex.flex-column.gap-2
-                        h5.mb-4 Change password
-                        .input-group.mb-3
-                            label(for='inputOldPassword')
-                                span.input-group-text Old password
-                            input.form-control(id='inputOldPassword' type='password')
-                        .input-group.mb-3
-                            label(for='inputNewPassword')
-                                span.input-group-text New Password
-                            input.form-control(id='inputNewPassword' type='password')
-                        .input-group.mb-3
-                            label(for='inputConfirmNewPassword')
-                                span.input-group-text Confirm new password
-                            input.form-control(id='inputConfirmNewPassword' type='password')
-                        button.btn.btn-primary.align-self-end(id='changePassword') Change password
+                            .col-4.text-center
+                                img.img-fluid.rounded-circle(src=`/img/default_user.jpg` alt=`User photo` style='height:5em')
+                            .col-8
+                                label.form-label(for='inputFile') Your photo
+                                input.form-control(id='inputFile' type='file')
+                        .row.text-center
+                            .col-4
+                                button.btn.btn-primary Delete
+                            .col-4
+                                button.btn.btn-primary Generate
+                            .col-4
+                                button.btn.btn-primary Upload
+                form.d-flex.flex-column.gap-2
+                    h5.mb-2 Change basic information
+                    +inputGroup('inputFirstName', 'text', 'First name')
+                    +inputGroup('inputLastName', 'text' ,'Last name')
+                    +inputGroup('inputBirthdate', 'date', 'Birthdate')
+                    button.btn.btn-primary.align-self-end(id='updateInfo') Save changes
+                form.d-flex.flex-column.gap-2
+                    h5.mb-2 Change password
+                    +inputGroup('inputOldPassword', 'password', 'Old password')
+                    +inputGroup('inputNewPassword', 'password', 'New Password')
+                    +inputGroup('inputConfirmNewPassword', 'password', 'Confirm new password')
+                    button.btn.btn-primary.align-self-end(id='changePassword') Change password
+                .d-flex.align-items-center.justify-content-between.mt-5
+                    h5 Delete profile
+                    btn.btn.btn-danger.mt-3 Delete profile
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
