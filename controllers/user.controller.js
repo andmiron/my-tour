@@ -1,20 +1,10 @@
-const multer = require('multer');
 const sharp = require('sharp');
 const User = require('../models/user.model');
 const catchAsync = require('../utils/catch.async');
-const AppError = require('../utils/app.error');
-
-const upload = multer({
-   dest: multer.memoryStorage(),
-   fileFilter: (req, file, done) => {
-      if (!file.mimetype.startWith('image')) return done(AppError.badRequest('Upload an image!'), false);
-      return done(null, true);
-   },
-});
+const { upload } = require('../utils/multer');
 
 exports.uploadUserPhotoHandler = catchAsync(async (req, res, next) => {
-   upload.single('inputPhoto');
-   res.status(200).send(req.file.filename);
+   const photo = upload.single('inputPhoto');
 });
 
 exports.resizeUserPhoto = catchAsync(async (req, res, next) => {
