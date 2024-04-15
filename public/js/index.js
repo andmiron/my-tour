@@ -10,7 +10,7 @@ if (signupForm) {
       e.preventDefault();
       const email = document.getElementById('floatingEmail').value;
       const password = document.getElementById('floatingPassword').value;
-      const { status, message } = await postJSON('/signup', { email, password });
+      const { status, message } = await postJSON('/api/v1/auth/signup', { email, password });
       if (status === 'error') return showAlert('danger', message);
       showAlert('success', message);
       window.setTimeout(() => {
@@ -24,7 +24,7 @@ if (loginForm) {
       e.preventDefault();
       const email = document.getElementById('floatingEmail').value;
       const password = document.getElementById('floatingPassword').value;
-      const { status, message } = await postJSON('/login', { email, password });
+      const { status, message } = await postJSON('/api/v1/auth/login', { email, password });
       if (status === 'error') return showAlert('danger', message);
       showAlert('success', message);
       window.setTimeout(() => {
@@ -35,7 +35,7 @@ if (loginForm) {
 
 if (logoutBtn)
    logoutBtn.addEventListener('click', async () => {
-      const { status, message } = await postJSON('/logout');
+      const { status, message } = await postJSON('/api/v1/auth/logout');
       if (status === 'error') return showAlert('danger', message);
       showAlert('success', message);
       window.setTimeout(() => {
@@ -44,14 +44,14 @@ if (logoutBtn)
    });
 
 if (loginBtnGoogle) {
-   loginBtnGoogle.addEventListener('click', () => location.assign('/login/google'));
+   loginBtnGoogle.addEventListener('click', () => location.assign('/api/v1/auth/login/google'));
 }
 
 if (forgetPasswordForm) {
    forgetPasswordForm.addEventListener('submit', async (e) => {
       e.preventDefault();
       const email = document.getElementById('floatingEmail').value;
-      const { status, message } = await postJSON('/forget', { email });
+      const { status, message } = await postJSON('/api/v1/auth/forget', { email });
       if (status === 'error') return showAlert('danger', message);
       showAlert('success', message);
       window.setTimeout(() => {
@@ -103,3 +103,18 @@ function hideAlert() {
    const el = document.querySelector('.alert');
    if (el) el.parentElement.removeChild(el);
 }
+
+document.addEventListener('DOMContentLoaded', function () {
+   // make all currently active items inactive
+   // (you can delete this block if you know that there are no active items when loading the page)
+   document.querySelectorAll('a.nav-link.active').forEach((li) => {
+      li.classList.remove('active');
+      li.attributes.removeNamedItem('aria-current');
+   });
+
+   // find the link to the current page and make it active
+   document.querySelectorAll(`a[href="${location.pathname}"].nav-link`).forEach((a) => {
+      a.classList.add('active');
+      a.setAttribute('aria-current', 'page');
+   });
+});

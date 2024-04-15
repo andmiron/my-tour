@@ -1,8 +1,15 @@
 extends base
 
+block append head
+    style.
+        .nav-pills .nav-link.active {
+            background-color: #fff;
+            border: solid;
+        }
+
 mixin navItem(path, text)
     li.nav-item
-        a.nav-link(href=`/${path}`)= text
+        a.nav-link.link-secondary.fs-4(href=`/${path}`)= text
 
 mixin inputGroup(groupId, type, text)
     .input-group.mb-3
@@ -10,17 +17,27 @@ mixin inputGroup(groupId, type, text)
             span.input-group-text= text
         input.form-control(id=groupId type=type)
 
+mixin profileListItem(key, value)
+    li.list-group-item= `${key}: ${value}`
+
 block content
     .container
         .row.p-3.g-5
-            .col-2.d-flex.flex-column
-                h4.my-3 My account
+            .col-2.p-3.d-flex.flex-column
+                h4 My account
                 ul.nav.nav-pills.flex-column
                     +navItem('profile', 'Profile')
                     +navItem('billing', 'Billing')
                     +navItem('my-tours', 'My tours')
                     +navItem('my-bookings', 'My bookings')
                     +navItem('my-reviews', 'My reviews')
+            .col-4.p-3
+                .d-flex.flex-column.gap-3
+                    h5 Profile information
+                    ul.list-group
+                        +profileListItem('Email', user.email)
+                        +profileListItem('Role', user.role)
+                        +profileListItem('Creation date', user.createdAt.toLocaleString())
             .col-4.p-3
                 .d-flex.flex-column.justify-content-between.mb-5
                     .d-flex.flex-column.gap-3
@@ -39,11 +56,14 @@ block content
                             .col-4
                                 button.btn.btn-primary Upload
                 form.d-flex.flex-column.gap-2
-                    h5.mb-2 Change basic information
-                    +inputGroup('inputFirstName', 'text', 'First name')
-                    +inputGroup('inputLastName', 'text' ,'Last name')
-                    +inputGroup('inputBirthdate', 'date', 'Birthdate')
-                    button.btn.btn-primary.align-self-end(id='updateInfo') Save changes
+                    h5.mb-2 Confirm email
+                    label.visually-hidden(for='confirmEmail') Confirm email
+                    input.form-control-plaintext(type='text' id='confirmEmail' readonly value= user.email)
+                    button.btn.btn-primary.align-self-end(type='submit') Confirm email
+                form.d-flex.flex-column.gap-2
+                    h5.mb-2 Change email
+                    +inputGroup('inputEmail', 'email', 'Email')
+                    button.btn.btn-primary.align-self-end(type='submit') Change email
                 form.d-flex.flex-column.gap-2
                     h5.mb-2 Change password
                     +inputGroup('inputOldPassword', 'password', 'Old password')
@@ -53,9 +73,6 @@ block content
                 .d-flex.align-items-center.justify-content-between.mt-5
                     h5 Delete profile
                     btn.btn.btn-danger.mt-3 Delete profile
-
-
-
 
 
 

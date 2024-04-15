@@ -30,14 +30,10 @@ function build() {
    app.use(session(sessionOptions));
    app.use(passport.initialize());
    app.use(passport.session());
-   app.use((req, res, next) => {
-      if (req.user) res.locals.user = req.user;
-      next();
-   });
-   app.use('/', viewRouter);
    app.use('/api/v1/auth', authRouter);
-   app.use('/api/v1/user', userRouter);
-   app.use('/api/v1/tour', tourRouter);
+   app.use('/api/v1/users', userRouter);
+   app.use('/api/v1/tours', tourRouter);
+   app.use('/', viewRouter);
    app.all('*', (req, res, next) => {
       next(AppError.notFound('Resource not found!'));
    });

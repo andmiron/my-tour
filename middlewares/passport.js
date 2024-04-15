@@ -46,7 +46,7 @@ passport.deserializeUser((userId, done) => {
    process.nextTick(() => {
       User.findById(userId).then((user) => {
          if (!user) return done(AppError.badRequest('Log in with valid user!'));
-         return done(null, user);
+         return done(null, user.toObject());
       });
    });
 });
