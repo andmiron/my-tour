@@ -105,14 +105,10 @@ function hideAlert() {
 }
 
 document.addEventListener('DOMContentLoaded', function () {
-   // make all currently active items inactive
-   // (you can delete this block if you know that there are no active items when loading the page)
    document.querySelectorAll('a.nav-link.active').forEach((li) => {
       li.classList.remove('active');
       li.attributes.removeNamedItem('aria-current');
    });
-
-   // find the link to the current page and make it active
    document.querySelectorAll(`a[href="${location.pathname}"].nav-link`).forEach((a) => {
       a.classList.add('active');
       a.setAttribute('aria-current', 'page');

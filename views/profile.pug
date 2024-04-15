@@ -1,60 +1,35 @@
 extends base
-
-block append head
-    style.
-        .nav-pills .nav-link.active {
-            background-color: #fff;
-            border: solid;
-        }
-
-mixin navItem(path, text)
-    li.nav-item
-        a.nav-link.link-secondary.fs-4(href=`/${path}`)= text
+include _profileNav
 
 mixin inputGroup(groupId, type, text)
     .input-group.mb-3
         label(for=groupId)
             span.input-group-text= text
-        input.form-control(id=groupId type=type)
-
-mixin profileListItem(key, value)
-    li.list-group-item= `${key}: ${value}`
+        input.form-control(id=groupId type=type required)
 
 block content
     .container
         .row.p-3.g-5
             .col-2.p-3.d-flex.flex-column
-                h4 My account
-                ul.nav.nav-pills.flex-column
-                    +navItem('profile', 'Profile')
-                    +navItem('billing', 'Billing')
-                    +navItem('my-tours', 'My tours')
-                    +navItem('my-bookings', 'My bookings')
-                    +navItem('my-reviews', 'My reviews')
-            .col-4.p-3
-                .d-flex.flex-column.gap-3
-                    h5 Profile information
-                    ul.list-group
-                        +profileListItem('Email', user.email)
-                        +profileListItem('Role', user.role)
-                        +profileListItem('Creation date', user.createdAt.toLocaleString())
-            .col-4.p-3
+                +profileNav
+            .col-auto.p-3
                 .d-flex.flex-column.justify-content-between.mb-5
                     .d-flex.flex-column.gap-3
                         h5 Change photo
-                        .row
-                            .col-4.text-center
-                                img.img-fluid.rounded-circle(src=`/img/default_user.jpg` alt=`User photo` style='height:5em')
-                            .col-8
-                                label.form-label(for='inputFile') Your photo
-                                input.form-control(id='inputFile' type='file')
-                        .row.text-center
-                            .col-4
-                                button.btn.btn-primary Delete
-                            .col-4
-                                button.btn.btn-primary Generate
-                            .col-4
-                                button.btn.btn-primary Upload
+                        .row.justify-content-evenly
+                            .col-auto.align-self-center
+                                div.position-relative
+                                    img.img-fluid.rounded-circle(src=`/img/default_user.jpg` alt=`User photo` style='height:5em')
+                                    span.position-absolute.top-0.start-100.translate-middle.badge.rounded-pill.bg-secondary= user.role
+                            .col-8.justify-content-center
+                                .row
+                                    label.form-label(for='inputPhoto') Your photo
+                                    input.form-control(id='inputPhoto' type='file' accept='image/*' name='inputPhoto' required)
+                                .row
+                                    .btn-group.p-3(role='group' aria-label='photo')
+                                        button.btn.btn-outline-secondary(type='button') Delete
+                                        button.btn.btn-outline-secondary(type='button') Generate
+                                        button.btn.btn-outline-secondary(type='button') Upload
                 form.d-flex.flex-column.gap-2
                     h5.mb-2 Confirm email
                     label.visually-hidden(for='confirmEmail') Confirm email

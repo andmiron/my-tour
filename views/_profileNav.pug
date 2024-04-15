@@ -1,0 +1,11 @@
+mixin navItem(path, text)
+    li.nav-item
+        a.nav-link.link-secondary.fs-4(href=`/${path}`)= text
+
+mixin profileNav
+    h4 My account
+    ul.nav.nav-pills.flex-column
+        +navItem('profile', 'Profile')
+        +navItem('my-tours', 'My tours')
+        +navItem('my-bookings', 'My bookings')
+        +navItem('my-reviews', 'My reviews')

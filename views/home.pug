@@ -5,9 +5,9 @@ block content
         h1.display-5.fw-bold.text-grey Find your tour
         .col-lg-6.mx-auto
             p.fs-5.mb-4 Begin an adventure
-            .d-grid.gap-2.d-sm-flex.justify-content-sm-center
-                button.btn.btn-outline-primary.btn-lg.px-4.me-sm-3.fw-bold(type='button') Explore the world
+            .d-flex.justify-content-center
+                a.btn.btn-outline-primary.btn-lg.px-4.me-sm-3.fw-bold(href='/tours') Explore the world
                 if user
-                    button.btn.btn-outline-dark.btn-lg.px-4(type='button') My bookings
+                    a.btn.btn-outline-dark.btn-lg.px-4(href='/my-bookings') My bookings
                 else
-                    button.btn.btn-outline-dark.btn-lg.px-4(type='button') Sign up
+                    a.btn.btn-outline-dark.btn-lg.px-4(href='/signup') Sign up

@@ -8,11 +8,11 @@ header.position-relative
             #navbarNav.collapse.navbar-collapse
                 ul.navbar-nav.mx-auto
                     li.nav-item
-                        a.nav-link(href="#") Home
+                        a.nav-link(href="/") Home
                     li.nav-item
-                        a.nav-link(href="#") Tours
+                        a.nav-link(href="/tours") Tours
                     li.nav-item
-                        a.nav-link(href="#") Guides
+                        a.nav-link(href="/guides") Guides
                 ul.navbar-nav.ml-auto.d-flex.align-items-center
                     if user
                         .nav-item.dropdown
@@ -21,15 +21,14 @@ header.position-relative
                             ul.dropdown-menu
                                 li
                                     a.dropdown-item(href="/profile") Profile
-                                    a.dropdown-item(href="/profile") Billing
-                                    a.dropdown-item(href="/profile") My tours
-                                    a.dropdown-item(href="/profile") My bookings
-                                    a.dropdown-item(href="/profile") My reviews
+                                    a.dropdown-item(href="/my-tours") My tours
+                                    a.dropdown-item(href="/my-bookings") My bookings
+                                    a.dropdown-item(href="/my-reviews") My reviews
                                 hr
                                 li
                                     btn.btn.btn-secondary.dropdown-item.logout-btn Log out
                     else
                         li.nav-item.mx-1
-                            a.nav-link.btn.btn-primary(href="/login" role='button') Login
+                            a.nav-link(href="/login" role='button') Login
                         li.nav-item.mx-1
-                            a.nav-link.btn.btn-primary(href="/signup" role='button') Sign Up
+                            a.nav-link(href="/signup" role='button') Sign Up
