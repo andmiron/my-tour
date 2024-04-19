@@ -1,4 +1,4 @@
-const { validationResult, body, param } = require('express-validator');
+const { validationResult, body, param, check } = require('express-validator');
 const AppError = require('../utils/app.error');
 const User = require('../models/user.model');
 const crypto = require('node:crypto');
@@ -77,7 +77,7 @@ exports.updatePasswordValidator = () => {
          .exists()
          .notEmpty()
          .custom(async (oldPassword, { req }) => {
-            const user = await User.findById(req.user.id).select('+password');
+            const user = await User.findById(req.user._id).select('+password');
             if (!user.isValidPassword(user.password, oldPassword)) return Promise.reject('Password is incorrect!');
          }),
       body('newPassword').exists().notEmpty().isLength({ min: 4 }).withMessage('Password must be longer!'),

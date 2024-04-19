@@ -1,7 +1,7 @@
 const multer = require('multer');
 const AppError = require('./app.error');
 
-exports.upload = multer({
+exports.multerUpload = multer({
    storage: multer.memoryStorage(),
    fileFilter: (req, file, done) => {
       if (!file.mimetype.startsWith('image')) return done(AppError.badRequest('Upload an image!'), false);

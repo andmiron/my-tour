@@ -19,17 +19,18 @@ block content
                         .row.justify-content-evenly
                             .col-auto.align-self-center
                                 div.position-relative
-                                    img.img-fluid.rounded-circle(src=`/img/default_user.jpg` alt=`User photo` style='height:5em')
+                                    img.img-fluid.rounded-circle(src= user.photo alt=`User photo` style='height:5em')
                                     span.position-absolute.top-0.start-100.translate-middle.badge.rounded-pill.bg-secondary= user.role
                             .col-8.justify-content-center
                                 .row
-                                    label.form-label(for='inputPhoto') Your photo
-                                    input.form-control(id='inputPhoto' type='file' accept='image/*' name='inputPhoto' required)
+                                    form(enctype='multipart/form-data')
+                                        label.form-label(for='inputPhoto') Your photo
+                                        input.form-control(id='inputPhoto' type='file' accept='image/*' name='inputPhoto' required)
                                 .row
                                     .btn-group.p-3(role='group' aria-label='photo')
-                                        button.btn.btn-outline-secondary(type='button') Delete
-                                        button.btn.btn-outline-secondary(type='button') Generate
-                                        button.btn.btn-outline-secondary(type='button') Upload
+                                        button.btn.btn-outline-secondary.delete-photo(type='button') Delete
+                                        button.btn.btn-outline-secondary.generate-photo(type='button') Generate
+                                        button.btn.btn-outline-secondary.upload-photo(type='button') Upload
                 form.d-flex.flex-column.gap-2
                     h5.mb-2 Confirm email
                     label.visually-hidden(for='confirmEmail') Confirm email

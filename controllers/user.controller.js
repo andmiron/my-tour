@@ -1,22 +1,57 @@
 const sharp = require('sharp');
 const User = require('../models/user.model');
 const catchAsync = require('../utils/catch.async');
-const { upload } = require('../utils/multer');
+const { multerUpload } = require('../utils/multer');
+const AppError = require('../utils/app.error');
+const { faker } = require('@faker-js/faker');
+const fetch = require('node-fetch');
+const fs = require('node:fs/promises');
 
-exports.uploadUserPhotoHandler = catchAsync(async (req, res, next) => {
-   const photo = upload.single('inputPhoto');
-});
-
-exports.resizeUserPhoto = catchAsync(async (req, res, next) => {
-   if (!req.file) return next();
-
-   req.file.filename = `user-${req.user.id}-${Date.now()}.jpeg`;
-
+const resizeUserPhoto = catchAsync(async (req, res, next) => {
+   req.file.filename = `user-${req.user._id}.jpeg`;
    await sharp(req.file.buffer)
-      .resize(500, 500)
+      .resize(300, 300)
       .toFormat('jpeg')
       .jpeg({ quality: 90 })
-      .toFile(`public/img/users/${req.file.filename}`);
-
+      .toFile(`public/img/${req.file.filename}`);
    next();
 });
+
+const saveUserPhoto = catchAsync(async (req, res) => {
+   const user = await User.findByIdAndUpdate(
+      { _id: req.user._id },
+      { photo: `img/${req.file.filename}` },
+      { new: true },
+   );
+   res.status(200).send({
+      status: 'Photo updated',
+      data: user.photo,
+   });
+});
+
+exports.generatePhotoHandler = catchAsync(async (req, res) => {
+   const photoUrl = faker.image.avatarLegacy();
+   const photo = await fetch(photoUrl);
+   const photoPath = `user-${req.user._id}.jpeg`;
+   await sharp(await photo.buffer())
+      .resize(300, 300)
+      .toFormat('jpeg')
+      .jpeg({ quality: 90 })
+      .toFile(`public/img/${photoPath}`);
+   const user = await User.findByIdAndUpdate({ _id: req.user._id }, { photo: `img/${photoPath}` }, { new: true });
+   res.status(200).send({
+      status: 'Photo generated',
+      data: user.photo,
+   });
+});
+
+exports.deletePhotoHandler = catchAsync(async (req, res) => {
+   await fs.unlink(`public/img/user-${req.user._id}.jpeg`);
+   const user = await User.findByIdAndUpdate({ _id: req.user._id }, { photo: `img/default_user.jpg` }, { new: true });
+   res.status(200).send({
+      status: 'Photo deleted',
+      data: user.photo,
+   });
+});
+
+exports.uploadUserPhotoHandler = [multerUpload.single('inputPhoto'), resizeUserPhoto, saveUserPhoto];

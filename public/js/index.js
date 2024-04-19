@@ -4,15 +4,19 @@ const loginBtnGoogle = document.querySelector('.login-btn-google');
 const logoutBtn = document.querySelector('.logout-btn');
 const forgetPasswordForm = document.querySelector('.forget-password-form');
 const resetPasswordForm = document.querySelector('.reset-password-form');
+const uploadPhotoBtn = document.querySelector('.upload-photo');
+const generatePhotoBtn = document.querySelector('.generate-photo');
+const deletePhotoBtn = document.querySelector('.delete-photo');
 
 if (signupForm) {
    signupForm.addEventListener('submit', async (e) => {
       e.preventDefault();
       const email = document.getElementById('floatingEmail').value;
       const password = document.getElementById('floatingPassword').value;
-      const { status, message } = await postJSON('/api/v1/auth/signup', { email, password });
-      if (status === 'error') return showAlert('danger', message);
-      showAlert('success', message);
+      const { status, data } = await postJSON('/api/v1/auth/signup', { email, password });
+      console.log(status, data);
+      if (status === 'error') return showAlert('danger', data);
+      showAlert('success', status);
       window.setTimeout(() => {
          location.assign('/login');
       }, 2000);
@@ -24,9 +28,9 @@ if (loginForm) {
       e.preventDefault();
       const email = document.getElementById('floatingEmail').value;
       const password = document.getElementById('floatingPassword').value;
-      const { status, message } = await postJSON('/api/v1/auth/login', { email, password });
-      if (status === 'error') return showAlert('danger', message);
-      showAlert('success', message);
+      const { status, data } = await postJSON('/api/v1/auth/login', { email, password });
+      if (status === 'error') return showAlert('danger', data);
+      showAlert('success', status);
       window.setTimeout(() => {
          location.assign('/');
       }, 2000);
@@ -35,9 +39,9 @@ if (loginForm) {
 
 if (logoutBtn)
    logoutBtn.addEventListener('click', async () => {
-      const { status, message } = await postJSON('/api/v1/auth/logout');
-      if (status === 'error') return showAlert('danger', message);
-      showAlert('success', message);
+      const { status, data } = await postJSON('/api/v1/auth/logout');
+      if (status === 'error') return showAlert('danger', data);
+      showAlert('success', status);
       window.setTimeout(() => {
          location.assign('/');
       }, 1500);
@@ -51,9 +55,9 @@ if (forgetPasswordForm) {
    forgetPasswordForm.addEventListener('submit', async (e) => {
       e.preventDefault();
       const email = document.getElementById('floatingEmail').value;
-      const { status, message } = await postJSON('/api/v1/auth/forget', { email });
-      if (status === 'error') return showAlert('danger', message);
-      showAlert('success', message);
+      const { status, data } = await postJSON('/api/v1/auth/forget', { email });
+      if (status === 'error') return showAlert('danger', data);
+      showAlert('success', status);
       window.setTimeout(() => {
          location.assign('/login');
       }, 1500);
@@ -66,13 +70,64 @@ if (resetPasswordForm) {
       const password = document.getElementById('floatingPassword').value;
       const passwordConfirm = document.getElementById('floatingPasswordConfirm').value;
       if (password !== passwordConfirm) return showAlert('danger', 'Passwords are different!');
-      const { status, message } = await postJSON(location.pathname, { password });
-      if (status === 'error') return showAlert('error', message);
-      showAlert('success', message);
+      const { status, data } = await postJSON(location.pathname, { password });
+      if (status === 'error') return showAlert('danger', data);
+      showAlert('success', status);
       window.setTimeout(() => {
          location.assign('/login');
       }, 1500);
    });
+}
+
+if (uploadPhotoBtn) {
+   uploadPhotoBtn.addEventListener('click', async () => {
+      const photo = document.getElementById('inputPhoto').files[0];
+      if (!photo) return showAlert('danger', 'First choose photo!');
+      const form = new FormData();
+      form.append('inputPhoto', photo);
+      const { status, data } = await fetchFormData('api/v1/users/photo', 'PUT', form);
+      if (status === 'error') return showAlert('danger', data);
+      showAlert('success', status);
+      window.setTimeout(() => {
+         location.reload();
+      }, 1000);
+   });
+}
+
+if (generatePhotoBtn) {
+   generatePhotoBtn.addEventListener('click', async () => {
+      const response = await fetch('api/v1/users/photoGenerate', {
+         method: 'POST',
+      });
+      const { status, data } = await response.json();
+      if (status === 'error') return showAlert('danger', data);
+      showAlert('success', status);
+      window.setTimeout(() => {
+         location.reload();
+      }, 1000);
+   });
+}
+
+if (deletePhotoBtn) {
+   deletePhotoBtn.addEventListener('click', async () => {
+      const response = await fetch('api/v1/users/photoDelete', {
+         method: 'DELETE',
+      });
+      const { status, data } = await response.json();
+      if (status === 'error') return showAlert('danger', data);
+      showAlert('success', status);
+      window.setTimeout(() => {
+         location.reload();
+      }, 1000);
+   });
+}
+
+async function fetchFormData(url, method, body) {
+   const response = await fetch(url, {
+      method,
+      body,
+   });
+   return response.json();
 }
 
 async function postJSON(url, data) {

@@ -8,15 +8,15 @@ exports.signupHandler = catchAsync(async (req, res) => {
    const { email, password } = req.body;
    const user = await User.create({ email, password });
    res.status(201).send({
-      message: 'Signed up',
-      user,
+      status: 'Signed up',
+      data: user,
    });
 });
 
 exports.loginHandler = (req, res) => {
    res.status(200).send({
-      message: 'Logged in',
-      user: req.user,
+      status: 'Logged in',
+      data: req.user,
    });
 };
 
@@ -24,8 +24,8 @@ exports.logoutHandler = catchAsync(async (req, res, next) => {
    req.logout((err) => {
       if (err) return next(err);
       res.status(200).clearCookie(process.env.SESSION_NAME).send({
-         message: 'Logged out',
-         user: null,
+         status: 'Logged out',
+         data: null,
       });
    });
 });
@@ -39,8 +39,8 @@ exports.forgetPasswordHandler = catchAsync(async (req, res, next) => {
       const resetLink = `${req.protocol}://${req.get('host')}/reset/${resetToken}`;
       await sendMail(email, 'Reset password link', resetLink);
       res.status(200).json({
-         message: 'Token created and sent to email',
-         resetToken,
+         status: 'Token created and sent to email',
+         data: resetToken,
       });
    } catch (err) {
       user.passwordResetToken = undefined;
@@ -58,19 +58,19 @@ exports.resetPasswordHandler = catchAsync(async (req, res, next) => {
    user.passwordResetExpires = undefined;
    await user.save();
    res.status(200).send({
-      message: 'Password reset',
-      user: user,
+      status: 'Password reset',
+      data: user,
    });
 });
 
 exports.deleteUserHandler = catchAsync(async (req, res, next) => {
-   await User.findByIdAndDelete(req.user.id);
+   await User.findByIdAndDelete(req.user._id);
    req.logout((err) => {
       if (err) return next(err);
       req.session.destroy(() => {
          res.clearCookie(process.env.SESSION_NAME).status(200).send({
-            message: 'User deleted',
-            user: null,
+            status: 'User deleted',
+            data: null,
          });
       });
    });

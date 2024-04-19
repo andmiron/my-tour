@@ -6,12 +6,12 @@ function handleError(err, req, res, next) {
    if (err instanceof AppError) {
       return res.status(code).json({
          status: 'error',
-         message: err.message,
+         data: err.message,
       });
    }
    return res.status(500).json({
       status: 'error',
-      message: 'something went wrong',
+      data: 'something went wrong',
    });
 }
 

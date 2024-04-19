@@ -10,7 +10,7 @@ exports.createRandomTourHandler = async (req, res) => {
       ...tourData,
    });
    res.status(201).send({
-      message: 'Random tour created',
-      randomTour,
+      status: 'Random tour created',
+      data: randomTour,
    });
 };

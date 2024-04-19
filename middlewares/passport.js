@@ -15,7 +15,9 @@ const localVerify = (email, password, done) => {
          if (user.provider === 'google') return done(AppError.unauthorized('Try log in with google!'));
          if (!user) return done(AppError.unauthorized('There is no such user!'));
          user.isValidPassword(user.password, password).then((isValid) => {
-            return isValid ? done(null, user) : done(AppError.unauthorized('Try another password!'));
+            const plainUserObject = user.toObject();
+            const { password, ...userToSend } = plainUserObject;
+            return isValid ? done(null, userToSend) : done(AppError.unauthorized('Try another password!'));
          });
       })
       .catch((err) => done(err));
@@ -40,7 +42,7 @@ const googleStrategy = new GoogleStrategy(googleOpts, verifyGoogle);
 passport.use(googleStrategy);
 
 passport.serializeUser((user, done) => {
-   process.nextTick(() => done(null, user.id));
+   process.nextTick(() => done(null, user._id));
 });
 passport.deserializeUser((userId, done) => {
    process.nextTick(() => {
