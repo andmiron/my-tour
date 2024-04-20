@@ -7,6 +7,7 @@ const resetPasswordForm = document.querySelector('.reset-password-form');
 const uploadPhotoBtn = document.querySelector('.upload-photo');
 const generatePhotoBtn = document.querySelector('.generate-photo');
 const deletePhotoBtn = document.querySelector('.delete-photo');
+const deleteProfileBtn = document.querySelector('.delete-profile');
 
 if (signupForm) {
    signupForm.addEventListener('submit', async (e) => {
@@ -118,6 +119,20 @@ if (deletePhotoBtn) {
       showAlert('success', status);
       window.setTimeout(() => {
          location.reload();
+      }, 1000);
+   });
+}
+
+if (deleteProfileBtn) {
+   deleteProfileBtn.addEventListener('click', async () => {
+      const response = await fetch('api/v1/users/profile', {
+         method: 'DELETE',
+      });
+      const { status, data } = await response.json();
+      if (status === 'error') return showAlert('danger', data);
+      showAlert('success', status);
+      window.setTimeout(() => {
+         location.assign('/');
       }, 1000);
    });
 }

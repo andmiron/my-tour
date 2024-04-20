@@ -62,16 +62,3 @@ exports.resetPasswordHandler = catchAsync(async (req, res, next) => {
       data: user,
    });
 });
-
-exports.deleteUserHandler = catchAsync(async (req, res, next) => {
-   await User.findByIdAndDelete(req.user._id);
-   req.logout((err) => {
-      if (err) return next(err);
-      req.session.destroy(() => {
-         res.clearCookie(process.env.SESSION_NAME).status(200).send({
-            status: 'User deleted',
-            data: null,
-         });
-      });
-   });
-});

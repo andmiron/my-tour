@@ -11,7 +11,7 @@ function handleError(err, req, res, next) {
    }
    return res.status(500).json({
       status: 'error',
-      data: 'something went wrong',
+      data: 'Something went wrong!',
    });
 }
 

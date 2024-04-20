@@ -29,6 +29,8 @@ const saveUserPhoto = catchAsync(async (req, res) => {
    });
 });
 
+exports.uploadUserPhotoHandler = [multerUpload.single('inputPhoto'), resizeUserPhoto, saveUserPhoto];
+
 exports.generatePhotoHandler = catchAsync(async (req, res) => {
    const photoUrl = faker.image.avatarLegacy();
    const photo = await fetch(photoUrl);
@@ -45,6 +47,7 @@ exports.generatePhotoHandler = catchAsync(async (req, res) => {
    });
 });
 
+// TODO check if photo is default or assigned and then delete
 exports.deletePhotoHandler = catchAsync(async (req, res) => {
    await fs.unlink(`public/img/user-${req.user._id}.jpeg`);
    const user = await User.findByIdAndUpdate({ _id: req.user._id }, { photo: `img/default_user.jpg` }, { new: true });
@@ -54,4 +57,16 @@ exports.deletePhotoHandler = catchAsync(async (req, res) => {
    });
 });
 
-exports.uploadUserPhotoHandler = [multerUpload.single('inputPhoto'), resizeUserPhoto, saveUserPhoto];
+exports.deleteUserHandler = catchAsync(async (req, res, next) => {
+   await fs.unlink(`public/img/user-${req.user._id}.jpeg`);
+   await User.findByIdAndDelete(req.user._id);
+   req.logout((err) => {
+      if (err) return next(err);
+      req.session.destroy(() => {
+         res.clearCookie(process.env.SESSION_NAME).status(200).send({
+            status: 'User deleted',
+            data: null,
+         });
+      });
+   });
+});
