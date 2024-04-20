@@ -19,7 +19,7 @@ block content
                         .row.justify-content-evenly
                             .col-auto.align-self-center
                                 div.position-relative
-                                    img.img-fluid.rounded-circle(src= user.photo alt=`User photo` style='height:5em')
+                                    img.img-fluid.rounded-circle(src=`${user.photo || 'img/default_user.jpg'}` alt=`User photo` style='height:5em')
                                     span.position-absolute.top-0.start-100.translate-middle.badge.rounded-pill.bg-secondary= user.role
                             .col-8.justify-content-center
                                 .row

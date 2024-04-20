@@ -47,10 +47,12 @@ exports.generatePhotoHandler = catchAsync(async (req, res) => {
    });
 });
 
-// TODO check if photo is default or assigned and then delete
-exports.deletePhotoHandler = catchAsync(async (req, res) => {
+exports.deletePhotoHandler = catchAsync(async (req, res, next) => {
+   const user = await User.findById(req.user._id);
+   if (!user.photo) return next(AppError.badRequest('You have no photo!'));
    await fs.unlink(`public/img/user-${req.user._id}.jpeg`);
-   const user = await User.findByIdAndUpdate({ _id: req.user._id }, { photo: `img/default_user.jpg` }, { new: true });
+   user.photo = undefined;
+   await user.save();
    res.status(200).send({
       status: 'Photo deleted',
       data: user.photo,
@@ -58,8 +60,9 @@ exports.deletePhotoHandler = catchAsync(async (req, res) => {
 });
 
 exports.deleteUserHandler = catchAsync(async (req, res, next) => {
-   await fs.unlink(`public/img/user-${req.user._id}.jpeg`);
-   await User.findByIdAndDelete(req.user._id);
+   const user = await User.findById(req.user._id);
+   if (user.photo) await fs.unlink(`public/img/user-${req.user._id}.jpeg`);
+   await user.deleteOne();
    req.logout((err) => {
       if (err) return next(err);
       req.session.destroy(() => {
