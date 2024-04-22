@@ -19,7 +19,6 @@ const tourRouter = require('./routes/tour.router');
 const app = express();
 
 function build() {
-   app.set('x-powered-by', false);
    app.set('view engine', 'pug');
    app.set('views', path.join(__dirname, 'views'));
    connectDatabase(process.env.MONGO_CONNECTION_STRING);

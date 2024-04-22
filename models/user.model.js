@@ -36,6 +36,14 @@ const userSchema = new mongoose.Schema(
          type: Number,
          select: false,
       },
+      emailConfirmToken: {
+         type: String,
+         select: false,
+      },
+      emailConfirmExpires: {
+         type: String,
+         select: false,
+      },
       provider: {
          type: String,
          enum: ['local', 'google'],
@@ -71,6 +79,13 @@ userSchema.methods.createResetToken = function () {
    const hashData = crypto.randomBytes(32).toString('hex');
    this.passwordResetToken = crypto.createHash('sha256').update(hashData).digest('hex');
    this.passwordResetExpires = Date.now() + 10 * 60 * 1000;
+   return hashData;
+};
+
+userSchema.methods.createEmailToken = function () {
+   const hashData = crypto.randomBytes(32).toString('hex');
+   this.emailConfirmToken = crypto.createHash('sha256').update(hashData).digest('hex');
+   this.emailConfirmExpires = Date.now() + 10 * 60 * 1000;
    return hashData;
 };
 

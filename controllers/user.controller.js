@@ -6,6 +6,8 @@ const AppError = require('../utils/app.error');
 const { faker } = require('@faker-js/faker');
 const fetch = require('node-fetch');
 const fs = require('node:fs/promises');
+const { sendMail } = require('../controllers/email.controller');
+const crypto = require('crypto');
 
 const resizeUserPhoto = catchAsync(async (req, res, next) => {
    req.file.filename = `user-${req.user._id}.jpeg`;
@@ -71,5 +73,42 @@ exports.deleteUserHandler = catchAsync(async (req, res, next) => {
             data: null,
          });
       });
+   });
+});
+
+exports.sendConfirmationEmailHandler = catchAsync(async (req, res, next) => {
+   const user = await User.findOne({ email: req.user.email });
+   const token = user.createEmailToken();
+   await user.save({ validateBeforeSave: false });
+   try {
+      const confirmationLink = `${req.protocol}://${req.get('host')}/email/verify/${token}`;
+      await sendMail(req.user.email, 'Email confirmation', confirmationLink);
+      res.status(200).json({
+         status: 'Check your email for confirmation link.',
+         data: token,
+      });
+   } catch (err) {
+      user.emailConfirmToken = undefined;
+      user.emailConfirmExpires = undefined;
+      await user.save({ validateBeforeSave: false });
+      return next(AppError.internal('Sending email error! Try again.'));
+   }
+});
+
+exports.verifyEmailHandler = catchAsync(async (req, res) => {
+   const hashedToken = crypto.createHash('sha256').update(req.body.token).digest('hex');
+   const user = await User.findOne({
+      emailConfirmToken: hashedToken,
+      emailConfirmExpires: {
+         $gt: Date.now(),
+      },
+   });
+   user.emailConfirmed = true;
+   user.emailConfirmToken = undefined;
+   user.emailConfirmExpires = undefined;
+   await user.save();
+   res.status(200).send({
+      status: 'Email confirmed',
+      data: user,
    });
 });

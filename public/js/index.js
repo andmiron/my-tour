@@ -71,7 +71,7 @@ if (resetPasswordForm) {
       const password = document.getElementById('floatingPassword').value;
       const passwordConfirm = document.getElementById('floatingPasswordConfirm').value;
       if (password !== passwordConfirm) return showAlert('danger', 'Passwords are different!');
-      const { status, data } = await postJSON(location.pathname, { password });
+      const { status, data } = await postJSON(`/api/v1/auth/${location.pathname}`, { password });
       if (status === 'error') return showAlert('danger', data);
       showAlert('success', status);
       window.setTimeout(() => {
@@ -159,7 +159,7 @@ async function postJSON(url, data) {
 function showAlert(type, message) {
    hideAlert();
    const markup = [
-      `<div class="alert alert-${type} alert-dismissible position-absolute translate-middle" style="top: 11%; left: 50%" role="alert">`,
+      `<div class="alert alert-${type} alert-dismissible position-fixed translate-middle" style="top: 11%; left: 50%; z-index: 100" role="alert">`,
       `   <div>${message}</div>`,
       '   <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>',
       '</div>',

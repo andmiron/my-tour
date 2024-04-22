@@ -9,7 +9,7 @@ exports.signupHandler = catchAsync(async (req, res) => {
    const user = await User.create({ email, password });
    res.status(201).send({
       status: 'Signed up',
-      data: user,
+      data: user.email,
    });
 });
 
@@ -50,7 +50,7 @@ exports.forgetPasswordHandler = catchAsync(async (req, res, next) => {
    }
 });
 
-exports.resetPasswordHandler = catchAsync(async (req, res, next) => {
+exports.resetPasswordHandler = catchAsync(async (req, res) => {
    const hashedToken = crypto.createHash('sha256').update(req.params.token).digest('hex');
    const user = await User.findOne({ passwordResetToken: hashedToken }).select('+password');
    user.password = req.body.password;

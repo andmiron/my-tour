@@ -1,22 +1,23 @@
+const { renderPage, getVerifiedEmail } = require('../controllers/view.controller');
+const { isAuthenticated } = require('../middlewares/authenticated');
+const { verifyEmailValidator, validate } = require('../middlewares/validate');
 const router = require('express').Router();
 
 router.use((req, res, next) => {
    if (req.user) res.locals.user = req.user;
    next();
 });
-router.get('/', (req, res) => res.render('home', { title: 'Home' }));
-router.get('/signup', (req, res) => res.render('signup', { title: 'Sign up' }));
-router.get('/login', (req, res) => res.render('login', { title: 'Login' }));
-router.get('/forget', (req, res) => res.render('forgetPassword', { title: 'Forget password' }));
-router.get('/reset/:token', (req, res) => res.render('resetPassword', { title: 'Reset password' }));
 
-router.use((req, res, next) => {
-   if (!req.user) res.redirect('/login');
-   next();
-});
-router.get('/profile', (req, res) => res.render('profile', { title: 'Profile' }));
-router.get('/my-reviews', (req, res) => res.render('my-reviews', { title: 'My reviews' }));
-router.get('/my-bookings', (req, res) => res.render('my-bookings', { title: 'My bookings' }));
-router.get('/my-tours', (req, res) => res.render('my-tours', { title: 'My tours' }));
+router.get('/', renderPage('home', 'Home'));
+router.get('/signup', renderPage('signup', 'Signup'));
+router.get('/login', renderPage('login', 'Login'));
+router.get('/forget', renderPage('forgetPassword', 'Forget password'));
+router.get('/reset/:token', renderPage('resetPassword', 'Reset password'));
+router.get('/profile', isAuthenticated, renderPage('profile', 'Profile'));
+router.get('/my-reviews', isAuthenticated, renderPage('myReviews', 'My reviews'));
+router.get('/my-bookings', isAuthenticated, renderPage('myBookings', 'My bookings'));
+router.get('/my-tours', isAuthenticated, renderPage('myTours', 'My tours'));
+// TODO finish conditional render based on confirmed email and remove confirm email from google users
+router.get('/email/verify/:token', verifyEmailValidator(), validate, getVerifiedEmail);
 
 module.exports = router;
