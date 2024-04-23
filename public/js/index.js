@@ -8,7 +8,6 @@ const uploadPhotoBtn = document.querySelector('.upload-photo');
 const generatePhotoBtn = document.querySelector('.generate-photo');
 const deletePhotoBtn = document.querySelector('.delete-photo');
 const deleteProfileBtn = document.querySelector('.delete-profile');
-const confirmEmailForm = document.querySelector('.confirm-email-form');
 
 if (signupForm) {
    signupForm.addEventListener('submit', async (e) => {
@@ -16,7 +15,6 @@ if (signupForm) {
       const email = document.getElementById('floatingEmail').value;
       const password = document.getElementById('floatingPassword').value;
       const { status, data } = await postJSON('/api/v1/auth/signup', { email, password });
-      console.log(status, data);
       if (status === 'error') return showAlert('danger', data);
       showAlert('success', status);
       window.setTimeout(() => {
@@ -160,7 +158,7 @@ async function postJSON(url, data) {
 function showAlert(type, message) {
    hideAlert();
    const markup = [
-      `<div class="alert alert-${type} alert-dismissible position-fixed translate-middle" style="top: 11%; left: 50%; z-index: 100" role="alert">`,
+      `<div class="alert alert-${type} alert-dismissible position-fixed translate-middle shadow" style="top: 11%; left: 50%; z-index: 100" role="alert">`,
       `   <div>${message}</div>`,
       '   <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>',
       '</div>',

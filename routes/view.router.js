@@ -1,4 +1,4 @@
-const { renderPage, getVerifiedEmail } = require('../controllers/view.controller');
+const { renderPage } = require('../controllers/view.controller');
 const { isAuthenticated } = require('../middlewares/authenticated');
 const router = require('express').Router();
 
