@@ -32,14 +32,6 @@ block content
                                         button.btn.btn-outline-secondary.generate-photo(type='button') Generate
                                         button.btn.btn-outline-secondary.upload-photo(type='button') Upload
                 if user.provider === 'local'
-                    form.d-flex.flex-column.gap-2.confirm-email-form
-                        h5.mb-2 Confirm email
-                        label.visually-hidden(for='confirmEmail') Confirm email
-                        input.form-control-plaintext(type='text' id='confirmEmail' readonly value= user.email)
-                        if !user.emailConfirmed
-                            button.btn.btn-primary.align-self-end(type='submit') Confirm email
-                        else
-                            button.btn.btn-primary.align-self-end(type='submit' disabled) Email confirmed
                     form.d-flex.flex-column.gap-2
                         h5.mb-2 Change email
                         +inputGroup('inputEmail', 'email', 'Email')

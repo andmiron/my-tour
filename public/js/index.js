@@ -138,16 +138,6 @@ if (deleteProfileBtn) {
    });
 }
 
-if (confirmEmailForm) {
-   confirmEmailForm.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const email = document.getElementById('confirmEmail').value;
-      const { status, data } = await postJSON('/api/v1/users/email/verify', { email });
-      if (status === 'error') return showAlert('danger', data);
-      showAlert('success', status);
-   });
-}
-
 async function fetchFormData(url, method, body) {
    const response = await fetch(url, {
       method,

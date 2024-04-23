@@ -86,23 +86,3 @@ exports.updatePasswordValidator = () => {
          .withMessage('New passwords do not match!'),
    ];
 };
-
-exports.verifyEmailValidator = () => {
-   return [
-      param('token')
-         .exists()
-         .isString()
-         .isLength({ min: 64, max: 64 })
-         .withMessage('Provide a valid token!')
-         .custom(async (token) => {
-            const hashedToken = crypto.createHash('sha256').update(token).digest('hex');
-            const user = await User.findOne({
-               emailConfirmToken: hashedToken,
-               emailConfirmExpires: {
-                  $gt: Date.now(),
-               },
-            });
-            if (!user) return Promise.reject('Token is invalid or expired!');
-         }),
-   ];
-};

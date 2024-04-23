@@ -16,6 +16,5 @@ router.get('/profile', isAuthenticated, renderPage('profile', 'Profile'));
 router.get('/my-reviews', isAuthenticated, renderPage('myReviews', 'My reviews'));
 router.get('/my-bookings', isAuthenticated, renderPage('myBookings', 'My bookings'));
 router.get('/my-tours', isAuthenticated, renderPage('myTours', 'My tours'));
-router.get('/email/verify/:token', getVerifiedEmail);
 
 module.exports = router;
