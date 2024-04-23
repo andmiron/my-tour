@@ -95,8 +95,9 @@ exports.verifyEmailValidator = () => {
          .isLength({ min: 64, max: 64 })
          .withMessage('Provide a valid token!')
          .custom(async (token) => {
+            const hashedToken = crypto.createHash('sha256').update(token).digest('hex');
             const user = await User.findOne({
-               emailConfirmToken: crypto.createHash('sha256').update(token).digest('hex'),
+               emailConfirmToken: hashedToken,
                emailConfirmExpires: {
                   $gt: Date.now(),
                },

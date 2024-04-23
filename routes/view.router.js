@@ -1,6 +1,5 @@
 const { renderPage, getVerifiedEmail } = require('../controllers/view.controller');
 const { isAuthenticated } = require('../middlewares/authenticated');
-const { verifyEmailValidator, validate } = require('../middlewares/validate');
 const router = require('express').Router();
 
 router.use((req, res, next) => {
@@ -17,7 +16,6 @@ router.get('/profile', isAuthenticated, renderPage('profile', 'Profile'));
 router.get('/my-reviews', isAuthenticated, renderPage('myReviews', 'My reviews'));
 router.get('/my-bookings', isAuthenticated, renderPage('myBookings', 'My bookings'));
 router.get('/my-tours', isAuthenticated, renderPage('myTours', 'My tours'));
-// TODO finish conditional render based on confirmed email and remove confirm email from google users
-router.get('/email/verify/:token', verifyEmailValidator(), validate, getVerifiedEmail);
+router.get('/email/verify/:token', getVerifiedEmail);
 
 module.exports = router;

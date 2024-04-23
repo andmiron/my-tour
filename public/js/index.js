@@ -8,6 +8,7 @@ const uploadPhotoBtn = document.querySelector('.upload-photo');
 const generatePhotoBtn = document.querySelector('.generate-photo');
 const deletePhotoBtn = document.querySelector('.delete-photo');
 const deleteProfileBtn = document.querySelector('.delete-profile');
+const confirmEmailForm = document.querySelector('.confirm-email-form');
 
 if (signupForm) {
    signupForm.addEventListener('submit', async (e) => {
@@ -134,6 +135,16 @@ if (deleteProfileBtn) {
       window.setTimeout(() => {
          location.assign('/');
       }, 1000);
+   });
+}
+
+if (confirmEmailForm) {
+   confirmEmailForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = document.getElementById('confirmEmail').value;
+      const { status, data } = await postJSON('/api/v1/users/email/verify', { email });
+      if (status === 'error') return showAlert('danger', data);
+      showAlert('success', status);
    });
 }
 

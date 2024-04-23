@@ -77,12 +77,12 @@ exports.deleteUserHandler = catchAsync(async (req, res, next) => {
 });
 
 exports.sendConfirmationEmailHandler = catchAsync(async (req, res, next) => {
-   const user = await User.findOne({ email: req.user.email });
+   const user = await User.findOne({ email: req.body.email });
    const token = user.createEmailToken();
    await user.save({ validateBeforeSave: false });
    try {
       const confirmationLink = `${req.protocol}://${req.get('host')}/email/verify/${token}`;
-      await sendMail(req.user.email, 'Email confirmation', confirmationLink);
+      await sendMail(req.body.email, 'Email confirmation', confirmationLink);
       res.status(200).json({
          status: 'Check your email for confirmation link.',
          data: token,

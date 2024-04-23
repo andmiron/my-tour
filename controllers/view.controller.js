@@ -1,5 +1,6 @@
 const fetch = require('node-fetch');
 const catchAsync = require('../utils/catch.async');
+const User = require('../models/user.model');
 
 exports.renderPage = function (template, title) {
    return function (req, res) {
