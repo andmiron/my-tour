@@ -32,11 +32,11 @@ block content
                                         button.btn.btn-outline-secondary.generate-photo(type='button') Generate
                                         button.btn.btn-outline-secondary.upload-photo(type='button') Upload
                 if user.provider === 'local'
-                    form.d-flex.flex-column.gap-2
+                    form.d-flex.flex-column.gap-2.change-email-form
                         h5.mb-2 Change email
                         +inputGroup('inputEmail', 'email', 'Email')
                         button.btn.btn-primary.align-self-end(type='submit') Change email
-                    form.d-flex.flex-column.gap-2
+                    form.d-flex.flex-column.gap-2.change-password-form
                         h5.mb-2 Change password
                         +inputGroup('inputOldPassword', 'password', 'Old password')
                         +inputGroup('inputNewPassword', 'password', 'New Password')

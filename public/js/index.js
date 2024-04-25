@@ -8,13 +8,15 @@ const uploadPhotoBtn = document.querySelector('.upload-photo');
 const generatePhotoBtn = document.querySelector('.generate-photo');
 const deletePhotoBtn = document.querySelector('.delete-photo');
 const deleteProfileBtn = document.querySelector('.delete-profile');
+const changeEmailForm = document.querySelector('.change-email-form');
+const changePasswordForm = document.querySelector('.change-password-form');
 
 if (signupForm) {
    signupForm.addEventListener('submit', async (e) => {
       e.preventDefault();
       const email = document.getElementById('floatingEmail').value;
       const password = document.getElementById('floatingPassword').value;
-      const { status, data } = await postJSON('/api/v1/auth/signup', { email, password });
+      const { status, data } = await sendJSON('/api/v1/auth/signup', 'POST', { email, password });
       if (status === 'error') return showAlert('danger', data);
       showAlert('success', status);
       window.setTimeout(() => {
@@ -28,7 +30,7 @@ if (loginForm) {
       e.preventDefault();
       const email = document.getElementById('floatingEmail').value;
       const password = document.getElementById('floatingPassword').value;
-      const { status, data } = await postJSON('/api/v1/auth/login', { email, password });
+      const { status, data } = await sendJSON('/api/v1/auth/login', 'POST', { email, password });
       if (status === 'error') return showAlert('danger', data);
       showAlert('success', status);
       window.setTimeout(() => {
@@ -39,7 +41,7 @@ if (loginForm) {
 
 if (logoutBtn)
    logoutBtn.addEventListener('click', async () => {
-      const { status, data } = await postJSON('/api/v1/auth/logout');
+      const { status, data } = await sendJSON('/api/v1/auth/logout', 'POST');
       if (status === 'error') return showAlert('danger', data);
       showAlert('success', status);
       window.setTimeout(() => {
@@ -55,7 +57,7 @@ if (forgetPasswordForm) {
    forgetPasswordForm.addEventListener('submit', async (e) => {
       e.preventDefault();
       const email = document.getElementById('floatingEmail').value;
-      const { status, data } = await postJSON('/api/v1/auth/forget', { email });
+      const { status, data } = await sendJSON('/api/v1/auth/forget', 'POST', { email });
       if (status === 'error') return showAlert('danger', data);
       showAlert('success', status);
       window.setTimeout(() => {
@@ -70,7 +72,7 @@ if (resetPasswordForm) {
       const password = document.getElementById('floatingPassword').value;
       const passwordConfirm = document.getElementById('floatingPasswordConfirm').value;
       if (password !== passwordConfirm) return showAlert('danger', 'Passwords are different!');
-      const { status, data } = await postJSON(`/api/v1/auth/${location.pathname}`, { password });
+      const { status, data } = await sendJSON(`/api/v1/auth/${location.pathname}`, 'POST', { password });
       if (status === 'error') return showAlert('danger', data);
       showAlert('success', status);
       window.setTimeout(() => {
@@ -136,6 +138,39 @@ if (deleteProfileBtn) {
    });
 }
 
+if (changeEmailForm) {
+   changeEmailForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = document.getElementById('inputEmail').value;
+      const { status, data } = await sendJSON('api/v1/users/email', 'PUT', { email });
+      console.log(status, data);
+      if (status === 'error') return showAlert('danger', data);
+      showAlert('success', status);
+      window.setTimeout(() => {
+         location.reload();
+      }, 1000);
+   });
+}
+
+if (changePasswordForm) {
+   changePasswordForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const oldPassword = document.getElementById('inputOldPassword').value;
+      const newPassword = document.getElementById('inputNewPassword').value;
+      const newPasswordConfirm = document.getElementById('inputConfirmNewPassword').value;
+      const { status, data } = await sendJSON('api/v1/users/password', 'PUT', {
+         oldPassword,
+         newPassword,
+         newPasswordConfirm,
+      });
+      if (status === 'error') return showAlert('danger', data);
+      showAlert('success', status);
+      window.setTimeout(() => {
+         location.reload();
+      }, 1000);
+   });
+}
+
 async function fetchFormData(url, method, body) {
    const response = await fetch(url, {
       method,
@@ -144,9 +179,9 @@ async function fetchFormData(url, method, body) {
    return response.json();
 }
 
-async function postJSON(url, data) {
+async function sendJSON(url, method, data) {
    const response = await fetch(url, {
-      method: 'POST',
+      method,
       headers: {
          'Content-Type': 'application/json',
       },

@@ -6,8 +6,6 @@ const AppError = require('../utils/app.error');
 const { faker } = require('@faker-js/faker');
 const fetch = require('node-fetch');
 const fs = require('node:fs/promises');
-const { sendMail } = require('../controllers/email.controller');
-const crypto = require('crypto');
 
 const resizeUserPhoto = catchAsync(async (req, res, next) => {
    req.file.filename = `user-${req.user._id}.jpeg`;
@@ -58,6 +56,25 @@ exports.deletePhotoHandler = catchAsync(async (req, res, next) => {
    res.status(200).send({
       status: 'Photo deleted',
       data: user.photo,
+   });
+});
+
+exports.changeEmailHandler = catchAsync(async (req, res, next) => {
+   const { email } = req.body;
+   const user = await User.findByIdAndUpdate(req.user._id, { email }, { new: true, runValidators: true });
+   res.status(200).send({
+      status: 'Email changed',
+      data: user.email,
+   });
+});
+
+exports.changePasswordHandler = catchAsync(async (req, res, next) => {
+   const user = await User.findById(req.user._id).select('+password');
+   user.password = req.body.newPassword;
+   await user.save();
+   res.status(200).send({
+      status: 'Password changed',
+      data: user,
    });
 });
 

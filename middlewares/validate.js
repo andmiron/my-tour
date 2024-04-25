@@ -71,7 +71,21 @@ exports.resetPasswordValidator = () => {
    ];
 };
 
-exports.updatePasswordValidator = () => {
+exports.changeEmailValidator = () => {
+   return [
+      body('email')
+         .exists()
+         .withMessage('Provide an email!')
+         .isEmail()
+         .withMessage('Email is not valid!')
+         .custom(async (newEmail, { req }) => {
+            const user = await User.findById(req.user._id);
+            if (user.email === newEmail) return Promise.reject('Email must be different from the current one!');
+         }),
+   ];
+};
+
+exports.changePasswordValidator = () => {
    return [
       body('oldPassword')
          .exists()
