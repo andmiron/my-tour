@@ -36,22 +36,9 @@
    "devDependencies": {
       "eslint": "^8.57.0",
       "eslint-plugin-node": "^11.1.0",
+      "globals": "^15.1.0",
       "nodemon": "^3.1.0",
       "prettier": "^3.2.5"
-   },
-   "eslintConfig": {
-      "root": true,
-      "extends": [
-         "eslint:recommended",
-         "plugin:node/recommended"
-      ],
-      "parserOptions": {
-         "ecmaVersion": 2020
-      },
-      "rules": {
-         "no-unused-vars": "warn",
-         "no-undef": "warn"
-      }
    },
    "prettier": {
       "printWidth": 120,
