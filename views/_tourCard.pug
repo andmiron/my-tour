@@ -5,4 +5,4 @@ mixin tourCard(tour)
             p= `${tour.difficulty} ${tour.duration}-day tour`
             p= tour.name
             p= tour.summary
-            a.btn.btn-secondary.align-self-end.rounded-5(href= tour.slug) Details
+            a.btn.btn-secondary.align-self-end.rounded-5(href= `tours/${tour.slug}`) Details

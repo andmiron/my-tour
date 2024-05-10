@@ -116,5 +116,34 @@ exports.getTourValidator = () => {
 };
 
 exports.createTourValidator = () => {
-   return [body('name')];
+   return [
+      body('name')
+         .exists()
+         .withMessage('Tour must have a name!')
+         .trim()
+         .isLength({ min: 10, max: 40 })
+         .withMessage('Tour name is minimum 10 and maximum 40 characters!'),
+      body('summary').exists().withMessage('Tour must have a summary!'),
+      body('description').exists().withMessage('Tour must have a description!'),
+      body('price').exists().toInt().withMessage('Tour must have a price!'),
+      body('priceDiscount')
+         .optional()
+         .custom((value, { req }) => {
+            return value < req.body.price;
+         })
+         .withMessage('Discount must be lower than the price!'),
+      body('duration').exists().toInt().withMessage('Tour must have a duration!'),
+      body('maxGroupSize').exists().toInt().withMessage('Tour must have a group size'),
+      body('difficulty')
+         .exists()
+         .isIn(['easy', 'medium', 'difficult'])
+         .withMessage('Difficulty is [easy, medium or difficult]'),
+      body('startLocation.coordinates.*').isLatLong().withMessage('Provide valid coordinates!'),
+      body('startLocation.address').exists().withMessage('Provide start location address!'),
+      body('startLocation.description').exists().withMessage('Provide start location description!'),
+      body('locations.*.coordinates.*').isLatLong().withMessage('Provide location coordinates!'),
+      body('locations.*.address').exists().notEmpty(),
+      body('locations.*.description').exists().notEmpty(),
+      body('locations.*.day').exists().isInt(),
+   ];
 };
