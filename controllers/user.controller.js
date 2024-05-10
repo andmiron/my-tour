@@ -13,14 +13,14 @@ const resizeUserPhoto = catchAsync(async (req, res, next) => {
       .resize(300, 300)
       .toFormat('jpeg')
       .jpeg({ quality: 90 })
-      .toFile(`public/img/${req.file.filename}`);
+      .toFile(`/public/img/${req.file.filename}`);
    next();
 });
 
 const saveUserPhoto = catchAsync(async (req, res) => {
    const user = await User.findByIdAndUpdate(
       { _id: req.user._id },
-      { photo: `img/${req.file.filename}` },
+      { photo: `/img/${req.file.filename}` },
       { new: true },
    );
    res.status(200).send({
@@ -40,7 +40,7 @@ exports.generatePhotoHandler = catchAsync(async (req, res) => {
       .toFormat('jpeg')
       .jpeg({ quality: 90 })
       .toFile(`public/img/${photoPath}`);
-   const user = await User.findByIdAndUpdate({ _id: req.user._id }, { photo: `img/${photoPath}` }, { new: true });
+   const user = await User.findByIdAndUpdate({ _id: req.user._id }, { photo: `/img/${photoPath}` }, { new: true });
    res.status(200).send({
       status: 'Photo generated',
       data: user.photo,

@@ -1,4 +1,4 @@
-const { renderPage } = require('../controllers/view.controller');
+const { renderPage, renderTours, renderTour } = require('../controllers/view.controller');
 const { isAuthenticated } = require('../middlewares/authenticated');
 const router = require('express').Router();
 
@@ -16,5 +16,8 @@ router.get('/profile', isAuthenticated, renderPage('profile', 'Profile'));
 router.get('/my-reviews', isAuthenticated, renderPage('myReviews', 'My reviews'));
 router.get('/my-bookings', isAuthenticated, renderPage('myBookings', 'My bookings'));
 router.get('/my-tours', isAuthenticated, renderPage('myTours', 'My tours'));
+router.get('/tours', renderTours);
+router.get('/tours/:tourSlug', renderTour);
+router.get('/tours/create', renderPage('createTour', 'Create tour'));
 
 module.exports = router;

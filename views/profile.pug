@@ -44,9 +44,18 @@ block content
                         button.btn.btn-primary.align-self-end(id='changePassword') Change password
                 .d-flex.align-items-center.justify-content-between.mt-5
                     h5 Delete profile
-                    btn.btn.btn-danger.mt-3.delete-profile Delete profile
-
-
+                    button.btn.btn-danger.mt-3(type='button' data-bs-toggle='modal' data-bs-target='#deleteProfileModal') Delete profile
+                    .modal.fade(id='deleteProfileModal' tabindex='-1' aria-labelledby='deleteProfileModal' aria-hidden='true')
+                        .modal-dialog.modal-dialog-centered
+                            .modal-content
+                                .modal-header
+                                    h1.modal-title.fs-5 Delete profile?
+                                    button.btn-close(type='button' data-bs-dismiss='modal' aria-label='Close')
+                                .modal-body
+                                    p All your data will be lost after this action.
+                                .modal-footer
+                                    button.btn.btn-secondary(type='button' data-bs-dismiss='modal') Close
+                                    button.btn.btn-danger.delete-profile(type='button') Delete profile
 
 
 

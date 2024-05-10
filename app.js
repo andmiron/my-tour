@@ -1,10 +1,10 @@
 require('dotenv').config();
 const express = require('express');
 const path = require('path');
+const mongoose = require('mongoose');
 const loggerOptions = require('./config/logger.options');
 const pinoLogger = require('pino-http')(loggerOptions);
 module.exports.pinoLogger = pinoLogger;
-const connectDatabase = require('./database/connection');
 const session = require('express-session');
 const sessionOptions = require('./config/session.options');
 const AppError = require('./utils/app.error');
@@ -21,7 +21,11 @@ const app = express();
 function build() {
    app.set('view engine', 'pug');
    app.set('views', path.join(__dirname, 'views'));
-   connectDatabase(process.env.MONGO_CONNECTION_STRING);
+   mongoose.set({ strictQuery: true });
+   mongoose
+      .connect(process.env.MONGO_CONNECTION_STRING)
+      .then(() => pinoLogger.logger.info('Mongo connected'))
+      .catch((err) => pinoLogger.logger.error('Mongo connection error'));
    app.use(express.static(path.join(__dirname, 'public')));
    app.use(pinoLogger);
    app.use(express.json());

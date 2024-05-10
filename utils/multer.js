@@ -7,4 +7,4 @@ exports.multerUpload = multer({
       if (!file.mimetype.startsWith('image')) return done(AppError.badRequest('Upload an image!'), false);
       return done(null, true);
    },
-});
+})

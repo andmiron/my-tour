@@ -1,0 +1,9 @@
+extends base
+include _tourCard
+
+block content
+    .container-lg
+        .row.py-3
+            each tour in tours
+               .col-4
+                   +tourCard(tour)

@@ -6,3 +6,11 @@ block content
         .row.p-3.g-5
             .col-2.p-3.d-flex.flex-column
                 +profileNav
+            .col-10.p-3.text-center
+                if tours
+                   each tour in tours
+                      p= tour
+                else
+                    h5 You have no created tours
+                    a.btn.btn-secondary.btn-lg.mt-3(href='/tours/create-tour') Create your first tour
+

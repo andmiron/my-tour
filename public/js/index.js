@@ -10,12 +10,15 @@ const deletePhotoBtn = document.querySelector('.delete-photo');
 const deleteProfileBtn = document.querySelector('.delete-profile');
 const changeEmailForm = document.querySelector('.change-email-form');
 const changePasswordForm = document.querySelector('.change-password-form');
+const mapBox = document.getElementById('map');
 
 if (signupForm) {
    signupForm.addEventListener('submit', async (e) => {
       e.preventDefault();
       const email = document.getElementById('floatingEmail').value;
       const password = document.getElementById('floatingPassword').value;
+      const passwordConfirm = document.getElementById('floatingPasswordConfirm').value;
+      if (password !== passwordConfirm) return showAlert('danger', 'Passwords do not match!');
       const { status, data } = await sendJSON('/api/v1/auth/signup', 'POST', { email, password });
       if (status === 'error') return showAlert('danger', data);
       showAlert('success', status);
@@ -171,6 +174,10 @@ if (changePasswordForm) {
    });
 }
 
+if (mapBox) {
+   displayMap();
+}
+
 async function fetchFormData(url, method, body) {
    const response = await fetch(url, {
       method,
@@ -193,7 +200,7 @@ async function sendJSON(url, method, data) {
 function showAlert(type, message) {
    hideAlert();
    const markup = [
-      `<div class="alert alert-${type} alert-dismissible position-fixed translate-middle shadow" style="top: 11%; left: 50%; z-index: 100" role="alert">`,
+      `<div class="alert alert-${type} alert-dismissible position-fixed translate-middle shadow" style="top: 11%; left: 50%; z-index: 10000" role="alert">`,
       `   <div>${message}</div>`,
       '   <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>',
       '</div>',
@@ -218,3 +225,13 @@ document.addEventListener('DOMContentLoaded', function () {
       a.setAttribute('aria-current', 'page');
    });
 });
+
+function displayMap() {
+   const map = new mapboxgl.Map({
+      accessToken: 'pk.eyJ1IjoiYW5kbWlyb24iLCJhIjoiY2x2bGRyMmkwMjcxbjJsbnpmOGsyZWprNCJ9.FMjD1-WaO4qXM28NY89C7g',
+      container: 'map',
+      style: 'mapbox://styles/andmiron/clddn3zn8000801nw8ooobs0y',
+      scrollZoom: false,
+      zoom: 2,
+   });
+}

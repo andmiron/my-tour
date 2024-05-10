@@ -1,8 +1,8 @@
 const crypto = require('crypto');
 const catchAsync = require('../utils/catch.async');
-const User = require('../models/user.model');
 const { sendMail } = require('../controllers/email.controller');
 const AppError = require('../utils/app.error');
+const User = require('../models/user.model');
 
 exports.signupHandler = catchAsync(async (req, res) => {
    const { email, password } = req.body;

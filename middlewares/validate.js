@@ -1,6 +1,7 @@
-const { validationResult, body, param, check } = require('express-validator');
+const { validationResult, body, param } = require('express-validator');
 const AppError = require('../utils/app.error');
 const User = require('../models/user.model');
+const Tour = require('../models/tour.model');
 const crypto = require('node:crypto');
 
 exports.validate = (req, res, next) => {
@@ -99,4 +100,21 @@ exports.changePasswordValidator = () => {
          .custom((newPasswordConfirm, { req }) => newPasswordConfirm === req.body.newPassword)
          .withMessage('New passwords do not match!'),
    ];
+};
+
+exports.getTourValidator = () => {
+   return [
+      param('slug')
+         .exists()
+         .isSlug()
+         .withMessage('Tour name is incorrect!')
+         .custom(async (slug) => {
+            const tour = await Tour.findOne({ slug });
+            if (!tour) return Promise.reject('There is no such tour!');
+         }),
+   ];
+};
+
+exports.createTourValidator = () => {
+   return [body('name')];
 };
