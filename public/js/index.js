@@ -11,6 +11,7 @@ const deleteProfileBtn = document.querySelector('.delete-profile');
 const changeEmailForm = document.querySelector('.change-email-form');
 const changePasswordForm = document.querySelector('.change-password-form');
 const mapBox = document.getElementById('map');
+const startLocationMap = document.getElementById('start-location-map');
 
 if (signupForm) {
    signupForm.addEventListener('submit', async (e) => {
@@ -174,10 +175,6 @@ if (changePasswordForm) {
    });
 }
 
-if (mapBox) {
-   displayMap();
-}
-
 async function fetchFormData(url, method, body) {
    const response = await fetch(url, {
       method,
@@ -226,12 +223,67 @@ document.addEventListener('DOMContentLoaded', function () {
    });
 });
 
-function displayMap() {
+const requiredInputs = document.querySelectorAll('input[required], textarea[required], select[required]');
+requiredInputs.forEach((node) => {
+   const label = document.querySelector(`label[for="${node.id}"]`);
+   if (label) {
+      label.innerHTML += ' <span style="color: red;">*</span>';
+   }
+});
+
+if (startLocationMap) {
+   mapboxgl.accessToken = 'pk.eyJ1IjoiYW5kbWlyb24iLCJhIjoiY2x2bGRyMmkwMjcxbjJsbnpmOGsyZWprNCJ9.FMjD1-WaO4qXM28NY89C7g';
    const map = new mapboxgl.Map({
-      accessToken: 'pk.eyJ1IjoiYW5kbWlyb24iLCJhIjoiY2x2bGRyMmkwMjcxbjJsbnpmOGsyZWprNCJ9.FMjD1-WaO4qXM28NY89C7g',
-      container: 'map',
+      container: startLocationMap.attributes.getNamedItem('id').value,
       style: 'mapbox://styles/andmiron/clddn3zn8000801nw8ooobs0y',
-      scrollZoom: false,
+      center: [30, 50],
       zoom: 2,
    });
+
+   const marker = new mapboxgl.Marker({
+      draggable: false,
+      color: '#0d6efd',
+   });
+
+   const geocoder = new MapboxGeocoder({
+      accessToken: mapboxgl.accessToken,
+      mapboxgl: mapboxgl,
+      placeholder: 'Start typing for location...',
+      language: 'en',
+      marker: marker,
+   });
+
+   const nav = new mapboxgl.NavigationControl();
+
+   geocoder.on('result', function (e) {
+      const { result } = e;
+      const [lng, lat] = result.center;
+      marker.setLngLat([lng, lat]);
+      document.getElementById('startLocCoords').value = result.place_name_en;
+      popup.addTo(map);
+      map.flyTo({ center: [lng, lat], zoom: 10 });
+   });
+
+   map.addControl(geocoder, 'top-left');
+   map.addControl(nav, 'top-right');
 }
+
+document.getElementById('duration').addEventListener('change', (e) => {
+   const container = document.getElementById('locations');
+   for (day = 1; day <= e.target.value; day++) {
+      container.appendChild(`
+      <div class="row">
+         <div class="col-6">
+            <label class="form-control" for="location${i}Desc"></label>
+            <input class="form-control" id="location1" required="required" type="text" name="location1" aria-describedby="location1Help"/>
+            <p class="form-text" id="location1Help">Day 1 description.</p>
+         </div>
+         <div class="col-6">
+            <label class="form-control" for="location1Coords"></label>
+            <input class="form-control" id="location1" required="required" type="text" name="location1" aria-describedby="location1Help"/>
+            <p class="form-text" id="location1Help">Day 1 location.</p>
+         </div>
+      </div>
+      `);
+   }
+});

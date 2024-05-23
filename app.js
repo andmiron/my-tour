@@ -4,6 +4,7 @@ const path = require('path');
 const mongoose = require('mongoose');
 const loggerOptions = require('./config/logger.options');
 const pinoLogger = require('pino-http')(loggerOptions);
+// const morgan = require('morgan');
 module.exports.pinoLogger = pinoLogger;
 const session = require('express-session');
 const sessionOptions = require('./config/session.options');
@@ -28,6 +29,7 @@ function build() {
       .catch((err) => pinoLogger.logger.error('Mongo connection error'));
    app.use(express.static(path.join(__dirname, 'public')));
    app.use(pinoLogger);
+   // app.use(morgan('dev'));
    app.use(express.json());
    app.use(express.urlencoded({ extended: true }));
    app.use(session(sessionOptions));

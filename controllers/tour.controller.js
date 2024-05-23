@@ -24,4 +24,10 @@ exports.getTourHandler = catchAsync(async (req, res) => {
    });
 });
 
-exports.createTourHandler = catchAsync(async (req, res) => {});
+exports.createTourHandler = catchAsync(async (req, res) => {
+   console.log(req.body);
+   res.status(201).send({
+      status: 'success',
+      data: req.body,
+   });
+});

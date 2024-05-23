@@ -61,9 +61,9 @@ const tourSchema = new mongoose.Schema(
             type: String,
             default: 'Point',
          },
-         coordinates: [Number],
          address: String,
          description: String,
+         coordinates: [Number],
       },
       locations: [
          {
@@ -72,10 +72,10 @@ const tourSchema = new mongoose.Schema(
                default: 'Point',
                enum: ['Point'],
             },
-            coordinates: [Number],
             address: String,
             description: String,
             day: Number,
+            coordinates: [Number],
          },
       ],
       imageCover: {

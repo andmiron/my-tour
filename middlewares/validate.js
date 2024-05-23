@@ -132,18 +132,15 @@ exports.createTourValidator = () => {
             return value < req.body.price;
          })
          .withMessage('Discount must be lower than the price!'),
-      body('duration').exists().toInt().withMessage('Tour must have a duration!'),
+      body('duration').exists().withMessage('Tour must have a duration!'),
       body('maxGroupSize').exists().toInt().withMessage('Tour must have a group size'),
-      body('difficulty')
-         .exists()
-         .isIn(['easy', 'medium', 'difficult'])
-         .withMessage('Difficulty is [easy, medium or difficult]'),
-      body('startLocation.coordinates.*').isLatLong().withMessage('Provide valid coordinates!'),
+      body('difficulty').isIn(['easy', 'medium', 'difficult']).withMessage('Difficulty is [easy, medium or difficult]'),
       body('startLocation.address').exists().withMessage('Provide start location address!'),
       body('startLocation.description').exists().withMessage('Provide start location description!'),
-      body('locations.*.coordinates.*').isLatLong().withMessage('Provide location coordinates!'),
+      body('startLocation.coordinates').isLatLong().withMessage('Provide valid coordinates!'),
       body('locations.*.address').exists().notEmpty(),
       body('locations.*.description').exists().notEmpty(),
       body('locations.*.day').exists().isInt(),
+      body('locations.*.coordinates').isLatLong().withMessage('Provide location coordinates!'),
    ];
 };

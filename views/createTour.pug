@@ -1,4 +1,71 @@
 extends base
 
+mixin tourInputField(inputId, labelText, helperId, helperText) 
+    .mb-3
+        label.form-label(for= inputId)= labelText
+        input.form-control(id= inputId name= inputId aria-describedby= helperId)&attributes(attributes)
+        p.form-text(id= helperId)= helperText   
+
+mixin locationInputField(inputId)
+    .row 
+        .col-6
+            label.form-label(for= inputId)= labelText
+            input.form-control(id= inputId name= inputId )
+        .col-6
+
 block content
-    #map.position-absolute.top-0.bottom-0.w-100
+    .container.p-4
+        h1.text-secondary.text-center Create a New Tour
+        form.mt-5(action="/tours/create" method="POST")
+            .row
+                h3.mb-3.text-secondary General information
+                .row
+                    .col-6
+                        +tourInputField('name', 'Tour Name', 'nameHelp', 'Must be 10 to 40 characters.')(required type='text' minlength='10' maxlength='40')
+                    .col-6
+                        +tourInputField('summary', 'Summary', 'summaryHelp', 'Describe your tour in one sentence.')(required type='text')
+                +tourInputField('description', 'Description', 'descriptionHelp', 'Give user colorful and interesting information about your tour.')(required type='text')
+                .row 
+                    .col-4
+                        +tourInputField('price', 'Price', 'priceHelp', 'Tour price in USD.')(required type='number' step='1' min='1')
+                    .col-4
+                        +tourInputField('priceDiscount', 'Price Discount', 'priceDiscountHelp', 'You can add discount later in tour details.')(type='number' step='1' min='1')
+                    .col-4 
+                        +tourInputField('maxGroupSize', 'Max group size', 'maxGroupSizeHelp', 'Max people to join the tour.')(required type='number' step='1' min='1')
+                .row
+                    .col-6 
+                        .mb-3
+                            label.form-label(for='duration') Duration (days)
+                            select#duration.form-select(required name='duration' aria-describedby='durationHelp' placeholder='Choose number of days')
+                                option(disabled selected)
+                                option(value='1') 1
+                                option(value='2') 2
+                                option(value='3') 3
+                                option(value='4') 4
+                                option(value='5') 5
+                            p#durationHelp.form-text Consecutive days in the tour.              
+                    .col-6 
+                        .mb-3
+                            label(for="difficulty" class="form-label") Difficulty
+                            select#difficulty(required name="difficulty" class="form-select" aria-describedby="difficultyHelp")
+                                option(disabled selected) 
+                                option(value="easy") Easy
+                                option(value="medium") Medium
+                                option(value="difficult") Difficult
+                            p#difficultyHelp.form-text Difficulty of the tour.
+            #locations.row
+                h3.mb-3.mt-5.text-secondary Locations
+                  
+                    //- .position-relative(style='height:500px; width:700px')
+                    //-     #start-location-map.position-absolute.w-100.h-100
+                    //-     input#startLocation(type='hidden' name='startLocation')
+                
+            //-     .mb-3
+            //-         label(for="startLocationCoordinates" class="form-label") Start Location Coordinates
+            //-         input#startLocationCoordinates(type="text" name="startLocation[coordinates]" class="form-control" placeholder="Comma-separated coordinates")
+            //-     .mb-3
+            //-         label(for="locations" class="form-label") Locations (address, description, day, coordinates)
+            //-         textarea#locations(name="locations" class="form-control" placeholder="Each location as JSON (e.g. {\"address\": \"\", \"description\": \"\", \"day\": 1, \"coordinates\": [0, 0]})")
+            //-     .mb-3.position-relative(style="height:500px")
+            //-         #map.position-absolute.top-0.bottom-0.w-100.border.rounded-3            
+            //- button(type="submit" class="btn btn-primary") Create Tour
