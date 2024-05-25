@@ -11,7 +11,8 @@ const deleteProfileBtn = document.querySelector('.delete-profile');
 const changeEmailForm = document.querySelector('.change-email-form');
 const changePasswordForm = document.querySelector('.change-password-form');
 const startLocationMap = document.getElementById('start-location-map');
-const createTourForm = document.getElementById('create-tour-form');
+const createTourForm = document.querySelector('.create-tour-form');
+const generateGeneralInfoBtn = document.querySelector('.generate-general-info');
 
 if (signupForm) {
    signupForm.addEventListener('submit', async (e) => {
@@ -91,7 +92,7 @@ if (uploadPhotoBtn) {
       if (!photo) return showAlert('danger', 'First choose photo!');
       const form = new FormData();
       form.append('inputPhoto', photo);
-      const { status, data } = await fetchFormData('api/v1/users/photo', 'PUT', form);
+      const { status, data } = await fetchFormData('/api/v1/users/photo', 'PUT', form);
       if (status === 'error') return showAlert('danger', data);
       showAlert('success', status);
       window.setTimeout(() => {
@@ -102,7 +103,7 @@ if (uploadPhotoBtn) {
 
 if (generatePhotoBtn) {
    generatePhotoBtn.addEventListener('click', async () => {
-      const response = await fetch('api/v1/users/photoGenerate', {
+      const response = await fetch('/api/v1/users/photoGenerate', {
          method: 'POST',
       });
       const { status, data } = await response.json();
@@ -116,7 +117,7 @@ if (generatePhotoBtn) {
 
 if (deletePhotoBtn) {
    deletePhotoBtn.addEventListener('click', async () => {
-      const response = await fetch('api/v1/users/photoDelete', {
+      const response = await fetch('/api/v1/users/photoDelete', {
          method: 'DELETE',
       });
       const { status, data } = await response.json();
@@ -130,7 +131,7 @@ if (deletePhotoBtn) {
 
 if (deleteProfileBtn) {
    deleteProfileBtn.addEventListener('click', async () => {
-      const response = await fetch('api/v1/users/profile', {
+      const response = await fetch('/api/v1/users/profile', {
          method: 'DELETE',
       });
       const { status, data } = await response.json();
@@ -146,7 +147,7 @@ if (changeEmailForm) {
    changeEmailForm.addEventListener('submit', async (e) => {
       e.preventDefault();
       const email = document.getElementById('inputEmail').value;
-      const { status, data } = await sendJSON('api/v1/users/email', 'PUT', { email });
+      const { status, data } = await sendJSON('/api/v1/users/email', 'PUT', { email });
       console.log(status, data);
       if (status === 'error') return showAlert('danger', data);
       showAlert('success', status);
@@ -162,7 +163,7 @@ if (changePasswordForm) {
       const oldPassword = document.getElementById('inputOldPassword').value;
       const newPassword = document.getElementById('inputNewPassword').value;
       const newPasswordConfirm = document.getElementById('inputConfirmNewPassword').value;
-      const { status, data } = await sendJSON('api/v1/users/password', 'PUT', {
+      const { status, data } = await sendJSON('/api/v1/users/password', 'PUT', {
          oldPassword,
          newPassword,
          newPasswordConfirm,
@@ -188,7 +189,62 @@ if (createTourForm) {
       const duration = document.getElementById('duration').value;
       const startLocLat = document.getElementById('startLocLat').value;
       const startLocLng = document.getElementById('startLocLng').value;
-      const startLocAdr = document.getElementById('startLocAdr').value;
+      const startLocDesc = document.getElementById('startLocDesc').value;
+      const startLocCoords = [+startLocLat, +startLocLng];
+      const startLocImg = document.getElementById('startLocImg').files[0];
+
+      const formData = new FormData();
+      formData.append('name', name);
+      formData.append('summary', summary);
+      formData.append('description', description);
+      formData.append('price', price);
+      formData.append('priceDiscount', priceDiscount);
+      formData.append('maxGroupSize', maxGroupSize);
+      formData.append('difficulty', difficulty);
+      formData.append('duration', duration);
+      formData.append('startLocCoords', startLocCoords);
+      formData.append('startLocDesc', startLocDesc);
+      formData.append('startLocImg', startLocImg);
+      for (const pair of formData.entries()) {
+         console.log(pair[0], pair[1]);
+      }
+   });
+}
+
+if (generateGeneralInfoBtn) {
+   generateGeneralInfoBtn.addEventListener('click', async (e) => {
+      const originalText = generateGeneralInfoBtn.innerHTML;
+      generateGeneralInfoBtn.innerHTML =
+         '<span class="spinner-border spinner-border-sm align-middle" role="status" aria-hidden="true"></span> Generating...';
+      generateGeneralInfoBtn.disabled = true;
+
+      const inputsIds = [
+         'name',
+         'summary',
+         'description',
+         'price',
+         'priceDiscount',
+         'maxGroupSize',
+         'difficulty',
+         'duration',
+      ];
+
+      const response = await fetch('/api/v1/tours/randomInfo', {
+         method: 'POST',
+         headers: {
+            'Content-type': 'application/json',
+         },
+      });
+      const { status, data } = await response.json();
+
+      if (status === 'error') return showAlert('danger', data);
+      showAlert('success', status);
+      generateGeneralInfoBtn.innerHTML = originalText;
+      generateGeneralInfoBtn.disabled = false;
+
+      inputsIds.forEach((inputId) => {
+         document.getElementById(inputId).value = data[inputId];
+      });
    });
 }
 
@@ -277,11 +333,12 @@ if (startLocationMap) {
       map.addControl(nav, 'top-right');
    });
 
-   geocoder.on('clear', function () {
-      if (map.getLayer('country-boundaries')) map.removeLayer('country-boundaries').removeSource('country-boundaries');
-   });
+   // geocoder.on('clear', function () {
+   //    if (map.getLayer('country-boundaries')) map.removeLayer('country-boundaries').removeSource('country-boundaries');
+   // });
 
    geocoder.on('result', function (e) {
+      if (map.getLayer('country-boundaries')) map.removeLayer('country-boundaries').removeSource('country-boundaries');
       const { result } = e;
       const [lng, lat] = result.center;
       const countryCode = result.context
@@ -307,6 +364,5 @@ if (startLocationMap) {
       marker.setLngLat([lng, lat]);
       document.getElementById('startLocLat').value = lat;
       document.getElementById('startLocLng').value = lng;
-      document.getElementById('startLocAdr').value = result.place_name_en;
    });
 }

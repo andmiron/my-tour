@@ -122,7 +122,11 @@ exports.createTourValidator = () => {
          .withMessage('Tour must have a name!')
          .trim()
          .isLength({ min: 10, max: 40 })
-         .withMessage('Tour name is minimum 10 and maximum 40 characters!'),
+         .withMessage('Tour name is minimum 10 and maximum 40 characters!')
+         .custom(async (name, { req }) => {
+            const tour = await Tour.findOne({ name });
+            if (tour) return Promise.reject('Tour with this name already exists!');
+         }),
       body('summary').exists().withMessage('Tour must have a summary!'),
       body('description').exists().withMessage('Tour must have a description!'),
       body('price').exists().toInt().withMessage('Tour must have a price!'),
@@ -135,12 +139,7 @@ exports.createTourValidator = () => {
       body('duration').exists().withMessage('Tour must have a duration!'),
       body('maxGroupSize').exists().toInt().withMessage('Tour must have a group size'),
       body('difficulty').isIn(['easy', 'medium', 'difficult']).withMessage('Difficulty is [easy, medium or difficult]'),
-      body('startLocation.address').exists().withMessage('Provide start location address!'),
       body('startLocation.description').exists().withMessage('Provide start location description!'),
       body('startLocation.coordinates').isLatLong().withMessage('Provide valid coordinates!'),
-      body('locations.*.address').exists().notEmpty(),
-      body('locations.*.description').exists().notEmpty(),
-      body('locations.*.day').exists().isInt(),
-      body('locations.*.coordinates').isLatLong().withMessage('Provide location coordinates!'),
    ];
 };

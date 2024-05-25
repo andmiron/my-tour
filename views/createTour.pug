@@ -9,9 +9,14 @@ mixin tourInputField(inputId, labelText, helperId, helperText)
 block content
     .container.p-4
         h1.text-secondary.text-center Create a New Tour
-        form.mt-5.p-3.create-tour-form
+        form.mt-5.p-3.create-tour-form(action='/tours/create' method='POST')
             .row.g-3
                 h3.mb-3.text-secondary General information
+                .row.align-items-center
+                    .col-auto
+                        p.text-secondary.p-0.m-0 Fill all the general information by yourself or simply generate random information about the tour with the help of AI.
+                    .col-auto
+                        button.btn.btn-sm.btn-secondary.generate-general-info.align-middle(type='button') Generate
                 .row.border.rounded-3.p-3.my-3
                     .col-6
                         +tourInputField('name', 'Tour Name', 'nameHelp', 'Must be 10 to 40 characters.')(required type='text' minlength='10' maxlength='40')
@@ -50,13 +55,13 @@ block content
             .row
                 h3.text-secondary.mt-5 Start Location
                 .row.border.rounded-3.p-3.my-3
-                    +tourInputField('startLocDesc', 'Start location description', 'startLocDescHelp', 'Describe start location')(required type='text')
+                    .col-6
+                        +tourInputField('startLocDesc', 'Start location description', 'startLocDescHelp', 'Describe start location')(required type='text')
+                    .col-6
+                        +tourInputField('startLocImg', 'Start location image', 'startLocImgHelp', 'Upload one photo')(required type='file' accept='image/*')
                     .row
                         .position-relative(style="height:500px")
                             #start-location-map.position-absolute.top-0.bottom-0.w-100.border.rounded-3
-                            input#startLocAdr(hidden type='text')
                             input#startLocLat(hidden type='text')
                             input#startLocLng(hidden type='text')
-            .row
-                .col.text-end
-                    button.btn.btn-primary.btn-lg.ml-auto(type="submit") Create Tour
+            button.btn.btn-primary.btn-lg.ml-auto.text-end(type="submit") Create Tour

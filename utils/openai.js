@@ -16,21 +16,14 @@ const prompt =
    '- description;\n' +
    '- price;\n' +
    '- priceDiscount;\n' +
-   '- duration;\n' +
+   '- duration (must not be more than 5);\n' +
    '- maxGroupSize;\n' +
-   '- difficulty;\n' +
-   '- startLocation;\n' +
-   '- locations;\n' +
-   '\n' +
-   "User will provide the place where a tour will take place. If user input is 'random' choose random place in the world.";
+   '- difficulty;\n';
 
-module.exports = async function (userInput) {
+module.exports = async function () {
    const chatCompletion = await openai.chat.completions.create({
       response_format: { type: 'json_object' },
-      messages: [
-         { role: 'system', content: prompt },
-         { role: 'user', content: userInput },
-      ],
+      messages: [{ role: 'system', content: prompt }],
       model: 'gpt-3.5-turbo-0125',
    });
    return JSON.parse(chatCompletion.choices[0].message.content);
