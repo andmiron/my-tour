@@ -4,7 +4,7 @@ const path = require('path');
 const mongoose = require('mongoose');
 const loggerOptions = require('./config/logger.options');
 const pinoLogger = require('pino-http')(loggerOptions);
-const morgan = require('morgan');
+// const morgan = require('morgan');
 module.exports.pinoLogger = pinoLogger;
 const session = require('express-session');
 const sessionOptions = require('./config/session.options');
@@ -20,7 +20,7 @@ const tourRouter = require('./routes/tour.router');
 const app = express();
 
 function build() {
-   app.set('port', process.env.PORT)
+   app.set('port', process.env.PORT);
    app.set('view engine', 'pug');
    app.set('views', path.join(__dirname, 'views'));
    mongoose.set({ strictQuery: true });
@@ -29,8 +29,8 @@ function build() {
       .then(() => pinoLogger.logger.info('Mongo connected'))
       .catch((err) => pinoLogger.logger.error('Mongo connection error'));
    app.use(express.static(path.join(__dirname, 'public')));
-   // app.use(pinoLogger);
-   app.use(morgan('dev'));
+   app.use(pinoLogger);
+   // app.use(morgan('dev'));
    app.use(express.json());
    app.use(express.urlencoded({ extended: true }));
    app.use(session(sessionOptions));

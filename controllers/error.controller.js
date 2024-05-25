@@ -1,7 +1,7 @@
 const AppError = require('../utils/app.error');
 
 function handleError(err, req, res, next) {
-   // req.log.error(err);
+   req.log.error(err);
    if (req.originalUrl.startsWith('/api')) {
       const code = err.code || 500;
       if (err instanceof AppError) {

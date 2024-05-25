@@ -179,35 +179,44 @@ if (changePasswordForm) {
 if (createTourForm) {
    createTourForm.addEventListener('submit', async (e) => {
       e.preventDefault();
-      const name = document.getElementById('name').value;
-      const summary = document.getElementById('summary').value;
-      const description = document.getElementById('description').value;
-      const price = document.getElementById('price').value;
-      const priceDiscount = document.getElementById('priceDiscount').value;
-      const maxGroupSize = document.getElementById('maxGroupSize').value;
-      const difficulty = document.getElementById('difficulty').value;
-      const duration = document.getElementById('duration').value;
-      const startLocLat = document.getElementById('startLocLat').value;
-      const startLocLng = document.getElementById('startLocLng').value;
-      const startLocDesc = document.getElementById('startLocDesc').value;
-      const startLocCoords = [+startLocLat, +startLocLng];
-      const startLocImg = document.getElementById('startLocImg').files[0];
-
+      const submitBtn = document.querySelector('.create-tour-btn');
+      const originalText = submitBtn.innerHTML;
+      submitBtn.innerHTML =
+         '<span class="spinner-border spinner-border-sm align-middle text-info" role="status" aria-hidden="true"></span> Creating...';
+      submitBtn.disabled = true;
       const formData = new FormData();
-      formData.append('name', name);
-      formData.append('summary', summary);
-      formData.append('description', description);
-      formData.append('price', price);
-      formData.append('priceDiscount', priceDiscount);
-      formData.append('maxGroupSize', maxGroupSize);
-      formData.append('difficulty', difficulty);
-      formData.append('duration', duration);
+      const inputsIds = [
+         'name',
+         'summary',
+         'description',
+         'price',
+         'priceDiscount',
+         'maxGroupSize',
+         'difficulty',
+         'duration',
+         'startLocDesc',
+      ];
+      inputsIds.forEach((inputId) => {
+         formData.append(inputId, document.getElementById(inputId).value);
+      });
+
+      const startLocCoords = [
+         +document.getElementById('startLocLat').value,
+         +document.getElementById('startLocLng').value,
+      ];
+      const startLocImg = document.getElementById('startLocImg').files[0];
       formData.append('startLocCoords', startLocCoords);
-      formData.append('startLocDesc', startLocDesc);
       formData.append('startLocImg', startLocImg);
-      for (const pair of formData.entries()) {
-         console.log(pair[0], pair[1]);
+
+      const { status, data } = await fetchFormData('/api/v1/tours', 'POST', formData);
+      if (status === 'error') {
+         submitBtn.disabled = false;
+         submitBtn.innerHTML = originalText;
+         return showAlert('danger', data);
       }
+      showAlert('success', status);
+      submitBtn.innerHTML = originalText;
+      submitBtn.disabled = false;
    });
 }
 
@@ -215,7 +224,7 @@ if (generateGeneralInfoBtn) {
    generateGeneralInfoBtn.addEventListener('click', async (e) => {
       const originalText = generateGeneralInfoBtn.innerHTML;
       generateGeneralInfoBtn.innerHTML =
-         '<span class="spinner-border spinner-border-sm align-middle" role="status" aria-hidden="true"></span> Generating...';
+         '<span class="spinner-border spinner-border-sm align-middle text-info" role="status" aria-hidden="true"></span> Generating...';
       generateGeneralInfoBtn.disabled = true;
 
       const inputsIds = [
@@ -237,7 +246,11 @@ if (generateGeneralInfoBtn) {
       });
       const { status, data } = await response.json();
 
-      if (status === 'error') return showAlert('danger', data);
+      if (status === 'error') {
+         generateGeneralInfoBtn.disabled = false;
+         generateGeneralInfoBtn.innerHTML = originalText;
+         return showAlert('danger', data);
+      }
       showAlert('success', status);
       generateGeneralInfoBtn.innerHTML = originalText;
       generateGeneralInfoBtn.disabled = false;

@@ -139,7 +139,7 @@ exports.createTourValidator = () => {
       body('duration').exists().withMessage('Tour must have a duration!'),
       body('maxGroupSize').exists().toInt().withMessage('Tour must have a group size'),
       body('difficulty').isIn(['easy', 'medium', 'difficult']).withMessage('Difficulty is [easy, medium or difficult]'),
-      body('startLocation.description').exists().withMessage('Provide start location description!'),
-      body('startLocation.coordinates').isLatLong().withMessage('Provide valid coordinates!'),
+      body('startLocDesc').exists().withMessage('Provide start location description!'),
+      body('startLocCoords').isLatLong().withMessage('Provide valid coordinates!'),
    ];
 };
