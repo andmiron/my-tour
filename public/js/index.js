@@ -10,8 +10,8 @@ const deletePhotoBtn = document.querySelector('.delete-photo');
 const deleteProfileBtn = document.querySelector('.delete-profile');
 const changeEmailForm = document.querySelector('.change-email-form');
 const changePasswordForm = document.querySelector('.change-password-form');
-const mapBox = document.getElementById('map');
 const startLocationMap = document.getElementById('start-location-map');
+const createTourForm = document.getElementById('create-tour-form');
 
 if (signupForm) {
    signupForm.addEventListener('submit', async (e) => {
@@ -175,6 +175,23 @@ if (changePasswordForm) {
    });
 }
 
+if (createTourForm) {
+   createTourForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const name = document.getElementById('name').value;
+      const summary = document.getElementById('summary').value;
+      const description = document.getElementById('description').value;
+      const price = document.getElementById('price').value;
+      const priceDiscount = document.getElementById('priceDiscount').value;
+      const maxGroupSize = document.getElementById('maxGroupSize').value;
+      const difficulty = document.getElementById('difficulty').value;
+      const duration = document.getElementById('duration').value;
+      const startLocLat = document.getElementById('startLocLat').value;
+      const startLocLng = document.getElementById('startLocLng').value;
+      const startLocAdr = document.getElementById('startLocAdr').value;
+   });
+}
+
 async function fetchFormData(url, method, body) {
    const response = await fetch(url, {
       method,
@@ -255,35 +272,41 @@ if (startLocationMap) {
 
    const nav = new mapboxgl.NavigationControl();
 
+   map.on('load', () => {
+      map.addControl(geocoder, 'top-left');
+      map.addControl(nav, 'top-right');
+   });
+
+   geocoder.on('clear', function () {
+      if (map.getLayer('country-boundaries')) map.removeLayer('country-boundaries').removeSource('country-boundaries');
+   });
+
    geocoder.on('result', function (e) {
       const { result } = e;
       const [lng, lat] = result.center;
+      const countryCode = result.context
+         ? result.context.find((el) => el.id.includes('country')).short_code
+         : result.properties.short_code;
+      map.addLayer(
+         {
+            id: 'country-boundaries',
+            source: {
+               type: 'vector',
+               url: 'mapbox://mapbox.country-boundaries-v1',
+            },
+            'source-layer': 'country_boundaries',
+            type: 'fill',
+            paint: {
+               'fill-color': '#1e7ed2',
+               'fill-opacity': 0.4,
+            },
+            filter: ['==', ['get', 'iso_3166_1'], countryCode.toUpperCase()],
+         },
+         'country-label',
+      );
       marker.setLngLat([lng, lat]);
-      document.getElementById('startLocCoords').value = result.place_name_en;
-      popup.addTo(map);
-      map.flyTo({ center: [lng, lat], zoom: 10 });
+      document.getElementById('startLocLat').value = lat;
+      document.getElementById('startLocLng').value = lng;
+      document.getElementById('startLocAdr').value = result.place_name_en;
    });
-
-   map.addControl(geocoder, 'top-left');
-   map.addControl(nav, 'top-right');
 }
-
-document.getElementById('duration').addEventListener('change', (e) => {
-   const container = document.getElementById('locations');
-   for (day = 1; day <= e.target.value; day++) {
-      container.appendChild(`
-      <div class="row">
-         <div class="col-6">
-            <label class="form-control" for="location${i}Desc"></label>
-            <input class="form-control" id="location1" required="required" type="text" name="location1" aria-describedby="location1Help"/>
-            <p class="form-text" id="location1Help">Day 1 description.</p>
-         </div>
-         <div class="col-6">
-            <label class="form-control" for="location1Coords"></label>
-            <input class="form-control" id="location1" required="required" type="text" name="location1" aria-describedby="location1Help"/>
-            <p class="form-text" id="location1Help">Day 1 location.</p>
-         </div>
-      </div>
-      `);
-   }
-});

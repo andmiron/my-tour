@@ -2,10 +2,9 @@ extends base
 include _profileNav
 
 mixin inputGroup(groupId, type, text)
-    .input-group.mb-3
-        label(for=groupId)
-            span.input-group-text= text
-        input.form-control(id=groupId type=type required)
+    .form-floating.mb-3
+        input.form-control(required id=groupId type=type placeholder= text)
+        label(for= groupId)= text
 
 block content
     .container
