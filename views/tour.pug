@@ -1,4 +1,35 @@
 extends base
 
 block content
-    p= tour
+    #tour-map.position-absolute.top-0.bottom-0.w-100.z-n1.opacity-50(data-location= `${JSON.stringify(tour.startLocation)}`)
+    .container.vh-100.mt-5
+        .row.p-3
+            h1.fw-bold.text-white.text-end
+                span.p-1(style='-webkit-box-decoration-break: clone; box-decoration-break: clone; background-image: linear-gradient(\n' +
+                '    to bottom right,\n' +
+                '    rgba(70, 25, 255, 0.85),\n' +
+                '    rgba(35, 131, 255, 0.85)\n' +
+                '  );')= tour.name
+        .row.p-3
+            .col-6.bg-light.p-3.text-secondary
+                .row.row-gap-3
+                    .row
+                        h3 Description
+                        p= tour.description
+                    .row
+                        h3 Location description
+                            i.bi.bi-pin-map-fill.p-3.text-primary.fs-3
+                        span.text-uppercase= tour.startLocation.description
+                    .row
+                        h3 Duration
+                            i.bi.bi-clock-fill.p-3.text-primary.fs-3
+                        span.text-uppercase= `${tour.duration} ${tour.duration === '1' ? 'day' : 'days'}`
+                    .row
+                        h3 Difficulty
+                            i.bi.bi-bar-chart-fill.p-3.text-primary.fs-3
+                        span.text-uppercase= tour.difficulty
+                    .row
+                        h3 Participants
+                            i.bi.bi-people.p-3.text-primary.fs-3
+                        span.text-uppercase= tour.maxGroupSize + ' people'
+                        // TODO finish tour page with reviews, booking

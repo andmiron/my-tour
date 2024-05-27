@@ -1,8 +1,42 @@
 mixin tourCard(tour)
-    .card.border.rounded-5.shadow
-        img.card-img-top.img-fluid.rounded-top-5(src= tour.imageCover)
+    .card.border.rounded-2.shadow.text-secondary
+        div.position-relative
+            img.card-img-top.img-fluid.rounded-top-5.opacity-25(src= tour.imageCover style='clip-path: polygon(0 0, 100% 0%, 100% 83%, 0% 98%);')
+            h3.fw-bold.fs-3.text-white.position-absolute.top-50.start-50.translate-middle.p-1.text-end
+                span.p-1(style='-webkit-box-decoration-break: clone; box-decoration-break: clone; background-image: linear-gradient(\n' +
+            '    to bottom right,\n' +
+            '    rgba(70, 25, 255, 0.85),\n' +
+            '    rgba(35, 131, 255, 0.85)\n' +
+            '  );')= tour.name
         .card-body.d-flex.flex-column
-            p= `${tour.difficulty} ${tour.duration}-day tour`
-            p= tour.name
-            p= tour.summary
-            a.btn.btn-secondary.align-self-end.rounded-5(href= `tours/${tour.slug}`) Details
+            p.fst-italic= tour.summary
+            .row
+                .col-auto
+                    i.bi.bi-pin-map-fill.p-3.text-primary.fs-3
+                    span.text-uppercase= tour.startLocation.description
+            .row
+                .col-6
+                    i.bi.bi-clock-fill.p-3.text-primary.fs-3
+                    span.text-uppercase= `${tour.duration} ${tour.duration === '1' ? 'day' : 'days'}`
+                .col-6
+                    i.bi.bi-bar-chart-fill.p-3.text-primary.fs-3
+                    span.text-uppercase= tour.difficulty
+            .row.mb-4
+                .col-6
+                    i.bi.bi-people.p-3.text-primary.fs-3
+                    span.text-uppercase= tour.maxGroupSize + ' people'
+                .col-6
+                    i.bi.bi-star.p-3.text-primary.fs-3
+                    span.text-uppercase= `${tour.ratingsAverage ? tour.ratingsAverage : 'N/A'}`
+            .row.pt-3.border-top
+                .col-8
+                    i.bi.bi-currency-dollar.p-3.text-primary.fs-3
+                    if tour.priceDiscount
+                       span.text-uppercase.text-decoration-line-through= tour.price
+                       span.text-uppercase.fs-3= ` / ${tour.price - tour.priceDiscount}`
+                    else
+                        span.text-uppercase.fs-3= tour.price
+                .col-4.d-flex.align-items-center.justify-content-center.p-0
+                    a.btn.btn-outline-primary.btn-lg.d-block(href=`tours/${tour.slug}`) Details
+
+

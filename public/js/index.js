@@ -13,6 +13,7 @@ const changePasswordForm = document.querySelector('.change-password-form');
 const startLocationMap = document.getElementById('start-location-map');
 const createTourForm = document.querySelector('.create-tour-form');
 const generateGeneralInfoBtn = document.querySelector('.generate-general-info');
+const tourMap = document.getElementById('tour-map');
 
 if (signupForm) {
    signupForm.addEventListener('submit', async (e) => {
@@ -381,4 +382,24 @@ if (startLocationMap) {
       document.getElementById('startLocLat').value = lat;
       document.getElementById('startLocLng').value = lng;
    });
+}
+
+if (tourMap) {
+   const location = JSON.parse(tourMap.dataset.location);
+   const [lat, lng] = location.coordinates;
+   mapboxgl.accessToken = 'pk.eyJ1IjoiYW5kbWlyb24iLCJhIjoiY2x2bGRyMmkwMjcxbjJsbnpmOGsyZWprNCJ9.FMjD1-WaO4qXM28NY89C7g';
+   const map = new mapboxgl.Map({
+      container: tourMap.attributes.getNamedItem('id').value,
+      style: 'mapbox://styles/andmiron/clddn3zn8000801nw8ooobs0y',
+      center: [lng - 20, lat],
+      zoom: 4,
+      interactive: false,
+   });
+
+   const marker = new mapboxgl.Marker({
+      draggable: false,
+      color: '#0d6efd',
+   });
+
+   marker.setLngLat([lng, lat]).addTo(map);
 }
