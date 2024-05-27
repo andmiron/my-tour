@@ -67,12 +67,10 @@ const tourSchema = new mongoose.Schema(
       imageCover: {
          type: String,
       },
-      guides: [
-         {
-            type: mongoose.Schema.ObjectId,
-            ref: 'User',
-         },
-      ],
+      guide: {
+         type: mongoose.Schema.ObjectId,
+         ref: 'User',
+      },
    },
    {
       toJSON: { virtuals: true },
@@ -89,15 +87,6 @@ tourSchema.virtual('reviews', {
 
 tourSchema.pre('save', function (next) {
    this.slug = slugify(this.name, { lower: true });
-   next();
-});
-
-tourSchema.pre(/^find/, function (next) {
-   this.populate({
-      path: 'guides',
-      select: '-__v -passwordChangedAt',
-   });
-
    next();
 });
 

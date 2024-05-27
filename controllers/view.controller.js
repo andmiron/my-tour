@@ -17,3 +17,8 @@ exports.renderTour = catchAsync(async (req, res) => {
    const tour = await Tour.findOne({ slug });
    res.render('tour', { title: tour.name, tour });
 });
+
+exports.renderMyTours = catchAsync(async (req, res) => {
+   const tours = await Tour.find({ guide: req.user._id });
+   res.render('myTours', { title: 'My tours', tours });
+});

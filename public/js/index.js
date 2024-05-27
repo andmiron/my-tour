@@ -88,6 +88,7 @@ if (resetPasswordForm) {
 
 if (uploadPhotoBtn) {
    uploadPhotoBtn.addEventListener('click', async () => {
+      uploadPhotoBtn.disabled = true;
       const photo = document.getElementById('inputPhoto').files[0];
       if (!photo) return showAlert('danger', 'First choose photo!');
       const form = new FormData();
@@ -103,6 +104,7 @@ if (uploadPhotoBtn) {
 
 if (generatePhotoBtn) {
    generatePhotoBtn.addEventListener('click', async () => {
+      generatePhotoBtn.disabled = true;
       const response = await fetch('/api/v1/users/photoGenerate', {
          method: 'POST',
       });
@@ -117,6 +119,7 @@ if (generatePhotoBtn) {
 
 if (deletePhotoBtn) {
    deletePhotoBtn.addEventListener('click', async () => {
+      deletePhotoBtn.disabled = true;
       const response = await fetch('/api/v1/users/photoDelete', {
          method: 'DELETE',
       });
@@ -221,7 +224,7 @@ if (createTourForm) {
 }
 
 if (generateGeneralInfoBtn) {
-   generateGeneralInfoBtn.addEventListener('click', async (e) => {
+   generateGeneralInfoBtn.addEventListener('click', async () => {
       const originalText = generateGeneralInfoBtn.innerHTML;
       generateGeneralInfoBtn.innerHTML =
          '<span class="spinner-border spinner-border-sm align-middle text-info" role="status" aria-hidden="true"></span> Generating...';

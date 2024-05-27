@@ -13,7 +13,7 @@ const resizeUserPhoto = catchAsync(async (req, res, next) => {
       .resize(300, 300)
       .toFormat('jpeg')
       .jpeg({ quality: 90 })
-      .toFile(`/public/img/${req.file.filename}`);
+      .toFile(`public/img/${req.file.filename}`);
    next();
 });
 
@@ -51,7 +51,7 @@ exports.deletePhotoHandler = catchAsync(async (req, res, next) => {
    const user = await User.findById(req.user._id);
    if (!user.photo) return next(AppError.badRequest('You have no photo!'));
    await fs.unlink(`public/img/user-${req.user._id}.jpeg`);
-   user.photo = undefined;
+   user.photo = `/img/default_user.jpg`;
    await user.save();
    res.status(200).send({
       status: 'Photo deleted',

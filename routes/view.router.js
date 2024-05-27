@@ -1,4 +1,4 @@
-const { renderPage, renderTours, renderTour } = require('../controllers/view.controller');
+const { renderPage, renderTours, renderTour, renderMyTours } = require('../controllers/view.controller');
 const { isAuthenticated } = require('../middlewares/authenticated');
 const router = require('express').Router();
 
@@ -15,7 +15,7 @@ router.get('/reset/:token', renderPage('resetPassword', 'Reset password'));
 router.get('/profile', isAuthenticated, renderPage('profile', 'Profile'));
 router.get('/my-reviews', isAuthenticated, renderPage('myReviews', 'My reviews'));
 router.get('/my-bookings', isAuthenticated, renderPage('myBookings', 'My bookings'));
-router.get('/my-tours', isAuthenticated, renderPage('myTours', 'My tours'));
+router.get('/my-tours', isAuthenticated, renderMyTours);
 router.get('/tours/create', isAuthenticated, renderPage('createTour', 'Create tour'));
 router.get('/tours', renderTours);
 router.get('/tours/:tourSlug', renderTour);

@@ -1,7 +1,7 @@
 const request = require('../utils/openai');
 const Tour = require('../models/tour.model');
-const { faker } = require('@faker-js/faker');
 const catchAsync = require('../utils/catch.async');
+const sharp = require('sharp');
 
 exports.generateRandomInfoHandler = catchAsync(async (req, res) => {
    const tourData = await request();
@@ -16,11 +16,18 @@ exports.createTourHandler = catchAsync(async (req, res) => {
       description: req.body.startLocDesc,
       coordinates: req.body.startLocCoords.split(','),
    };
-   // TODO add image upload startLocImg > imageCover
    const { startLocCoords, startLocDesc, ...rest } = req.body;
-   const newTour = await Tour.create({ startLocation, ...rest, guides: req.user._id });
+   const newTour = new Tour({ startLocation, ...rest, guide: req.user._id });
+   req.file.filename = `tour-${newTour.id}.jpeg`;
+   await sharp(req.file.buffer)
+      .resize(2000, 1333)
+      .toFormat('jpeg')
+      .jpeg({ quality: 90 })
+      .toFile(`public/img/${req.file.filename}`);
+   newTour.imageCover = `/img/${req.file.filename}`;
+   await newTour.save();
    res.status(201).send({
-      status: 'Tour has been created',
+      status: 'Tour created',
       data: newTour,
    });
 });
