@@ -2,7 +2,7 @@ extends base
 
 block content
     #tour-map.position-absolute.top-0.bottom-0.w-100.z-n1.opacity-50(data-location= `${JSON.stringify(tour.startLocation)}`)
-    .container.vh-100.mt-5
+    section.container.mt-5
         .row.p-3
             h1.fw-bold.text-white.text-end
                 span.p-1(style='-webkit-box-decoration-break: clone; box-decoration-break: clone; background-image: linear-gradient(\n' +
@@ -10,7 +10,7 @@ block content
                 '    rgba(70, 25, 255, 0.85),\n' +
                 '    rgba(35, 131, 255, 0.85)\n' +
                 '  );')= tour.name
-        .row.p-3
+        .row
             .col-6.bg-light.p-3.text-secondary
                 .row.row-gap-3
                     .row
@@ -32,4 +32,20 @@ block content
                         h3 Participants
                             i.bi.bi-people.p-3.text-primary.fs-3
                         span.text-uppercase= tour.maxGroupSize + ' people'
-                        // TODO finish tour page with reviews, booking
+                    .row
+                        .col
+                            h3 Price
+                                i.bi.bi-currency-dollar.p-3.text-primary.fs-3
+                            span.text-uppercase= tour.priceDiscount ? `${tour.price - tour.priceDiscount}` : `${tour.price}`
+                        .col.align-self-center.justify-self-end.text-end
+                            if user
+                                button.btn.btn-lg.btn-primary.create-checkout-session(type='button') Book a tour
+                            else
+                                p.
+                                    To book a tour please #[a(href='/login') Log in]
+    section.container-sm.mt-5.text-secondary
+        .row.p-3.bg-light
+            h3 Leave a review
+            input.
+
+

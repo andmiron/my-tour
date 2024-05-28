@@ -14,6 +14,7 @@ const startLocationMap = document.getElementById('start-location-map');
 const createTourForm = document.querySelector('.create-tour-form');
 const generateGeneralInfoBtn = document.querySelector('.generate-general-info');
 const tourMap = document.getElementById('tour-map');
+const createCheckoutSession = document.querySelector('.create-checkout-session');
 
 if (signupForm) {
    signupForm.addEventListener('submit', async (e) => {
@@ -395,11 +396,12 @@ if (tourMap) {
       zoom: 4,
       interactive: false,
    });
-
    const marker = new mapboxgl.Marker({
       draggable: false,
       color: '#0d6efd',
    });
-
    marker.setLngLat([lng, lat]).addTo(map);
+}
+
+if (createCheckoutSession) {
 }
