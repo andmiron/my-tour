@@ -16,7 +16,30 @@ html
                     background-color: rgba(0, 0, 0, 0.1);
                 }
 
+                .star-rating {
+                    display: inline-flex;
+                    flex-direction: row-reverse;
+                    justify-content: center;
+                }
+
+                .star-rating input {
+                    display: none;
+                }
+
+                .star-rating label {
+                    font-size: 2rem;
+                    color: #ddd;
+                    cursor: pointer;
+                }
+
+                .star-rating input:checked ~ label,
+                .star-rating label:hover,
+                .star-rating label:hover ~ label {
+                    color: #4619ff;
+                }
+
     body.d-flex.flex-column.min-vh-100.bg-light.position-relative
+        #base-map.position-absolute.top-0.bottom-0.w-100.z-n1.opacity-50
         include _header
         block content
         script(src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous")

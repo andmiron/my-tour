@@ -15,6 +15,8 @@ const createTourForm = document.querySelector('.create-tour-form');
 const generateGeneralInfoBtn = document.querySelector('.generate-general-info');
 const tourMap = document.getElementById('tour-map');
 const createCheckoutSession = document.querySelector('.create-checkout-session');
+const submitReviewForm = document.getElementById('submit-review');
+const baseMap = document.getElementById('base-map');
 
 if (signupForm) {
    signupForm.addEventListener('submit', async (e) => {
@@ -266,6 +268,19 @@ if (generateGeneralInfoBtn) {
    });
 }
 
+if (submitReviewForm) {
+   submitReviewForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const reviewText = document.getElementById('reviewText').value;
+      const starRating = document.querySelector('input[name="rating"]:checked');
+      if (!starRating) {
+         return showAlert('danger', 'Rate the tour!');
+      }
+      const { status, data } = await sendJSON('');
+      // TODO finish sending review from client to API
+   });
+}
+
 async function fetchFormData(url, method, body) {
    const response = await fetch(url, {
       method,
@@ -321,6 +336,69 @@ requiredInputs.forEach((node) => {
       label.innerHTML += ' <span style="color: red;">*</span>';
    }
 });
+
+if (baseMap) {
+   function getRandomColor() {
+      const letters = '0123456789ABCDEF';
+      let color = '#';
+      for (let i = 0; i < 6; i++) {
+         color += letters[Math.floor(Math.random() * 16)];
+      }
+      return color;
+   }
+   mapboxgl.accessToken = 'pk.eyJ1IjoiYW5kbWlyb24iLCJhIjoiY2x2bGRyMmkwMjcxbjJsbnpmOGsyZWprNCJ9.FMjD1-WaO4qXM28NY89C7g';
+   const map = new mapboxgl.Map({
+      container: baseMap.attributes.getNamedItem('id').value,
+      style: 'mapbox://styles/andmiron/clddn3zn8000801nw8ooobs0y',
+      center: [30, 50],
+      interactive: false,
+      zoom: 4,
+   });
+   map.on('load', () => {
+      map.addSource('country-boundaries', {
+         type: 'vector',
+         url: 'mapbox://mapbox.country-boundaries-v1',
+      });
+
+      map.addLayer({
+         id: 'country-boundaries',
+         source: 'country-boundaries',
+         'source-layer': 'country_boundaries',
+         type: 'fill',
+         paint: {
+            'fill-color': [
+               'case',
+               ['boolean', ['feature-state', 'random-color'], false],
+               ['feature-state', 'random-color'],
+               '#1e7ed2',
+            ],
+            'fill-opacity': 0.4,
+         },
+      });
+      map.on('idle', function () {
+         // Fetch all country features from the source
+         const features = map.querySourceFeatures('country-boundaries', {
+            sourceLayer: 'country_boundaries',
+         });
+         if (features.length) {
+            features.forEach((feature) => {
+               const randomColor = getRandomColor();
+               map.setFeatureState(
+                  {
+                     source: 'country-boundaries',
+                     sourceLayer: 'country_boundaries',
+                     id: feature.id,
+                  },
+                  {
+                     'random-color': randomColor,
+                  },
+               );
+            });
+         }
+         //    TODO finish coloring different countries with different colors
+      });
+   });
+}
 
 if (startLocationMap) {
    mapboxgl.accessToken = 'pk.eyJ1IjoiYW5kbWlyb24iLCJhIjoiY2x2bGRyMmkwMjcxbjJsbnpmOGsyZWprNCJ9.FMjD1-WaO4qXM28NY89C7g';

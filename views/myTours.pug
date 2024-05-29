@@ -7,7 +7,7 @@ block content
             .col-2.p-3.d-flex.flex-column
                 +profileNav
             .col-10.p-3.text-center
-                if tours
+                if tours.length
                    each tour in tours
                       p= tour
                 else

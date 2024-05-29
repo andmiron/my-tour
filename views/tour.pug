@@ -1,15 +1,13 @@
 extends base
 
+mixin ratingStar(id, value)
+    input(type="radio" id= id name="rating" value= value)
+    label(for= id)
+        i.bi.bi-star-fill
+
 block content
     #tour-map.position-absolute.top-0.bottom-0.w-100.z-n1.opacity-50(data-location= `${JSON.stringify(tour.startLocation)}`)
     section.container.mt-5
-        .row.p-3
-            h1.fw-bold.text-white.text-end
-                span.p-1(style='-webkit-box-decoration-break: clone; box-decoration-break: clone; background-image: linear-gradient(\n' +
-                '    to bottom right,\n' +
-                '    rgba(70, 25, 255, 0.85),\n' +
-                '    rgba(35, 131, 255, 0.85)\n' +
-                '  );')= tour.name
         .row
             .col-6.bg-light.p-3.text-secondary
                 .row.row-gap-3
@@ -33,6 +31,10 @@ block content
                             i.bi.bi-people.p-3.text-primary.fs-3
                         span.text-uppercase= tour.maxGroupSize + ' people'
                     .row
+                        h3 Rating
+                            i.bi.bi-star.p-3.text-primary.fs-3
+                        span.text-uppercase= `${tour.ratingsAverage ? tour.ratingsAverage : 'N/A'}`
+                    .row
                         .col
                             h3 Price
                                 i.bi.bi-currency-dollar.p-3.text-primary.fs-3
@@ -43,9 +45,32 @@ block content
                             else
                                 p.
                                     To book a tour please #[a(href='/login') Log in]
-    section.container-sm.mt-5.text-secondary
-        .row.p-3.bg-light
-            h3 Leave a review
-            input.
+            .col-6
+                h1.fw-bold.text-white.text-end
+                    span.p-1(style='-webkit-box-decoration-break: clone; box-decoration-break: clone; background-image: linear-gradient(\n' +
+                    '    to bottom right,\n' +
+                    '    rgba(70, 25, 255, 0.85),\n' +
+                    '    rgba(35, 131, 255, 0.85)\n' +
+                    '  );')= tour.name
+    section.container-sm.my-5.text-secondary.bg-light.p-3
+        form.form-group#submit-review
+            p.fst-italic If you have already experienced this tour, please leave a comment and rate this tour:
+            .row.gap-3
+                .col
+                    h3 Leave a review
+                    input#reviewText.form-control(required type='text' name='review')
+                .col
+                    h3.m-0 Rate this tour
+                    .star-rating
+                        +ratingStar('star-5','5')
+                        +ratingStar('star-4','4')
+                        +ratingStar('star-3','3')
+                        +ratingStar('star-2','2')
+                        +ratingStar('star-1','1')
+                .row
+                    .col-4
+                        button.btn.btn-lg.btn-primary(type='submit') Submit a review
+
+
 
 
