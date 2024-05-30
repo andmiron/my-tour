@@ -2,6 +2,7 @@ const crypto = require('node:crypto');
 const mongoose = require('mongoose');
 const argon = require('argon2');
 
+// TODO update model with references to reviews and bookings
 const userSchema = new mongoose.Schema(
    {
       email: {

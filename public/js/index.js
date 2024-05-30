@@ -346,6 +346,7 @@ if (baseMap) {
       }
       return color;
    }
+
    mapboxgl.accessToken = 'pk.eyJ1IjoiYW5kbWlyb24iLCJhIjoiY2x2bGRyMmkwMjcxbjJsbnpmOGsyZWprNCJ9.FMjD1-WaO4qXM28NY89C7g';
    const map = new mapboxgl.Map({
       container: baseMap.attributes.getNamedItem('id').value,
@@ -354,49 +355,72 @@ if (baseMap) {
       interactive: false,
       zoom: 4,
    });
+
+   let hoveredPolygonId = null;
+   let countryColors = {};
+   const WORLDVIEW = 'UA';
+   const worldview_filter = [
+      'any',
+      ['==', ['get', 'disputed'], 'false'],
+      ['all', ['==', ['get', 'disputed'], 'true'], ['in', WORLDVIEW, ['get', 'worldview']]],
+   ];
+
    map.on('load', () => {
-      map.addSource('country-boundaries', {
+      map.addSource('countries-source', {
          type: 'vector',
          url: 'mapbox://mapbox.country-boundaries-v1',
       });
 
-      map.addLayer({
-         id: 'country-boundaries',
-         source: 'country-boundaries',
-         'source-layer': 'country_boundaries',
-         type: 'fill',
-         paint: {
-            'fill-color': [
-               'case',
-               ['boolean', ['feature-state', 'random-color'], false],
-               ['feature-state', 'random-color'],
-               '#1e7ed2',
-            ],
-            'fill-opacity': 0.4,
+      map.addLayer(
+         {
+            id: 'countries',
+            type: 'fill',
+            source: 'countries-source',
+            'source-layer': 'country_boundaries',
+            filter: worldview_filter,
+            paint: {
+               'fill-opacity': ['case', ['boolean', ['feature-state', 'hover'], false], 0.4, 0],
+            },
          },
-      });
-      map.on('idle', function () {
-         // Fetch all country features from the source
-         const features = map.querySourceFeatures('country-boundaries', {
-            sourceLayer: 'country_boundaries',
-         });
-         if (features.length) {
-            features.forEach((feature) => {
-               const randomColor = getRandomColor();
-               map.setFeatureState(
-                  {
-                     source: 'country-boundaries',
-                     sourceLayer: 'country_boundaries',
-                     id: feature.id,
-                  },
-                  {
-                     'random-color': randomColor,
-                  },
-               );
-            });
+         'country-label',
+      );
+   });
+
+   map.on('mousemove', 'countries', (e) => {
+      if (e.features.length > 0) {
+         if (hoveredPolygonId !== null) {
+            map.setFeatureState(
+               { source: 'countries-source', id: hoveredPolygonId, sourceLayer: 'country_boundaries' },
+               { hover: false },
+            );
          }
-         //    TODO finish coloring different countries with different colors
-      });
+         hoveredPolygonId = e.features[0].id;
+         if (!countryColors[hoveredPolygonId]) {
+            countryColors[hoveredPolygonId] = getRandomColor();
+         }
+
+         map.setPaintProperty('countries', 'fill-color', [
+            'case',
+            ['boolean', ['feature-state', 'hover'], false],
+            countryColors[hoveredPolygonId],
+            '#adb5bd',
+         ]);
+
+         map.setFeatureState(
+            { source: 'countries-source', id: hoveredPolygonId, sourceLayer: 'country_boundaries' },
+            { hover: true },
+         );
+      }
+   });
+
+   map.on('mouseleave', 'countries', () => {
+      if (hoveredPolygonId !== null) {
+         map.setFeatureState(
+            { source: 'countries-source', sourceLayer: 'country_boundaries', id: hoveredPolygonId },
+            { hover: false },
+         );
+      }
+      hoveredPolygonId = null;
    });
 }
 

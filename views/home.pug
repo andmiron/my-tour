@@ -1,13 +1,14 @@
 extends base
 
 block content
+    #base-map.position-absolute.top-0.bottom-0.w-100.opacity-50
     .d-flex.flex-column.align-items-center.justify-content-center.text-secondary.p-5.text-center(style='height:500px')
-        h1.display-5.fw-bold.text-grey Find your tour
+        h1.display-5.fw-bold.text-grey.z-2 Find your tour
         .col-lg-6.mx-auto
-            p.fs-5.mb-4 Begin an adventure
+            p.fs-5.mb-4.z-2 Begin an adventure
             .d-flex.justify-content-center
-                a.btn.btn-outline-primary.btn-lg.px-4.me-sm-3.fw-bold(href='/tours') Explore the world
+                a.btn.btn-outline-primary.btn-lg.px-4.me-sm-3.fw-bold.z-2(href='/tours') Explore the world
                 if user
-                    a.btn.btn-outline-dark.btn-lg.px-4(href='/my-bookings') My bookings
+                    a.btn.btn-outline-dark.btn-lg.px-4.z-2(href='/my-bookings') My bookings
                 else
-                    a.btn.btn-outline-dark.btn-lg.px-4(href='/signup') Sign up
+                    a.btn.btn-outline-dark.btn-lg.px-4.z-2(href='/signup') Sign up
