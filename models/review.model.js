@@ -3,7 +3,7 @@ const Tour = require('./tour.model');
 
 const reviewSchema = new mongoose.Schema(
    {
-      review: {
+      text: {
          type: String,
          required: [true, 'Review cannot be empty'],
       },
@@ -21,7 +21,7 @@ const reviewSchema = new mongoose.Schema(
       user: {
          type: mongoose.Schema.ObjectId,
          ref: 'User',
-         required: [true, 'review must belong to a user'],
+         required: [true, 'A review must belong to a user!'],
       },
    },
    {

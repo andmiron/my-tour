@@ -2,7 +2,6 @@ const crypto = require('node:crypto');
 const mongoose = require('mongoose');
 const argon = require('argon2');
 
-// TODO update model with references to reviews and bookings
 const userSchema = new mongoose.Schema(
    {
       email: {
@@ -58,6 +57,19 @@ const userSchema = new mongoose.Schema(
          enum: ['user', 'admin', 'guide'],
          default: 'user',
       },
+      bookings: [
+         {
+            type: mongoose.Schema.ObjectId,
+            ref: 'Booking',
+         },
+      ],
+      tours: [
+         {
+            type: mongoose.Schema.ObjectId,
+            ref: 'Tour',
+         },
+      ],
+      reviews: [{ type: mongoose.Schema.ObjectId, ref: 'Review' }],
    },
    { timestamps: true },
 );

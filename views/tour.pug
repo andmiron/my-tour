@@ -58,7 +58,8 @@ block content
             .row.gap-3
                 .col
                     h3 Leave a review
-                    input#reviewText.form-control(required type='text' name='review')
+                    label.form-label(for='reviewText') Must be at least 10 characters
+                    input#reviewText.form-control(required type='text' name='review' minlength='10')
                 .col
                     h3.m-0 Rate this tour
                     .star-rating

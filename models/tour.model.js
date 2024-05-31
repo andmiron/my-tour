@@ -70,7 +70,14 @@ const tourSchema = new mongoose.Schema(
       guide: {
          type: mongoose.Schema.ObjectId,
          ref: 'User',
+         required: [true, 'A tour must have a guide!'],
       },
+      reviews: [
+         {
+            type: mongoose.Schema.ObjectId,
+            ref: 'Review',
+         },
+      ],
    },
    {
       toJSON: { virtuals: true },
@@ -78,12 +85,6 @@ const tourSchema = new mongoose.Schema(
       timestamps: true,
    },
 );
-
-tourSchema.virtual('reviews', {
-   ref: 'Review',
-   localField: '_id',
-   foreignField: 'tour',
-});
 
 tourSchema.pre('save', function (next) {
    this.slug = slugify(this.name, { lower: true });

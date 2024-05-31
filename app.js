@@ -16,6 +16,7 @@ const authRouter = require('./routes/auth.router');
 const viewRouter = require('./routes/view.router');
 const userRouter = require('./routes/user.router');
 const tourRouter = require('./routes/tour.router');
+const reviewRouter = require('./routes/review.router');
 
 const app = express();
 
@@ -39,6 +40,7 @@ function build() {
    app.use('/api/v1/auth', authRouter);
    app.use('/api/v1/users', userRouter);
    app.use('/api/v1/tours', tourRouter);
+   app.use('/api/v1/reviews', reviewRouter);
    app.use('/', viewRouter);
    app.all('*', (req, res, next) => {
       next(AppError.notFound('Resource not found!'));

@@ -143,3 +143,16 @@ exports.createTourValidator = () => {
       body('startLocCoords').isLatLong().withMessage('Provide valid coordinates!'),
    ];
 };
+
+exports.submitReviewValidator = () => {
+   return [
+      body('text').isLength({ min: 10 }).withMessage('Review text must be at least 10 characters!'),
+      body('rating').isIn([1, 2, 3, 4, 5]),
+      body('tour').custom(async (name, { req }) => {
+         const tour = await Tour.findOne({ name });
+         if (!tour) return Promise.reject('No tour to review!');
+         if (tour.guide === req.user.id) return Promise.reject('You can not review your own tour!');
+         req.body.tour = tour.id;
+      }),
+   ];
+};
