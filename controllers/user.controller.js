@@ -92,3 +92,10 @@ exports.deleteUserHandler = catchAsync(async (req, res, next) => {
       });
    });
 });
+
+exports.getMeHandler = catchAsync(async (req, res) => {
+   res.status(200).send({
+      status: 'success',
+      data: req.user,
+   });
+});

@@ -1,36 +1,32 @@
 const mongoose = require('mongoose');
 
-const bookingSchema = new mongoose.Schema({
-   tour: {
-      type: mongoose.Schema.ObjectId,
-      ref: 'Tour',
-      required: [true, 'Booking must belong to a Tour!'],
+const bookingSchema = new mongoose.Schema(
+   {
+      tourId: {
+         type: mongoose.Schema.ObjectId,
+         ref: 'Tour',
+         required: [true, 'Booking must belong to a Tour!'],
+      },
+      userId: {
+         type: mongoose.Schema.ObjectId,
+         ref: 'User',
+         required: [true, 'Booking must belong to a User!'],
+      },
+      price: {
+         type: Number,
+         min: 1,
+         required: [true, 'Booking must have a price.'],
+      },
+      isPaid: {
+         type: Boolean,
+         default: false,
+      },
    },
-   user: {
-      type: mongoose.Schema.ObjectId,
-      ref: 'User',
-      required: [true, 'Booking must belong to a User!'],
-   },
-   price: {
-      type: Number,
-      require: [true, 'Booking must have a price.'],
-   },
-   createdAt: {
-      type: Date,
-      default: Date.now(),
-   },
-   paid: {
-      type: Boolean,
-      default: false,
-   },
-});
+   { timestamps: true },
+);
 
-bookingSchema.pre(/^find/, function (next) {
-   this.populate('user').populate({
-      path: 'tour',
-      select: 'name',
-   });
-   next();
+bookingSchema.post('save', async function (doc) {
+   await mongoose.model('User').findByIdAndUpdate(doc.userId, { $push: { bookings: doc._id } });
 });
 
 const Booking = mongoose.model('Booking', bookingSchema);

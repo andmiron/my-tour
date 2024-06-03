@@ -6,6 +6,7 @@ const {
    deleteUserHandler,
    changeEmailHandler,
    changePasswordHandler,
+   getMeHandler,
 } = require('../controllers/user.controller');
 const { changeEmailValidator, changePasswordValidator, validate } = require('../middlewares/validate');
 const router = require('express').Router();
@@ -17,5 +18,6 @@ router.put('/photo', uploadUserPhotoHandler);
 router.post('/photoGenerate', generatePhotoHandler);
 router.delete('/photoDelete', deletePhotoHandler);
 router.delete('/profile', deleteUserHandler);
+router.get('/profile', getMeHandler);
 
 module.exports = router;

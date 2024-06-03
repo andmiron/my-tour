@@ -147,12 +147,12 @@ exports.createTourValidator = () => {
 exports.submitReviewValidator = () => {
    return [
       body('text').isLength({ min: 10 }).withMessage('Review text must be at least 10 characters!'),
-      body('rating').isIn([1, 2, 3, 4, 5]),
-      body('tour').custom(async (name, { req }) => {
-         const tour = await Tour.findOne({ name });
-         if (!tour) return Promise.reject('No tour to review!');
+      body('rating').isIn([1, 2, 3, 4, 5]).withMessage('Rating must be between 1 and 5!'),
+      body('tour').custom(async (slug, { req }) => {
+         const tour = await Tour.findOne({ slug });
+         if (!tour) return Promise.reject('Incorrect tour name!');
          if (tour.guide === req.user.id) return Promise.reject('You can not review your own tour!');
-         req.body.tour = tour.id;
+         req.body.tourId = tour.id;
       }),
    ];
 };

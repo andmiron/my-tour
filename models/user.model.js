@@ -14,17 +14,9 @@ const userSchema = new mongoose.Schema(
          type: Boolean,
          default: false,
       },
-      firstName: {
-         type: String,
-      },
-      lastName: {
-         type: String,
-      },
-      birthDate: {
-         type: Date,
-      },
       password: {
          type: String,
+         minLength: 6,
          required: [() => this.provider === 'local', 'Password is required!'],
          select: false,
       },
@@ -54,7 +46,7 @@ const userSchema = new mongoose.Schema(
       },
       role: {
          type: String,
-         enum: ['user', 'admin', 'guide'],
+         enum: ['user', 'admin'],
          default: 'user',
       },
       bookings: [
@@ -74,13 +66,8 @@ const userSchema = new mongoose.Schema(
    { timestamps: true },
 );
 
-userSchema.virtual('fullName').get(function () {
-   return this.firstName + ' ' + this.lastName;
-});
-
 userSchema.pre('save', async function (next) {
-   if (!this.isModified('password')) return next();
-   this.password = await argon.hash(this.password);
+   if (this.isModified('password')) this.password = await argon.hash(this.password);
    next();
 });
 
@@ -102,5 +89,21 @@ userSchema.methods.createEmailToken = function () {
    return hashData;
 };
 
+userSchema.statics.deleteUser = async function (userId) {
+   const session = await mongoose.startSession();
+   session.startTransaction();
+   try {
+      await mongoose.model('Tour').deleteMany({ ownerId: userId }, { session });
+      await mongoose.model('Review').deleteMany({ ownerId: userId }, { session });
+      await this.findByIdAndDelete(userId);
+      await session.commitTransaction();
+   } catch (err) {
+      await session.abortTransaction();
+   } finally {
+      await session.endSession();
+   }
+};
+
 const User = mongoose.model('User', userSchema);
+
 module.exports = User;

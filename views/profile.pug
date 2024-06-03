@@ -2,66 +2,60 @@ extends base
 include _profileNav
 
 mixin inputGroup(groupId, type, text)
-    .form-floating.mb-3
+    .form-floating.mb-2
         input.form-control(required id=groupId type=type placeholder= text)
         label(for= groupId)= text
 
 block content
     .container
-        .row.p-3.g-5
-            .col-2.p-3.d-flex.flex-column
+        .row.text-center.p-3
+            h2 My Account
+        .row
+            .col-2
                 +profileNav
-            .col-auto.p-3
-                .d-flex.flex-column.justify-content-between.mb-5
-                    .d-flex.flex-column.gap-3
-                        h5 Change photo
-                        .row.justify-content-evenly
-                            .col-auto.align-self-center
-                                div.position-relative
-                                    img.img-fluid.rounded-circle(src= user.photo alt=`User photo` style='height:5em')
-                                    span.position-absolute.top-0.start-100.translate-middle.badge.rounded-pill.bg-secondary= user.role
-                            .col-8.justify-content-center
-                                .row
-                                    form(enctype='multipart/form-data')
-                                        label.form-label(for='inputPhoto') Your photo
-                                        input.form-control(id='inputPhoto' type='file' accept='image/*' name='inputPhoto' required)
-                                .row
-                                    .btn-group.p-3(role='group' aria-label='photo')
-                                            button.btn.btn-outline-secondary.delete-photo(type='button') Delete
-                                            button.btn.btn-outline-secondary.generate-photo(type='button') Generate
-                                            button.btn.btn-outline-secondary.upload-photo(type='button') Upload
-                if user.provider === 'local'
-                    form.d-flex.flex-column.gap-2.change-email-form
-                        h5.mb-2 Change email
-                        +inputGroup('inputEmail', 'email', 'Email')
-                        button.btn.btn-primary.align-self-end(type='submit') Change email
-                    form.d-flex.flex-column.gap-2.change-password-form
-                        h5.mb-2 Change password
-                        +inputGroup('inputOldPassword', 'password', 'Old password')
-                        +inputGroup('inputNewPassword', 'password', 'New Password')
-                        +inputGroup('inputConfirmNewPassword', 'password', 'Confirm new password')
-                        button.btn.btn-primary.align-self-end(id='changePassword') Change password
-                .d-flex.align-items-center.justify-content-between.mt-5
-                    h5 Delete profile
-                    button.btn.btn-danger.mt-3(type='button' data-bs-toggle='modal' data-bs-target='#deleteProfileModal') Delete profile
-                    .modal.fade(id='deleteProfileModal' tabindex='-1' aria-labelledby='deleteProfileModal' aria-hidden='true')
-                        .modal-dialog.modal-dialog-centered
-                            .modal-content
-                                .modal-header
-                                    h1.modal-title.fs-5 Delete profile?
-                                    button.btn-close(type='button' data-bs-dismiss='modal' aria-label='Close')
-                                .modal-body
-                                    p All your data will be lost after this action.
-                                .modal-footer
-                                    button.btn.btn-secondary(type='button' data-bs-dismiss='modal') Close
-                                    button.btn.btn-danger.delete-profile(type='button') Delete profile
-
-
-
-
-
-
-
+            .col-10
+                .row
+                    .col-5.p-3
+                        .d-flex.flex-column.align-items-center.mb-3
+                            h5 Change photo
+                            div.position-relative
+                                img.img-fluid.rounded-circle(src= user.photo alt=`User photo` style='height:5em')
+                                span.position-absolute.top-0.start-100.translate-middle.badge.rounded-pill.bg-secondary= user.role
+                            .row
+                                form(enctype='multipart/form-data')
+                                    label.form-label(for='inputPhoto') Your photo
+                                    input.form-control(id='inputPhoto' type='file' accept='image/*' name='inputPhoto' required)
+                            .row
+                                .btn-group.p-3(role='group' aria-label='photo')
+                                    button.btn.btn-outline-secondary.delete-photo(type='button') Delete
+                                    button.btn.btn-outline-secondary.generate-photo(type='button') Generate
+                                    button.btn.btn-outline-secondary.upload-photo(type='button') Upload
+                        if user.provider === 'local'
+                            form.d-flex.flex-column.gap-2.change-email-form
+                                h5.mb-2 Change email
+                                +inputGroup('inputEmail', 'email', 'Email')
+                                button.btn.btn-primary.align-self-end(type='submit') Change email
+                    .col-5.p-3
+                        form.d-flex.flex-column.change-password-form
+                            h5.mb-3 Change password
+                            +inputGroup('inputOldPassword', 'password', 'Old password')
+                            +inputGroup('inputNewPassword', 'password', 'New Password')
+                            +inputGroup('inputConfirmNewPassword', 'password', 'Confirm new password')
+                            button.btn.btn-primary.align-self-end(id='changePassword') Change password
+                        .d-flex.align-items-center.justify-content-between.mt-5
+                            h5 Delete profile
+                            button.btn.btn-danger.mt-3(type='button' data-bs-toggle='modal' data-bs-target='#deleteProfileModal') Delete profile
+                            .modal.fade(id='deleteProfileModal' tabindex='-1' aria-labelledby='deleteProfileModal' aria-hidden='true')
+                                .modal-dialog.modal-dialog-centered
+                                    .modal-content
+                                        .modal-header
+                                            h1.modal-title.fs-5 Delete profile?
+                                            button.btn-close(type='button' data-bs-dismiss='modal' aria-label='Close')
+                                        .modal-body
+                                            p All your data will be lost after this action.
+                                        .modal-footer
+                                            button.btn.btn-secondary(type='button' data-bs-dismiss='modal') Close
+                                            button.btn.btn-danger.delete-profile(type='button') Delete profile
 
 
 

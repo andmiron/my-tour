@@ -1,24 +1,23 @@
 const mongoose = require('mongoose');
-const Tour = require('./tour.model');
 
 const reviewSchema = new mongoose.Schema(
    {
       text: {
          type: String,
-         required: [true, 'Review cannot be empty'],
+         required: [true, 'Review cannot be empty!'],
       },
       rating: {
          type: Number,
          min: 1,
          max: 5,
-         required: [true, 'Leave a review 1 to 5'],
+         required: [true, 'Leave a review 1 to 5!'],
       },
-      tour: {
+      tourId: {
          type: mongoose.Schema.ObjectId,
          ref: 'Tour',
-         required: [true, 'review must belong to a tour'],
+         required: [true, 'review must belong to a tour!'],
       },
-      user: {
+      ownerId: {
          type: mongoose.Schema.ObjectId,
          ref: 'User',
          required: [true, 'A review must belong to a user!'],
@@ -31,54 +30,25 @@ const reviewSchema = new mongoose.Schema(
    },
 );
 
-reviewSchema.pre(/^find/, function (next) {
-   this.populate({
-      path: 'user',
-      select: 'name photo',
-   });
-   next();
+reviewSchema.post('save', async function (doc) {
+   await mongoose.model('User').findByIdAndUpdate(doc.ownerId, { $push: { reviews: doc._id } });
+   await mongoose.model('Tour').findByIdAndUpdate(doc.tourId, { $push: { reviews: doc._id } });
 });
 
-reviewSchema.statics.calcAverageRatings = async function (tourId) {
-   const stats = await this.aggregate([
-      {
-         $match: { tour: tourId },
-      },
-      {
-         $group: {
-            _id: '$tour',
-            nRating: { $sum: 1 },
-            avgRating: { $avg: '$rating' },
-         },
-      },
-   ]);
-
-   if (stats.length > 0) {
-      await Tour.findByIdAndUpdate(tourId, {
-         ratingsQuantity: stats[0].nRating,
-         ratingsAverage: stats[0].avgRating,
-      });
-   } else {
-      await Tour.findByIdAndUpdate(tourId, {
-         ratingsQuantity: 0,
-         ratingsAverage: 4.5,
-      });
+reviewSchema.statics.deleteReview = async function (reviewId) {
+   const session = await mongoose.startSession();
+   await session.startTransaction();
+   try {
+      await mongoose.model('User').updateMany({ reviews: reviewId }, { $pull: { reviews: reviewId } }, { session });
+      await mongoose.model('Tour').updateMany({ reviews: reviewId }, { $pull: { reviews: reviewId } }, { session });
+      await this.findByIdAndDelete(reviewId);
+      await session.commitTransaction();
+   } catch (err) {
+      await session.abortTransaction();
+   } finally {
+      await session.endSession();
    }
 };
-
-reviewSchema.post('save', function () {
-   // this points to the current review
-   this.constructor.calcAverageRatings(this.tour);
-});
-
-reviewSchema.pre(/^findOneAnd/, async function (next) {
-   this.review = await this.findOne();
-   next();
-});
-
-reviewSchema.post(/^findOneAnd/, async function () {
-   await this.review.constructor.calcAverageRatings(this.review.tour);
-});
 
 const Review = mongoose.model('Review', reviewSchema);
 
