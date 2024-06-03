@@ -71,8 +71,8 @@ userSchema.pre('save', async function (next) {
    next();
 });
 
-userSchema.methods.isValidPassword = async function (validPassword, givenPassword) {
-   return argon.verify(validPassword, givenPassword);
+userSchema.methods.isPasswordValid = async function (password) {
+   return argon.verify(this.password, password);
 };
 
 userSchema.methods.createResetToken = function () {
