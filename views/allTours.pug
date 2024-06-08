@@ -2,8 +2,10 @@ extends base
 include _tourCard
 
 block content
-    .container-lg
-        .row.py-3
+    #base-map.position-absolute.top-0.bottom-0.w-100.opacity-50
+    .container-lg.z-2
+        h1.p-3.fw-bold.text-end All tours
+        .row.py-2.g-3
             each tour in tours
-               .col-4.p-0
+               .col-4.z-2
                    +tourCard(tour)

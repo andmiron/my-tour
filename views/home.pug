@@ -2,13 +2,18 @@ extends base
 
 block content
     #base-map.position-absolute.top-0.bottom-0.w-100.opacity-50
-    .d-flex.flex-column.align-items-center.justify-content-center.text-secondary.p-5.text-center(style='height:500px')
-        h1.display-5.fw-bold.text-grey.z-2 Find your tour
-        .col-lg-6.mx-auto
-            p.fs-5.mb-4.z-2 Begin an adventure
+    .d-flex.flex-column.align-items-center.justify-content-center.p-5.text-center(style='height:500px')
+        h1.display-5.fw-bold.z-2 Find your tour
+        .col-lg-6.mx-auto.z-2
+            h3.fw-bold.fs-3.p-1.text-white
+                span.p-1(style='-webkit-box-decoration-break: clone; box-decoration-break: clone; background-image: linear-gradient(\n' +
+                '    to bottom right,\n' +
+                '    rgba(70, 25, 255, 0.85),\n' +
+                '    rgba(35, 131, 255, 0.85)\n' +
+                '  );') Create your own tours to explore the world with like-minded people
             .d-flex.justify-content-center
-                a.btn.btn-outline-primary.btn-lg.px-4.me-sm-3.fw-bold.z-2(href='/tours') Explore the world
+                a.btn.btn-secondary.btn-lg.px-4.me-sm-3.z-2(href='/tours') Browse tours
                 if user
-                    a.btn.btn-outline-dark.btn-lg.px-4.z-2(href='/my-bookings') My bookings
+                    a.btn.btn-secondary.btn-lg.px-4.z-2(href='/tours/create') Create tour
                 else
-                    a.btn.btn-outline-dark.btn-lg.px-4.z-2(href='/signup') Sign up
+                    a.btn.btn-secondary.btn-lg.px-4.z-2(href='/login') Log in

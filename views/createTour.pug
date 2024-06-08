@@ -56,12 +56,12 @@ block content
                 h3.text-secondary.mt-5 Start Location
                 .row.border.rounded-3.p-3.my-3
                     .col-6
-                        +tourInputField('startLocDesc', 'Start location description', 'startLocDescHelp', 'Describe start location')(required type='text')
+                        +tourInputField('locDesc', 'Start location description', 'startLocDescHelp', 'Describe start location')(required type='text')
                     .col-6
-                        +tourInputField('startLocImg', 'Start location image', 'startLocImgHelp', 'Upload one photo')(required type='file' accept='image/*' name='startLocImg')
+                        +tourInputField('locImg', 'Start location image', 'startLocImgHelp', 'Upload one photo')(required type='file' accept='image/*' name='startLocImg')
                     .row
                         .position-relative(style="height:500px")
                             #start-location-map.position-absolute.top-0.bottom-0.w-100.border.rounded-3
-                            input#startLocLat(hidden type='text')
-                            input#startLocLng(hidden type='text')
+                            input#locLat(hidden type='text')
+                            input#locLng(hidden type='text')
             button.btn.btn-primary.btn-lg.ml-auto.text-end.create-tour-btn(type="submit") Create Tour

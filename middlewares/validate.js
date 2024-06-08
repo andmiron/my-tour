@@ -84,7 +84,7 @@ exports.changePasswordValidator = () => {
          const user = await User.findById(req.user._id).select('+password').exec();
          if (!user.isPasswordValid(oldPassword)) return Promise.reject('Password is incorrect!');
       }),
-      body('newPassword').exists().notEmpty().isLength({ min: 4 }).withMessage('Password must be longer!'),
+      body('newPassword').exists().notEmpty().isLength({ min: 6 }).withMessage('Password must be longer!'),
       body('newPasswordConfirm')
          .custom((newPasswordConfirm, { req }) => newPasswordConfirm === req.body.newPassword)
          .withMessage('New passwords do not match!'),
@@ -125,8 +125,8 @@ exports.createTourValidator = () => {
       body('duration').isInt().withMessage('Invalid tour duration!'),
       body('maxGroupSize').isInt().withMessage('Invalid tour group size!'),
       body('difficulty').isIn(['easy', 'medium', 'difficult']).withMessage('Difficulty is [easy, medium or difficult]'),
-      body('startLocDesc').isString().withMessage('Provide start location description!'),
-      body('startLocCoords').isLatLong().withMessage('Invalid location coordinates!'),
+      body('locDesc').isString().withMessage('Provide start location description!'),
+      body('locCoords').isLatLong().withMessage('Invalid location coordinates!'),
    ];
 };
 
@@ -134,11 +134,13 @@ exports.submitReviewValidator = () => {
    return [
       body('text').isLength({ min: 10 }).withMessage('Review text must be at least 10 characters!'),
       body('rating').isIn([1, 2, 3, 4, 5]).withMessage('Rating must be between 1 and 5!'),
-      body('tour').custom(async (slug, { req }) => {
-         const tour = await Tour.findOne({ slug }).exec();
-         if (!tour) return Promise.reject('Invalid tour name!');
-         if (tour.guide === req.user.id) return Promise.reject('You can not review your own tour!');
-         req.body.tourId = tour.id;
-      }),
+      body('tour')
+         .isMongoId()
+         .custom(async (tourId, { req }) => {
+            const tour = await Tour.findById(tourId).exec();
+            if (!tour) return Promise.reject('Invalid tour!');
+            if (tour.ownerId === req.user.id) return Promise.reject('You can not review your own tour!');
+            req.body.tourId = tour.id;
+         }),
    ];
 };

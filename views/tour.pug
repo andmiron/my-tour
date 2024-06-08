@@ -5,46 +5,36 @@ mixin ratingStar(id, value)
     label(for= id)
         i.bi.bi-star-fill
 
+mixin tourItem(headerText, iconClass, text)
+    h4= headerText
+    p.align-middle
+        i.bi.text-primary.fs-4.p-1(class= iconClass)
+        | #{text}
+
+
 block content
-    #tour-map.position-absolute.top-0.bottom-0.w-100.z-n1.opacity-50(data-location= `${JSON.stringify(tour.startLocation)}`)
+    #tour-map.position-absolute.top-0.bottom-0.w-100.z-n1.opacity-50(data-location= `${JSON.stringify(tour.location)}`)
     section.container.mt-5
         .row
             .col-6.bg-light.p-3.text-secondary
-                .row.row-gap-3
-                    .row
-                        h3 Description
-                        p= tour.description
-                    .row
-                        h3 Location description
-                            i.bi.bi-pin-map-fill.p-3.text-primary.fs-3
-                        span.text-uppercase= tour.startLocation.description
-                    .row
-                        h3 Duration
-                            i.bi.bi-clock-fill.p-3.text-primary.fs-3
-                        span.text-uppercase= `${tour.duration} ${tour.duration === '1' ? 'day' : 'days'}`
-                    .row
-                        h3 Difficulty
-                            i.bi.bi-bar-chart-fill.p-3.text-primary.fs-3
-                        span.text-uppercase= tour.difficulty
-                    .row
-                        h3 Participants
-                            i.bi.bi-people.p-3.text-primary.fs-3
-                        span.text-uppercase= tour.maxGroupSize + ' people'
-                    .row
-                        h3 Rating
-                            i.bi.bi-star.p-3.text-primary.fs-3
-                        span.text-uppercase= `${tour.ratingsAverage ? tour.ratingsAverage : 'N/A'}`
-                    .row
-                        .col
-                            h3 Price
-                                i.bi.bi-currency-dollar.p-3.text-primary.fs-3
-                            span.text-uppercase= tour.priceDiscount ? `${tour.price - tour.priceDiscount}` : `${tour.price}`
-                        .col.align-self-center.justify-self-end.text-end
-                            if user
-                                button.btn.btn-lg.btn-primary.create-checkout-session(type='button') Book a tour
-                            else
-                                p.
-                                    To book a tour please #[a(href='/login') Log in]
+                .vstack.p-2
+                    +tourItem('Description', 'bi-body-text', tour.description)
+                    +tourItem('Location', 'bi-pin-map-fill', tour.location.description)
+                    +tourItem('Duration','bi-clock-fill', `${tour.duration} ${tour.duration === '1' ? 'day' : 'days'}`)
+                    +tourItem('Difficulty','bi-bar-chart-fill', tour.difficulty)
+                    +tourItem('Participants','bi-people', tour.maxGroupSize + ' people')
+                    +tourItem('Rating','bi-star', `${tour.averageRating ? tour.averageRating : 'N/A'}`)
+                    +tourItem('Price','bi-currency-dollar', tour.price)
+                    h4 Guide
+                    a.text-decoration-none.text-secondary(href=`/users/${tour.ownerId.id}`)
+                        i.bi.bi-person-walking.fs-4.p-1.text-primary
+                        | #{tour.ownerId.email}
+                    div.ms-auto
+                        if user
+                            button.btn.btn-lg.btn-primary.create-checkout-session(type='button') Book a tour
+                        else
+                            p.m-0.
+                                To book a tour please #[a(href='/login') Log in]
             .col-6
                 h1.fw-bold.text-white.text-end
                     span.p-1(style='-webkit-box-decoration-break: clone; box-decoration-break: clone; background-image: linear-gradient(\n' +
@@ -53,25 +43,31 @@ block content
                     '    rgba(35, 131, 255, 0.85)\n' +
                     '  );')= tour.name
     section.container-sm.my-5.text-secondary.bg-light.p-3
-        form.form-group#submit-review
-            p.fst-italic If you have already experienced this tour, please leave a comment and rate this tour:
-            .row.gap-3
-                .col
-                    h3 Leave a review
-                    label.form-label(for='reviewText') Must be at least 10 characters
-                    input#reviewText.form-control(required type='text' name='review' minlength='10')
-                .col
-                    h3.m-0 Rate this tour
-                    .star-rating
-                        +ratingStar('star-5','5')
-                        +ratingStar('star-4','4')
-                        +ratingStar('star-3','3')
-                        +ratingStar('star-2','2')
-                        +ratingStar('star-1','1')
-                .row
-                    .col-4
-                        button.btn.btn-lg.btn-primary(type='submit') Submit a review
-
-
+        if user && user.id === tour.ownerId.id
+            h3.
+                You can not review your own tour!
+        else if user
+            form.form-group#submit-review
+                .row.gap-3
+                    .col
+                        h3 Leave a review
+                        input#reviewText.form-control(required type='text' name='review' minlength='10')
+                        label.form-label(for='reviewText') Must be at least 10 characters
+                    .col
+                        h3.m-0 Rate this tour
+                        .star-rating
+                            +ratingStar('star-5','5')
+                            +ratingStar('star-4','4')
+                            +ratingStar('star-3','3')
+                            +ratingStar('star-2','2')
+                            +ratingStar('star-1','1')
+                    .row
+                        .col-4
+                            button.btn.btn-lg.btn-primary(type='submit') Submit a review
+        else
+            .row
+                h3.
+                    To leave a review please #[a(href='/login') Log in]
+        // TODO list all tour reviews
 
 

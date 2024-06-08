@@ -25,8 +25,11 @@ if (signupForm) {
       const password = document.getElementById('floatingPassword').value;
       const passwordConfirm = document.getElementById('floatingPasswordConfirm').value;
       if (password !== passwordConfirm) return showAlert('danger', 'Passwords do not match!');
+
       const { status, data } = await sendJSON('/api/v1/auth/signup', 'POST', { email, password });
-      if (status === 'error') return showAlert('danger', data);
+      if (status === 'error') {
+         return showAlert('danger', data);
+      }
       showAlert('success', status);
       window.setTimeout(() => {
          location.assign('/login');
@@ -39,6 +42,7 @@ if (loginForm) {
       e.preventDefault();
       const email = document.getElementById('floatingEmail').value;
       const password = document.getElementById('floatingPassword').value;
+
       const { status, data } = await sendJSON('/api/v1/auth/login', 'POST', { email, password });
       if (status === 'error') return showAlert('danger', data);
       showAlert('success', status);
@@ -94,11 +98,18 @@ if (uploadPhotoBtn) {
    uploadPhotoBtn.addEventListener('click', async () => {
       uploadPhotoBtn.disabled = true;
       const photo = document.getElementById('inputPhoto').files[0];
-      if (!photo) return showAlert('danger', 'First choose photo!');
+      if (!photo) {
+         uploadPhotoBtn.disabled = false;
+         return showAlert('danger', 'First choose photo!');
+      }
       const form = new FormData();
       form.append('inputPhoto', photo);
-      const { status, data } = await fetchFormData('/api/v1/users/photo', 'PUT', form);
-      if (status === 'error') return showAlert('danger', data);
+      const { status, data } = await fetchFormData('/api/v1/users/photo', 'POST', form);
+      if (status === 'error') {
+         uploadPhotoBtn.disabled = false;
+         return showAlert('danger', data);
+      }
+      uploadPhotoBtn.disabled = false;
       showAlert('success', status);
       window.setTimeout(() => {
          location.reload();
@@ -109,11 +120,15 @@ if (uploadPhotoBtn) {
 if (generatePhotoBtn) {
    generatePhotoBtn.addEventListener('click', async () => {
       generatePhotoBtn.disabled = true;
-      const response = await fetch('/api/v1/users/photoGenerate', {
-         method: 'POST',
+      const response = await fetch('/api/v1/users/photo', {
+         method: 'PUT',
       });
       const { status, data } = await response.json();
-      if (status === 'error') return showAlert('danger', data);
+      if (status === 'error') {
+         generatePhotoBtn.disabled = false;
+         return showAlert('danger', data);
+      }
+      generatePhotoBtn.disabled = false;
       showAlert('success', status);
       window.setTimeout(() => {
          location.reload();
@@ -124,11 +139,15 @@ if (generatePhotoBtn) {
 if (deletePhotoBtn) {
    deletePhotoBtn.addEventListener('click', async () => {
       deletePhotoBtn.disabled = true;
-      const response = await fetch('/api/v1/users/photoDelete', {
+      const response = await fetch('/api/v1/users/photo', {
          method: 'DELETE',
       });
       const { status, data } = await response.json();
-      if (status === 'error') return showAlert('danger', data);
+      if (status === 'error') {
+         deletePhotoBtn.disabled = false;
+         return showAlert('danger', data);
+      }
+      deletePhotoBtn.disabled = false;
       showAlert('success', status);
       window.setTimeout(() => {
          location.reload();
@@ -201,19 +220,17 @@ if (createTourForm) {
          'maxGroupSize',
          'difficulty',
          'duration',
-         'startLocDesc',
+         'locDesc',
       ];
       inputsIds.forEach((inputId) => {
          formData.append(inputId, document.getElementById(inputId).value);
       });
 
-      const startLocCoords = [
-         +document.getElementById('startLocLat').value,
-         +document.getElementById('startLocLng').value,
-      ];
-      const startLocImg = document.getElementById('startLocImg').files[0];
-      formData.append('startLocCoords', startLocCoords);
-      formData.append('startLocImg', startLocImg);
+      formData.append('locCoords', [
+         +document.getElementById('locLat').value,
+         +document.getElementById('locLng').value,
+      ]);
+      formData.append('locImg', document.getElementById('locImg').files[0]);
 
       const { status, data } = await fetchFormData('/api/v1/tours', 'POST', formData);
       if (status === 'error') {
@@ -271,13 +288,17 @@ if (generateGeneralInfoBtn) {
 if (submitReviewForm) {
    submitReviewForm.addEventListener('submit', async (e) => {
       e.preventDefault();
-      const reviewText = document.getElementById('reviewText').value;
-      const starRating = document.querySelector('input[name="rating"]:checked');
-      if (!starRating) {
+      const text = document.getElementById('reviewText').value;
+      const rating = document.querySelector('input[name="rating"]:checked').value;
+      if (!rating) {
          return showAlert('danger', 'Rate the tour!');
       }
-      const { status, data } = await sendJSON('');
-      // TODO finish sending review from client to API
+      const { status, data } = await sendJSON('/api/v1/reviews', 'POST', { text, rating });
+      if (status === 'error') return showAlert('danger', data);
+      showAlert('success', status);
+      window.setTimeout(() => {
+         location.reload();
+      }, 1000);
    });
 }
 
@@ -453,9 +474,9 @@ if (startLocationMap) {
       map.addControl(nav, 'top-right');
    });
 
-   // geocoder.on('clear', function () {
-   //    if (map.getLayer('country-boundaries')) map.removeLayer('country-boundaries').removeSource('country-boundaries');
-   // });
+   geocoder.on('clear', function () {
+      if (map.getLayer('country-boundaries')) map.removeLayer('country-boundaries').removeSource('country-boundaries');
+   });
 
    geocoder.on('result', function (e) {
       if (map.getLayer('country-boundaries')) map.removeLayer('country-boundaries').removeSource('country-boundaries');
@@ -482,8 +503,8 @@ if (startLocationMap) {
          'country-label',
       );
       marker.setLngLat([lng, lat]);
-      document.getElementById('startLocLat').value = lat;
-      document.getElementById('startLocLng').value = lng;
+      document.getElementById('locLat').value = lat;
+      document.getElementById('locLng').value = lng;
    });
 }
 
@@ -502,8 +523,6 @@ if (tourMap) {
       draggable: false,
       color: '#0d6efd',
    });
-   marker.setLngLat([lng, lat]).addTo(map);
-}
 
-if (createCheckoutSession) {
+   marker.setLngLat([lng, lat]).addTo(map);
 }

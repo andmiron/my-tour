@@ -1,18 +1,18 @@
 header
     nav.navbar.navbar-expand-lg.border-bottom.sticky-top.bg-light
         .container-lg
-            a.navbar-brand(href='/') My Tour
+            a.navbar-brand.fs-3(href='/') My Tour
             button.navbar-toggler(type="button", data-bs-toggle="collapse", data-bs-target="#navbarNav", aria-controls="navbarNav", aria-expanded="false", aria-label="Toggle navigation")
                 span.navbar-toggler-icon
             #navbarNav.collapse.navbar-collapse
-                ul.navbar-nav.mx-auto
+                ul.navbar-nav
                     li.nav-item
                         a.nav-link(href="/") Home
                     li.nav-item
                         a.nav-link(href="/tours") Tours
                     li.nav-item
-                        a.nav-link(href="/guides") Guides
-                ul.navbar-nav.ml-auto.d-flex.align-items-center
+                        a.nav-link(href="/users") Guides
+                ul.navbar-nav.ms-auto
                     if user
                         .nav-item.dropdown
                             button.btn.btn-link.dropdown-toggle(data-bs-toggle="dropdown", aria-expanded="false")

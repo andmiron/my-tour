@@ -1,7 +1,7 @@
 mixin tourCard(tour)
-    .card.border.rounded-3.shadow.text-secondary
+    .card.text-secondary.h-100
         div.position-relative
-            img.card-img-top.img-fluid.rounded-top-5.opacity-25(src= tour.imageCover style='clip-path: polygon(0 0, 100% 0%, 100% 83%, 0% 98%);')
+            img.card-img-top.img-fluid(src= tour.imageCover style='clip-path: polygon(0 0, 100% 0%, 100% 83%, 0% 98%);')
             h3.fw-bold.fs-3.text-white.position-absolute.top-50.start-50.translate-middle.p-1.text-end
                 span.p-1(style='-webkit-box-decoration-break: clone; box-decoration-break: clone; background-image: linear-gradient(\n' +
             '    to bottom right,\n' +
@@ -9,34 +9,39 @@ mixin tourCard(tour)
             '    rgba(35, 131, 255, 0.85)\n' +
             '  );')= tour.name
         .card-body
-            .row
+            .row.h-100.d-flex.flex-column.justify-content-between
                 p.fst-italic= tour.summary
                 .row
-                    .col-auto
+                    div
                         i.bi.bi-pin-map-fill.p-3.text-primary.fs-3
-                        span.text-uppercase= tour.startLocation.description
-                .row
+                        span.text-uppercase= tour.location.description
                     .col-6
-                        i.bi.bi-clock-fill.p-3.text-primary.fs-3
-                        span.text-uppercase= `${tour.duration} ${tour.duration === '1' ? 'day' : 'days'}`
-                    .col-6
-                        i.bi.bi-bar-chart-fill.p-3.text-primary.fs-3
-                        span.text-uppercase= tour.difficulty
-                .row
-                    .col-6
-                        i.bi.bi-people.p-3.text-primary.fs-3
-                        span.text-uppercase= tour.maxGroupSize + ' people'
-                    .col-6
-                        i.bi.bi-star.p-3.text-primary.fs-3
-                        span.text-uppercase= `${tour.ratingsAverage ? tour.ratingsAverage : 'N/A'}`
-                .row
-                    .col
-                        i.bi.bi-currency-dollar.p-3.text-primary.fs-3
-                        if tour.priceDiscount
-                           span.text-uppercase.text-decoration-line-through= tour.price
-                           span.text-uppercase.fs-3= ` ${tour.price - tour.priceDiscount}`
-                        else
-                            span.text-uppercase.fs-3= tour.price
+                        div
+                            i.bi.bi-bar-chart-fill.p-3.text-primary.fs-3
+                            span.text-uppercase= tour.difficulty
+                        div
+                            i.bi.bi-clock-fill.p-3.text-primary.fs-3
+                            span.text-uppercase= `${tour.duration} ${tour.duration === '1' ? 'day' : 'days'}`
+                        div
+                            i.bi.bi-star.p-3.text-primary.fs-3
+                            span.text-uppercase= `${tour.averageRating ? tour.averageRating : 'N/A'}`
+                        //    TODO update rating based on db data
+                        div
+                            i.bi.bi-people.p-3.text-primary.fs-3
+                            span.text-uppercase= tour.maxGroupSize + ' people'
+                        div
+                            i.bi.bi-currency-dollar.p-3.text-primary.fs-3
+                            if tour.priceDiscount
+                                span.text-uppercase.text-decoration-line-through= tour.price
+                                span.text-uppercase.fs-3= ` ${tour.price - tour.priceDiscount}`
+                            else
+                                span.text-uppercase.fs-3= tour.price
+                    .col-6.position-relative
+                        a.position-absolute.top-50.start-50.translate-middle.text-decoration-none.text-secondary(href=`/users/${tour.ownerId.id}`)
+                            div.position-relative
+                                img.img-fluid.rounded-circle(src= tour.ownerId.photo alt=`User photo` style='height:5em')
+                                span.position-absolute.top-0.start-50.translate-middle.badge.rounded-pill.bg-secondary= tour.ownerId.email
+                                span.fs-6.fw-bold Your guide
         a.btn.d-block.rounded-0.rounded-bottom-3.fw-bold.fs-4.text-bg-primary(href=`tours/${tour.slug}`) Details
 
 

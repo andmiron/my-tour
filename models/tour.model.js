@@ -53,7 +53,7 @@ const tourSchema = new mongoose.Schema(
             message: 'Difficulty is [easy, medium or difficult]!',
          },
       },
-      startLocation: {
+      location: {
          type: {
             type: String,
             default: 'Point',
@@ -87,6 +87,7 @@ tourSchema.virtual('averageRating').get(function () {
    if (this.reviews.length === 0) return 0;
    const sum = this.reviews.reduce((sum, review) => sum + review.rating, 0);
    return sum / this.reviews.length;
+   //    TODO fix null value
 });
 
 tourSchema.virtual('numberOfReviews').get(function () {

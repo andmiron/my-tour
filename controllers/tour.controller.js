@@ -2,6 +2,7 @@ const request = require('../services/openai');
 const Tour = require('../models/tour.model');
 const catchAsync = require('../utils/catch.async');
 const sharp = require('sharp');
+const { uploadToS3 } = require('../services/clientS3');
 
 exports.generateRandomInfoHandler = catchAsync(async (req, res) => {
    const tourData = await request();
@@ -12,19 +13,14 @@ exports.generateRandomInfoHandler = catchAsync(async (req, res) => {
 });
 
 exports.createTourHandler = catchAsync(async (req, res) => {
-   const startLocation = {
-      description: req.body.startLocDesc,
-      coordinates: req.body.startLocCoords.split(','),
+   const location = {
+      description: req.body.locDesc,
+      coordinates: req.body.locCoords.split(','),
    };
-   const { startLocCoords, startLocDesc, ...rest } = req.body;
-   const newTour = new Tour({ startLocation, ...rest, guide: req.user._id });
-   req.file.filename = `tour-${newTour.id}.jpeg`;
-   await sharp(req.file.buffer)
-      .resize(2000, 1333)
-      .toFormat('jpeg')
-      .jpeg({ quality: 90 })
-      .toFile(`public/img/${req.file.filename}`);
-   newTour.imageCover = `/img/${req.file.filename}`;
+   const { locCoords, locDesc, ...rest } = req.body;
+   const newTour = new Tour({ location, ...rest, ownerId: req.user._id });
+   const resizedPhotoBuffer = await sharp(req.file.buffer).resize(2000, 1333).jpeg().toBuffer();
+   newTour.imageCover = await uploadToS3(resizedPhotoBuffer, `tour-${newTour.id}.jpeg`, 'image/jpeg');
    await newTour.save();
    res.status(201).send({
       status: 'Tour created',
@@ -33,9 +29,17 @@ exports.createTourHandler = catchAsync(async (req, res) => {
 });
 
 exports.getTourHandler = catchAsync(async (req, res) => {
-   const tour = await Tour.findOne({ slug: req.params.slug });
+   const tour = await Tour.findOne({ slug: req.params.slug }).exec();
    res.status(200).send({
       status: 'success',
       data: tour,
+   });
+});
+
+exports.getAllTours = catchAsync(async (req, res) => {
+   const tours = await Tour.find().populate({ path: 'reviews' }).exec();
+   res.status(200).send({
+      status: 'success',
+      data: tours,
    });
 });
