@@ -12,7 +12,7 @@ passport.use(
       },
       async function localVerify(email, password, done) {
          try {
-            const user = await User.findOne({ email }).select('+password -__v').exec();
+            const user = await User.findOne({ email }).select('+password').exec();
             if (!user) return done(AppError.unauthorized('Incorrect email or password!'));
             if (user.provider === 'google') return done(AppError.unauthorized('Try log in with google!'));
             const isPasswordValid = await user.isPasswordValid(password);
@@ -49,6 +49,6 @@ passport.serializeUser((userId, done) => {
 });
 
 passport.deserializeUser(async (userId, done) => {
-   const user = await User.findById(userId);
+   const user = await User.findById(userId).exec();
    return user ? done(null, user) : done(AppError.unauthorized('Log in with valid user!'));
 });

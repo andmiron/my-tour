@@ -1,4 +1,4 @@
-const request = require('../utils/openai');
+const request = require('../services/openai');
 const Tour = require('../models/tour.model');
 const catchAsync = require('../utils/catch.async');
 const sharp = require('sharp');

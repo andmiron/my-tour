@@ -1,6 +1,6 @@
-const crypto = require('crypto');
+const crypto = require('node:crypto');
 const catchAsync = require('../utils/catch.async');
-const { sendMail } = require('../controllers/email.controller');
+const { sendMail } = require('../services/email');
 const AppError = require('../utils/app.error');
 const User = require('../models/user.model');
 
@@ -32,7 +32,7 @@ exports.logoutHandler = catchAsync(async (req, res, next) => {
 
 exports.forgetPasswordHandler = catchAsync(async (req, res, next) => {
    const { email } = req.body;
-   const user = await User.findOne({ email });
+   const user = await User.findOne({ email }).exec();
    const resetToken = user.createResetToken();
    await user.save({ validateBeforeSave: false });
    try {
@@ -52,13 +52,13 @@ exports.forgetPasswordHandler = catchAsync(async (req, res, next) => {
 
 exports.resetPasswordHandler = catchAsync(async (req, res) => {
    const hashedToken = crypto.createHash('sha256').update(req.params.token).digest('hex');
-   const user = await User.findOne({ passwordResetToken: hashedToken }).select('+password');
+   const user = await User.findOne({ passwordResetToken: hashedToken }).select('+password').exec();
    user.password = req.body.password;
    user.passwordResetToken = undefined;
    user.passwordResetExpires = undefined;
    await user.save();
    res.status(200).send({
       status: 'Password reset',
-      data: user,
+      data: user.email,
    });
 });

@@ -7,7 +7,7 @@ const {
 const { getTourValidator, validate, createTourValidator } = require('../middlewares/validate');
 const router = require('express').Router();
 const multer = require('multer');
-const { isAuthenticated } = require('../middlewares/authenticated');
+const { isAuthenticated } = require('../middlewares/isAuthenticated');
 const upload = multer();
 
 router.get('/:slug', getTourValidator(), validate, getTourHandler);

@@ -13,7 +13,7 @@ const {
    resetPasswordHandler,
 } = require('../controllers/auth.contoller');
 const passport = require('passport');
-const { isAuthenticated } = require('../middlewares/authenticated');
+const { isAuthenticated } = require('../middlewares/isAuthenticated');
 const router = require('express').Router();
 
 router.post('/signup', signupValidator(), validate, signupHandler);
@@ -22,6 +22,6 @@ router.get('/login/google', passport.authenticate('google', { scope: ['email', '
 router.get('/google/callback', passport.authenticate('google', { successRedirect: '/', failureRedirect: '/login' }));
 router.post('/logout', isAuthenticated, logoutHandler);
 router.post('/forget', forgetPasswordValidator(), validate, forgetPasswordHandler);
-router.post('/reset/:token', resetPasswordValidator(), validate, resetPasswordHandler);
+router.patch('/reset/:token', resetPasswordValidator(), validate, resetPasswordHandler);
 
 module.exports = router;

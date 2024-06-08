@@ -9,7 +9,7 @@ module.exports.pinoLogger = pinoLogger;
 const session = require('express-session');
 const sessionOptions = require('./config/session.options');
 const AppError = require('./utils/app.error');
-require('./middlewares/passport');
+require('./services/passport');
 const passport = require('passport');
 const errorHandlerMiddleware = require('./controllers/error.controller');
 const authRouter = require('./routes/auth.router');

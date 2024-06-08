@@ -17,7 +17,7 @@ header
                         .nav-item.dropdown
                             button.btn.btn-link.dropdown-toggle(data-bs-toggle="dropdown", aria-expanded="false")
                                 span.text-secondary.mx-2= user.email
-                                img.img-fluid.rounded-circle(src= user.photo || `img/default_user.jpg` alt=`User photo` style="height:2em")
+                                img.img-fluid.rounded-circle(src= user.photo alt=`User photo` style="height:2em")
                             ul.dropdown-menu
                                 li
                                     a.dropdown-item(href="/profile") Profile

@@ -43,6 +43,7 @@ const userSchema = new mongoose.Schema(
       },
       photo: {
          type: String,
+         default: 'https://my-tour-app.s3.eu-north-1.amazonaws.com/default_user.jpg',
       },
       role: {
          type: String,

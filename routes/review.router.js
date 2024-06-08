@@ -1,4 +1,4 @@
-const { isAuthenticated } = require('../middlewares/authenticated');
+const { isAuthenticated } = require('../middlewares/isAuthenticated');
 const router = require('express').Router();
 const { submitReviewValidator, validate } = require('../middlewares/validate');
 const { submitReviewHandler } = require('../controllers/review.controller');

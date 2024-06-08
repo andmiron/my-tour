@@ -1,67 +1,54 @@
+const fs = require('node:fs/promises');
 const sharp = require('sharp');
 const User = require('../models/user.model');
 const catchAsync = require('../utils/catch.async');
-const { multerUpload } = require('../utils/multer');
 const AppError = require('../utils/app.error');
-const { faker } = require('@faker-js/faker');
-const fetch = require('node-fetch');
-const fs = require('node:fs/promises');
+const { uploadToS3, deleteFromS3 } = require('../services/clientS3');
+const uploadFile = require('../services/multer');
+const getRandomPhotoBuffer = require('../utils/randomPhoto');
 
-const resizeUserPhoto = catchAsync(async (req, res, next) => {
-   req.file.filename = `user-${req.user._id}.jpeg`;
-   await sharp(req.file.buffer)
-      .resize(300, 300)
-      .toFormat('jpeg')
-      .jpeg({ quality: 90 })
-      .toFile(`public/img/${req.file.filename}`);
-   next();
-});
-
-const saveUserPhoto = catchAsync(async (req, res) => {
-   const user = await User.findByIdAndUpdate(
-      { _id: req.user._id },
-      { photo: `/img/${req.file.filename}` },
-      { new: true },
-   );
-   res.status(200).send({
-      status: 'Photo updated',
-      data: user.photo,
-   });
-});
-
-exports.uploadUserPhotoHandler = [multerUpload.single('inputPhoto'), resizeUserPhoto, saveUserPhoto];
+exports.uploadUserPhotoHandler = [
+   uploadFile.single('inputPhoto'),
+   catchAsync(async (req, res, next) => {
+      const resizedPhotoBuffer = await sharp(req.file.buffer).resize(300, 300).jpeg().toBuffer();
+      const uploadedFileURL = await uploadToS3(resizedPhotoBuffer, `user-${req.user.id}.jpeg`, 'image/jpeg');
+      const updatedUser = await User.findByIdAndUpdate(req.user._id, { photo: uploadedFileURL }, { new: true }).exec();
+      res.status(200).send({
+         status: 'Photo uploaded',
+         data: updatedUser.photo,
+      });
+   }),
+];
 
 exports.generatePhotoHandler = catchAsync(async (req, res) => {
-   const photoUrl = faker.image.avatarLegacy();
-   const photo = await fetch(photoUrl);
-   const photoPath = `user-${req.user._id}.jpeg`;
-   await sharp(await photo.buffer())
-      .resize(300, 300)
-      .toFormat('jpeg')
-      .jpeg({ quality: 90 })
-      .toFile(`public/img/${photoPath}`);
-   const user = await User.findByIdAndUpdate({ _id: req.user._id }, { photo: `/img/${photoPath}` }, { new: true });
+   const randomPhotoBuffer = await getRandomPhotoBuffer();
+   const resizedPhotoBuffer = await sharp(randomPhotoBuffer).resize(300, 300).jpeg().toBuffer();
+   const uploadedFileURL = await uploadToS3(resizedPhotoBuffer, `user-${req.user.id}.jpeg`, 'image/jpeg');
+   const updatedUser = await User.findByIdAndUpdate(req.user._id, { photo: uploadedFileURL }, { new: true }).exec();
    res.status(200).send({
       status: 'Photo generated',
-      data: user.photo,
+      data: updatedUser.photo,
    });
 });
 
 exports.deletePhotoHandler = catchAsync(async (req, res, next) => {
-   const user = await User.findById(req.user._id);
-   if (!user.photo) return next(AppError.badRequest('You have no photo!'));
-   await fs.unlink(`public/img/user-${req.user._id}.jpeg`);
-   user.photo = `/img/default_user.jpg`;
+   const user = await User.findById(req.user._id).exec();
+   if (user.photo.includes('default_user')) return next(AppError.badRequest('You have no photo!'));
+   const deleteResult = await deleteFromS3(`user-${req.user._id}.jpeg`);
+   user.photo = new User().photo;
    await user.save();
    res.status(200).send({
       status: 'Photo deleted',
-      data: user.photo,
+      data: deleteResult,
    });
 });
 
 exports.changeEmailHandler = catchAsync(async (req, res, next) => {
-   const { email } = req.body;
-   const user = await User.findByIdAndUpdate(req.user._id, { email }, { new: true, runValidators: true });
+   const user = await User.findByIdAndUpdate(
+      req.user._id,
+      { email: req.body.email },
+      { new: true, runValidators: true },
+   ).exec();
    res.status(200).send({
       status: 'Email changed',
       data: user.email,
@@ -69,7 +56,7 @@ exports.changeEmailHandler = catchAsync(async (req, res, next) => {
 });
 
 exports.changePasswordHandler = catchAsync(async (req, res, next) => {
-   const user = await User.findById(req.user._id).select('+password');
+   const user = await User.findById(req.user._id).select('+password').exec();
    user.password = req.body.newPassword;
    await user.save();
    res.status(200).send({
@@ -79,9 +66,7 @@ exports.changePasswordHandler = catchAsync(async (req, res, next) => {
 });
 
 exports.deleteUserHandler = catchAsync(async (req, res, next) => {
-   const user = await User.findById(req.user._id);
-   if (user.photo) await fs.unlink(`public/img/user-${req.user._id}.jpeg`);
-   await user.deleteOne();
+   await User.deleteUser(req.user._id);
    req.logout((err) => {
       if (err) return next(err);
       req.session.destroy(() => {

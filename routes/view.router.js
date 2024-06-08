@@ -1,5 +1,5 @@
 const { renderPage, renderTours, renderTour, renderMyTours } = require('../controllers/view.controller');
-const { isAuthenticated } = require('../middlewares/authenticated');
+const { isAuthenticated } = require('../middlewares/isAuthenticated');
 const router = require('express').Router();
 
 router.use((req, res, next) => {
