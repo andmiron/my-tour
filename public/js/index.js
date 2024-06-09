@@ -314,6 +314,16 @@ if (submitReviewForm) {
    });
 }
 
+if (createCheckoutSession) {
+   createCheckoutSession.addEventListener('click', async () => {
+      const tourSlug = window.location.pathname.split('/').pop();
+      const response = await fetch(`/api/v1/bookings/checkout/${tourSlug}`, { method: 'POST' });
+      const { redirectTo } = await response.json();
+      if (response.ok) window.location.href = redirectTo;
+      //    TODO error handling
+   });
+}
+
 async function fetchFormData(url, method, body) {
    const response = await fetch(url, {
       method,

@@ -130,6 +130,16 @@ exports.createTourValidator = () => {
    ];
 };
 
+exports.createCheckoutSessionValidator = () => {
+   return [
+      param('tourSlug').custom(async (tourSlug, { req }) => {
+         const tour = await Tour.findOne({ slug: tourSlug }).lean().exec();
+         if (!tour) return Promise.reject(AppError.badRequest('Invalid tour id!'));
+         req.body.tour = tour;
+      }),
+   ];
+};
+
 exports.submitReviewValidator = () => {
    return [
       body('text').isLength({ min: 10 }).withMessage('Review text must be at least 10 characters!'),
@@ -137,7 +147,7 @@ exports.submitReviewValidator = () => {
       body('tour')
          .isMongoId()
          .custom(async (tourId, { req }) => {
-            const tour = await Tour.findById(tourId).exec();
+            const tour = await Tour.findById({ tourId }).exec();
             if (!tour) return Promise.reject('Invalid tour!');
             if (tour.ownerId === req.user.id) return Promise.reject('You can not review your own tour!');
             req.body.tourId = tour.id;
