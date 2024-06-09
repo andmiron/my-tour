@@ -16,9 +16,8 @@ const userRouter = require('./routes/user.router');
 const tourRouter = require('./routes/tour.router');
 const reviewRouter = require('./routes/review.router');
 
-const app = express();
-
 function build() {
+   const app = express();
    connectMongo(process.env.MONGO_CONNECTION_STRING);
    app.set('port', process.env.PORT || 3000);
    app.set('view engine', 'pug');

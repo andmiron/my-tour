@@ -63,7 +63,19 @@ if (logoutBtn)
    });
 
 if (loginBtnGoogle) {
-   loginBtnGoogle.addEventListener('click', () => location.assign('/api/v1/auth/login/google'));
+   loginBtnGoogle.addEventListener('click', () => {
+      window.open('/api/v1/auth/login/google', 'Google Login', 'popup=true');
+      window.addEventListener('message', (event) => {
+         if (event.data === 'google-success') {
+            showAlert('success', 'Google auth success');
+            setTimeout(() => location.assign('/'), 1500);
+         }
+         if (event.data === 'google-failure') {
+            showAlert('warn', 'Google auth failure');
+            setTimeout(() => location.assign('/login'), 1500);
+         }
+      });
+   });
 }
 
 if (forgetPasswordForm) {

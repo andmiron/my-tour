@@ -34,6 +34,6 @@ exports.renderAllUsers = catchAsync(async (req, res) => {
 });
 
 exports.renderUser = catchAsync(async (req, res) => {
-   const user = await User.findById(req.params.userId).populate({ path: 'tours reviews' }).exec();
-   res.render('user', { title: 'User', user });
+   const guide = await User.findById(req.params.userId).populate({ path: 'tours reviews' }).exec();
+   res.render('user', { title: 'User', guide });
 });
