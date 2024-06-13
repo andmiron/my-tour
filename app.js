@@ -16,6 +16,7 @@ const userRouter = require('./routes/user.router');
 const tourRouter = require('./routes/tour.router');
 const reviewRouter = require('./routes/review.router');
 const bookingRouter = require('./routes/booking.router');
+const { checkoutWebhookHandler } = require('./controllers/booking.controller');
 
 function build() {
    const app = express();
@@ -24,6 +25,7 @@ function build() {
    app.set('view engine', 'pug');
    app.set('views', path.join(__dirname, 'views'));
    app.use(express.static(path.join(__dirname, 'public')));
+   app.post('/checkout-webhook', express.raw({ type: 'application/json' }), checkoutWebhookHandler);
    app.use(express.json());
    app.use(express.urlencoded({ extended: true }));
    app.use(session(sessionOptions));
@@ -31,14 +33,14 @@ function build() {
    app.use(morgan(morganConfig));
    app.use(passport.initialize());
    app.use(passport.session());
+   app.use('/', viewRouter);
    app.use('/api/v1/auth', authRouter);
    app.use('/api/v1/users', userRouter);
    app.use('/api/v1/tours', tourRouter);
    app.use('/api/v1/reviews', reviewRouter);
    app.use('/api/v1/bookings', bookingRouter);
-   app.use('/', viewRouter);
    app.all('*', (req, res, next) => {
-      next(AppError.notFound('Resource not found!'));
+      next(AppError.notFound(`Resource not found!: ${req.originalUrl}`));
    });
    app.use(handleError);
    app.listen(app.get('port'), () => {

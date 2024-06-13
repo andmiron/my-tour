@@ -10,7 +10,6 @@ exports.renderPage = function (template, title) {
 
 exports.renderTours = catchAsync(async (req, res) => {
    const tours = await Tour.find().populate({ path: 'ownerId' }).exec();
-   console.log(tours);
    res.render('allTours', { title: 'All tours', tours });
 });
 

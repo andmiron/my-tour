@@ -132,8 +132,8 @@ exports.createTourValidator = () => {
 
 exports.createCheckoutSessionValidator = () => {
    return [
-      param('tourSlug').custom(async (tourSlug, { req }) => {
-         const tour = await Tour.findOne({ slug: tourSlug }).lean().exec();
+      body('tourSlug').custom(async (tourSlug, { req }) => {
+         const tour = await Tour.findOne({ slug: tourSlug }).exec();
          if (!tour) return Promise.reject(AppError.badRequest('Invalid tour id!'));
          req.body.tour = tour;
       }),
