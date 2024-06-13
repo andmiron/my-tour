@@ -4,7 +4,7 @@ const { isAuthenticated } = require('../middlewares/isAuthenticated');
 const { createCheckoutSessionValidator, validate } = require('../middlewares/validate');
 
 router.post(
-   '/checkout/:tourSlug',
+   '/checkout/create-session',
    isAuthenticated,
    createCheckoutSessionValidator(),
    validate,

@@ -1,4 +1,4 @@
-const { validationResult, body, param } = require('express-validator');
+const { validationResult, body, param, query } = require('express-validator');
 const AppError = require('../utils/app.error');
 const User = require('../models/user.model');
 const Tour = require('../models/tour.model');
@@ -132,12 +132,17 @@ exports.createTourValidator = () => {
 
 exports.createCheckoutSessionValidator = () => {
    return [
-      param('tourSlug').custom(async (tourSlug, { req }) => {
-         const tour = await Tour.findOne({ slug: tourSlug }).lean().exec();
+      body('tourSlug').custom(async (tourSlug, { req }) => {
+         const tour = await Tour.findOne({ slug: tourSlug }).exec();
          if (!tour) return Promise.reject(AppError.badRequest('Invalid tour id!'));
          req.body.tour = tour;
       }),
    ];
+};
+
+exports.renderSuccessCheckout = () => {
+   return [query('session_id').custom(sessionId, (req) => {})];
+   //    TODO finish stripe session validation
 };
 
 exports.submitReviewValidator = () => {
@@ -147,7 +152,7 @@ exports.submitReviewValidator = () => {
       body('tour')
          .isMongoId()
          .custom(async (tourId, { req }) => {
-            const tour = await Tour.findById({ tourId }).exec();
+            const tour = await Tour.findById(tourId).exec();
             if (!tour) return Promise.reject('Invalid tour!');
             if (tour.ownerId === req.user.id) return Promise.reject('You can not review your own tour!');
             req.body.tourId = tour.id;

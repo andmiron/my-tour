@@ -7,7 +7,7 @@ const bookingSchema = new mongoose.Schema(
          ref: 'Tour',
          required: [true, 'Booking must belong to a Tour!'],
       },
-      userId: {
+      ownerId: {
          type: mongoose.Schema.ObjectId,
          ref: 'User',
          required: [true, 'Booking must belong to a User!'],
@@ -25,8 +25,9 @@ const bookingSchema = new mongoose.Schema(
    { timestamps: true },
 );
 
-bookingSchema.post('save', async function (doc) {
+bookingSchema.post('save', async function (doc, next) {
    await mongoose.model('User').findByIdAndUpdate(doc.userId, { $push: { bookings: doc._id } });
+   next();
 });
 
 const Booking = mongoose.model('Booking', bookingSchema);

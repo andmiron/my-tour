@@ -31,7 +31,8 @@ block content
                         | #{tour.ownerId.email}
                     div.ms-auto
                         if user
-                            button.btn.btn-lg.btn-primary.create-checkout-session(type='button') Book a tour
+                            form.create-checkout-session-form
+                                button.btn.btn-lg.btn-primary(type='submit') Book a tour
                         else
                             p.m-0.
                                 To book a tour please #[a(href='/login') Log in]

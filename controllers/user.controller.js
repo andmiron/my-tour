@@ -1,4 +1,3 @@
-const fs = require('node:fs/promises');
 const sharp = require('sharp');
 const User = require('../models/user.model');
 const catchAsync = require('../utils/catch.async');
@@ -66,6 +65,7 @@ exports.changePasswordHandler = catchAsync(async (req, res, next) => {
 });
 
 exports.deleteUserHandler = catchAsync(async (req, res, next) => {
+   if (!req.user.photo.includes('default_user')) await deleteFromS3(`user-${req.user._id}.jpeg`);
    await User.deleteUser(req.user._id);
    req.logout((err) => {
       if (err) return next(err);

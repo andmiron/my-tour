@@ -14,7 +14,7 @@ const startLocationMap = document.getElementById('start-location-map');
 const createTourForm = document.querySelector('.create-tour-form');
 const generateGeneralInfoBtn = document.querySelector('.generate-general-info');
 const tourMap = document.getElementById('tour-map');
-const createCheckoutSession = document.querySelector('.create-checkout-session');
+const createCheckoutSessionForm = document.querySelector('.create-checkout-session-form');
 const submitReviewForm = document.getElementById('submit-review');
 const baseMap = document.getElementById('base-map');
 
@@ -186,7 +186,6 @@ if (changeEmailForm) {
       e.preventDefault();
       const email = document.getElementById('inputEmail').value;
       const { status, data } = await sendJSON('/api/v1/users/email', 'PUT', { email });
-      console.log(status, data);
       if (status === 'error') return showAlert('danger', data);
       showAlert('success', status);
       window.setTimeout(() => {
@@ -314,13 +313,18 @@ if (submitReviewForm) {
    });
 }
 
-if (createCheckoutSession) {
-   createCheckoutSession.addEventListener('click', async () => {
+if (createCheckoutSessionForm) {
+   createCheckoutSessionForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      showAlert('info', 'Redirecting to payment page...');
       const tourSlug = window.location.pathname.split('/').pop();
-      const response = await fetch(`/api/v1/bookings/checkout/${tourSlug}`, { method: 'POST' });
-      const { redirectTo } = await response.json();
-      if (response.ok) window.location.href = redirectTo;
-      //    TODO error handling
+      try {
+         const response = await sendJSON(`/api/v1/bookings/checkout/create-session`, 'POST', { tourSlug: tourSlug });
+         const { redirectUrl } = await response;
+         window.location.href = redirectUrl;
+      } catch (err) {
+         showAlert('danger', 'Checkout redirect failure!');
+      }
    });
 }
 

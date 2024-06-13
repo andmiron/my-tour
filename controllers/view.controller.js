@@ -1,3 +1,4 @@
+const stripe = require('stripe')(process.env.STRIPE_API_KEY);
 const Tour = require('../models/tour.model');
 const catchAsync = require('../utils/catch.async');
 const User = require('../models/user.model');
@@ -10,7 +11,6 @@ exports.renderPage = function (template, title) {
 
 exports.renderTours = catchAsync(async (req, res) => {
    const tours = await Tour.find().populate({ path: 'ownerId' }).exec();
-   console.log(tours);
    res.render('allTours', { title: 'All tours', tours });
 });
 
@@ -36,4 +36,11 @@ exports.renderAllUsers = catchAsync(async (req, res) => {
 exports.renderUser = catchAsync(async (req, res) => {
    const guide = await User.findById(req.params.userId).populate({ path: 'tours reviews' }).exec();
    res.render('user', { title: 'User', guide });
+});
+
+exports.renderSuccessCheckout = catchAsync(async (req, res) => {
+   const { session_id } = req.query;
+   const session = await stripe.checkout.sessions.retrieve(session_id);
+   res.render('paymentSuccess', { title: 'Success', session: JSON.stringify(session) });
+   //    TODO finish redirecting on my bookings page and fill with relative data from session
 });

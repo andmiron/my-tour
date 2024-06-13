@@ -7,6 +7,7 @@ const {
    renderMyTours,
    renderAllUsers,
    renderUser,
+   renderSuccessCheckout,
 } = require('../controllers/view.controller');
 
 router.use((req, res, next) => {
@@ -28,5 +29,6 @@ router.get('/my-tours', isAuthenticated, renderMyTours);
 router.get('/tours/create', isAuthenticated, renderPage('createTour', 'Create tour'));
 router.get('/tours', renderTours);
 router.get('/tours/:tourSlug', renderTour);
+router.get('/payment/success', renderSuccessCheckout);
 
 module.exports = router;

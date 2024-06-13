@@ -96,6 +96,7 @@ userSchema.statics.deleteUser = async function (userId) {
    try {
       await mongoose.model('Tour').deleteMany({ ownerId: userId }, { session });
       await mongoose.model('Review').deleteMany({ ownerId: userId }, { session });
+      await mongoose.model('Booking').deleteMany({ ownerId: userId }, { session });
       await this.findByIdAndDelete(userId);
       await session.commitTransaction();
    } catch (err) {
