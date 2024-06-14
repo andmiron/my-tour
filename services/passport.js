@@ -50,7 +50,7 @@ passport.serializeUser((userId, done) => {
 
 passport.deserializeUser(async (userId, done) => {
    const user = await User.findById(userId).exec();
-   return user ? done(null, user) : done(AppError.unauthorized('Log in with valid user!'));
+   return user ? done(null, user) : done(null, false, AppError.unauthorized('Log in with valid user!'));
 });
 
 module.exports = passport;

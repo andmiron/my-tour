@@ -3,6 +3,15 @@ include _profileNav
 
 block content
     .container
-        .row.p-3.g-5
+        .row.text-center.p-3
+            h2 My reviews
+        .row
             .col-2.p-3.d-flex.flex-column
                 +profileNav
+            .col-10.p-3.text-center
+                if reviews.length
+                   each review in reviews
+                      p= review
+                else
+                    h5 You have no reviews for now
+                    a.btn.btn-secondary.btn-lg.mt-3(href='/tours') Pick a tour to leave a review

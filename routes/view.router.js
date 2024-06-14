@@ -8,6 +8,10 @@ const {
    renderAllUsers,
    renderUser,
    renderSuccessCheckout,
+   renderFailureCheckout,
+   renderMyBookings,
+   renderMyReviews,
+   renderEditTour,
 } = require('../controllers/view.controller');
 
 router.use((req, res, next) => {
@@ -20,15 +24,17 @@ router.get('/signup', renderPage('signup', 'Signup'));
 router.get('/login', renderPage('login', 'Login'));
 router.get('/forget', renderPage('forgetPassword', 'Forget password'));
 router.get('/reset/:token', renderPage('resetPassword', 'Reset password'));
-router.get('/users', renderAllUsers);
+router.get('/guides', renderAllUsers);
 router.get('/users/:userId', renderUser);
 router.get('/profile', isAuthenticated, renderPage('profile', 'Profile'));
-router.get('/my-reviews', isAuthenticated, renderPage('myReviews', 'My reviews'));
-router.get('/my-bookings', isAuthenticated, renderPage('myBookings', 'My bookings'));
+router.get('/my-reviews', isAuthenticated, renderMyReviews);
+router.get('/my-bookings', isAuthenticated, renderMyBookings);
 router.get('/my-tours', isAuthenticated, renderMyTours);
 router.get('/tours/create', isAuthenticated, renderPage('createTour', 'Create tour'));
 router.get('/tours', renderTours);
 router.get('/tours/:tourSlug', renderTour);
+router.get('/tours/:tourSlug/edit', isAuthenticated, renderEditTour);
 router.get('/payment/success', renderSuccessCheckout);
+router.get('/payment/failure', renderFailureCheckout);
 
 module.exports = router;

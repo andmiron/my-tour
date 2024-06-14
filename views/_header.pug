@@ -11,7 +11,7 @@ header
                     li.nav-item
                         a.nav-link(href="/tours") Tours
                     li.nav-item
-                        a.nav-link(href="/users") Guides
+                        a.nav-link(href="/guides") Guides
                 ul.navbar-nav.ms-auto
                     if user
                         .nav-item.dropdown
@@ -21,10 +21,12 @@ header
                             ul.dropdown-menu
                                 li
                                     a.dropdown-item(href="/profile") Profile
-                                    a.dropdown-item(href="/my-tours") My tours
-                                    a.dropdown-item(href="/my-bookings") My bookings
-                                    a.dropdown-item(href="/my-reviews") My reviews
-                                //    TODO add badges about tours, bookings
+                                    a.dropdown-item(href="/my-tours").
+                                        My tours #[span.badge.text-bg-secondary.align-middle= user.tours.length]
+                                    a.dropdown-item(href="/my-bookings").
+                                        My bookings #[span.badge.text-bg-secondary.align-middle= user.bookings.length]
+                                    a.dropdown-item(href="/my-reviews").
+                                        My reviews #[span.badge.text-bg-secondary.align-middle= user.reviews.length]
                                 hr
                                 li
                                     btn.btn.btn-secondary.dropdown-item.logout-btn Log out

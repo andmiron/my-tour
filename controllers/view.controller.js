@@ -2,6 +2,8 @@ const stripe = require('stripe')(process.env.STRIPE_API_KEY);
 const Tour = require('../models/tour.model');
 const catchAsync = require('../utils/catch.async');
 const User = require('../models/user.model');
+const Booking = require('../models/booking.model');
+const Review = require('../models/review.model');
 
 exports.renderPage = function (template, title) {
    return function (req, res) {
@@ -24,13 +26,13 @@ exports.renderTour = catchAsync(async (req, res) => {
 });
 
 exports.renderMyTours = catchAsync(async (req, res) => {
-   const tours = await Tour.find({ guide: req.user._id }).exec();
+   const tours = await Tour.find({ ownerId: req.user._id }).populate({ path: 'ownerId', select: 'photo' }).exec();
    res.render('myTours', { title: 'My tours', tours });
 });
 
 exports.renderAllUsers = catchAsync(async (req, res) => {
-   const users = await User.find().populate({ path: 'tours reviews' }).exec();
-   res.render('allUsers', { title: 'Users', users });
+   const guides = await User.find().populate({ path: 'tours reviews' }).exec();
+   res.render('allUsers', { title: 'Users', guides });
 });
 
 exports.renderUser = catchAsync(async (req, res) => {
@@ -39,8 +41,26 @@ exports.renderUser = catchAsync(async (req, res) => {
 });
 
 exports.renderSuccessCheckout = catchAsync(async (req, res) => {
-   const { session_id } = req.query;
-   const session = await stripe.checkout.sessions.retrieve(session_id);
-   res.render('paymentSuccess', { title: 'Success', session: JSON.stringify(session) });
-   //    TODO finish redirecting on my bookings page and fill with relative data from session
+   res.render('paymentSuccess', { title: 'Success' });
+});
+
+exports.renderFailureCheckout = catchAsync(async (req, res) => {
+   res.render('paymentFailure', { title: 'Failure' });
+});
+
+exports.renderMyReviews = catchAsync(async (req, res) => {
+   const reviews = await Review.find({ ownerId: req.user.id }).exec();
+   res.render('myReviews', { title: 'Reviews', reviews });
+});
+
+exports.renderEditTour = catchAsync(async (req, res) => {});
+
+exports.renderMyBookings = catchAsync(async (req, res) => {
+   const bookingsData = await Booking.find({ ownerId: req.user.id }).exec();
+   const bookings = await Promise.all(
+      bookingsData.map(async (booking) => {
+         return await stripe.checkout.sessions.retrieve(booking.stripeSessionId);
+      }),
+   );
+   res.render('myBookings', { title: 'My Bookings', bookings });
 });

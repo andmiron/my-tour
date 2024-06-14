@@ -11,9 +11,9 @@ block content
         .row.text-center.p-3
             h2 My Account
         .row
-            .col-2
+            .col-2.p-3.d-flex.flex-column
                 +profileNav
-            .col-10
+            .col-10.p-3.text-center
                 .row
                     .col-5.p-3
                         .d-flex.flex-column.align-items-center.mb-3
@@ -36,13 +36,14 @@ block content
                                 +inputGroup('inputEmail', 'email', user.email)
                                 button.btn.btn-primary.align-self-end(type='submit') Change email
                     .col-5.p-3
-                        form.d-flex.flex-column.change-password-form
-                            h5.mb-3 Change password
-                            +inputGroup('inputOldPassword', 'password', 'Old password')(minlength='6' aria-describedby='helpPassword')
-                            +inputGroup('inputNewPassword', 'password', 'New Password')(minlength='6' aria-describedby='helpPassword')
-                            +inputGroup('inputConfirmNewPassword', 'password', 'Confirm new password')(minlength='6' aria-describedby='helpPassword')
-                            p.form-text(id='helpPassword') Password must be at least 6 characters long
-                            button.btn.btn-primary.align-self-end(id='changePassword') Change password
+                        if user.provider !== 'google'
+                            form.d-flex.flex-column.change-password-form
+                                h5.mb-3 Change password
+                                +inputGroup('inputOldPassword', 'password', 'Old password')(minlength='6' aria-describedby='helpPassword')
+                                +inputGroup('inputNewPassword', 'password', 'New Password')(minlength='6' aria-describedby='helpPassword')
+                                +inputGroup('inputConfirmNewPassword', 'password', 'Confirm new password')(minlength='6' aria-describedby='helpPassword')
+                                p.form-text(id='helpPassword') Password must be at least 6 characters long
+                                button.btn.btn-primary.align-self-end(id='changePassword') Change password
                         .d-flex.align-items-center.justify-content-between.mt-5
                             h5 Delete profile
                             button.btn.btn-danger.mt-3(type='button' data-bs-toggle='modal' data-bs-target='#deleteProfileModal') Delete profile

@@ -8,7 +8,7 @@ module.exports = {
    saveUninitialized: true,
    rolling: true,
    cookie: {
-      maxAge: 360000,
+      maxAge: 1000 * 60 * 60,
       secure: false,
       httpOnly: true,
    },

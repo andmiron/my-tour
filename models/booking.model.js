@@ -2,6 +2,11 @@ const mongoose = require('mongoose');
 
 const bookingSchema = new mongoose.Schema(
    {
+      stripeSessionId: {
+         type: String,
+         required: true,
+         unique: true,
+      },
       tourId: {
          type: mongoose.Schema.ObjectId,
          ref: 'Tour',
@@ -11,15 +16,6 @@ const bookingSchema = new mongoose.Schema(
          type: mongoose.Schema.ObjectId,
          ref: 'User',
          required: [true, 'Booking must belong to a User!'],
-      },
-      price: {
-         type: Number,
-         min: 1,
-         required: [true, 'Booking must have a price.'],
-      },
-      isPaid: {
-         type: Boolean,
-         default: false,
       },
    },
    { timestamps: true },

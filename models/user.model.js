@@ -92,11 +92,12 @@ userSchema.methods.createEmailToken = function () {
 
 userSchema.statics.deleteUser = async function (userId) {
    const session = await mongoose.startSession();
+   const ownerId = userId;
    session.startTransaction();
    try {
-      await mongoose.model('Tour').deleteMany({ ownerId: userId }, { session });
-      await mongoose.model('Review').deleteMany({ ownerId: userId }, { session });
-      await mongoose.model('Booking').deleteMany({ ownerId: userId }, { session });
+      await mongoose.model('Tour').deleteMany({ ownerId }, { session });
+      await mongoose.model('Review').deleteMany({ ownerId }, { session });
+      await mongoose.model('Booking').deleteMany({ ownerId }, { session });
       await this.findByIdAndDelete(userId);
       await session.commitTransaction();
    } catch (err) {

@@ -24,6 +24,7 @@ exports.createCheckoutSessionHandler = catchAsync(async (req, res, next) => {
       success_url: `${req.protocol}://${req.get('host')}/payment/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${req.protocol}://${req.get('host')}/api/v1/bookings/checkout/failure`,
    });
+   // TODO create checkout record here
    res.status(200).send({
       redirectUrl: session.url,
    });
@@ -48,12 +49,15 @@ exports.checkoutWebhookHandler = catchAsync(async (req, res, next) => {
          process.env.STRIPE_WEBHOOK_SECRET,
       );
    }
+
    async function submitPayment() {
       const checkoutSession = await stripe.checkout.sessions.retrieve(event.data.object.id);
-      const { client_reference_id: tourId, customer_email: email, amount_total: price } = checkoutSession;
+      const { client_reference_id: tourId, customer_email: email, id: stripeSessionId } = checkoutSession;
       const user = await User.findOne({ email }).exec();
-      await Booking.create({ tourId, ownerId: user.id, price, isPaid: true });
+      await Booking.create({ tourId, ownerId: user.id, stripeSessionId });
    }
 
    res.status(200).end();
 });
+
+//TODO create endpoint to redirect user to payment later in time

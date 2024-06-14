@@ -250,6 +250,9 @@ if (createTourForm) {
          return showAlert('danger', data);
       }
       showAlert('success', status);
+      window.setTimeout(() => {
+         window.location.href = '/my-tours';
+      }, 1000);
       submitBtn.innerHTML = originalText;
       submitBtn.disabled = false;
    });
@@ -350,7 +353,7 @@ async function sendJSON(url, method, data) {
 function showAlert(type, message) {
    hideAlert();
    const markup = [
-      `<div class="alert alert-${type} alert-dismissible position-fixed translate-middle shadow" style="top: 11%; left: 50%; z-index: 10000" role="alert">`,
+      `<div class="alert alert-${type} alert-dismissible position-fixed translate-middle shadow" style="top: 12%; left: 50%; z-index: 10000" role="alert">`,
       `   <div>${message}</div>`,
       '   <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>',
       '</div>',
