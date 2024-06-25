@@ -11,5 +11,6 @@ router.post(
    BookingsValidator.validate,
    catchAsync(BookingsController.createCheckoutSession),
 );
+router.get('/', isAuthenticated, BookingsController.getMyBookings);
 
 module.exports = router;

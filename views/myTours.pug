@@ -1,31 +1,21 @@
-extends base
-include _profileNav
-include _tourCard
+extends baseProfile
 
-block content
-    .container
-        .row.text-center.p-3
-            h2 My tours
-        .row
-            .col-2.p-3.d-flex.flex-column
-                +profileNav
-            .col-10.p-3.text-center
-                .row
-                    if tours.length
-                        each tour in tours
-                            .position-relative.w-25
-                                a(href=`/tours/${tour.slug}`)
-                                    div.position-relative
-                                        img.card-img-top.img-fluid(src= tour.imageCover style='clip-path: polygon(0 0, 100% 0%, 100% 83%, 0% 98%);')
-                                        h3.fw-bold.fs-3.text-white.position-absolute.top-50.start-50.translate-middle.p-1.text-end
-                                            span.p-1(style='-webkit-box-decoration-break: clone; box-decoration-break: clone; background-image: linear-gradient(\n' +
-                                            '    to bottom right,\n' +
-                                            '    rgba(70, 25, 255, 0.85),\n' +
-                                            '    rgba(35, 131, 255, 0.85)\n' +
-                                            '  );')= tour.name
-                                a.position-absolute.bottom-0.end-0.text-end.translate-middle-x(href=`/tours/${tour.slug}/edit`)
-                                    i.bi.bi-pencil-square.text-secondary.fs-2.bg-light.rounded-3
-                    else
-                        h5 You have no created tours
-                        a.btn.btn-secondary.btn-lg.mt-3(href='/tours/create') Create your first tour
+block profilePage
+    .row
+        if tours.length
+            each tour in tours
+                .position-relative.w-25
+                    a(href=`/tours/${tour.slug}`)
+                        div.position-relative
+                            img.card-img-top.img-fluid(src= tour.imageCover style='clip-path: polygon(0 0, 100% 0%, 100% 83%, 0% 98%);')
+                            h3.fw-bold.fs-3.text-white.position-absolute.top-50.start-50.translate-middle.p-1.text-end
+                                span.p-1(style='-webkit-box-decoration-break: clone; box-decoration-break: clone; background-image: linear-gradient(\n' +
+                                '    to bottom right,\n' +
+                                '    rgba(70, 25, 255, 0.85),\n' +
+                                '    rgba(35, 131, 255, 0.85)\n' +
+                                '  );')= tour.name
+                    a.btn.btn-secondary.position-absolute.end-0.top-100.translate-middle-y.text-decoration-none(href=`/tours/${tour.slug}/edit`) Edit
+        else
+            h5 You have no created tours
+            a.btn.btn-secondary.btn-lg.mt-3(href='/tours/create') Create your first tour
 

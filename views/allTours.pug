@@ -2,12 +2,11 @@ extends base
 include _tourCard
 
 block content
-    #base-map.position-absolute.top-0.bottom-0.w-100.opacity-50
     .container-lg.z-2
         .d-flex.justify-content-end.align-items-center.py-3.gap-3
             button.btn.btn-outline-primary(onclick=`window.location.href='/tours/create'`) Create tour
             h1.fw-bold.text-end All tours
-        .row.py-2.g-3
+        .row.py-2.g-4
             each tour in tours
                .col-4.z-2
                    +tourCard(tour)

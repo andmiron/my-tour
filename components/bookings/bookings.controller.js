@@ -13,7 +13,7 @@ class BookingsController {
       });
       const tourPrice = await stripe.prices.create({
          product: tourProduct.id,
-         unit_amount: tour.price,
+         unit_amount: tour.price * 100,
          currency: 'usd',
       });
       const session = await stripe.checkout.sessions.create({
@@ -21,7 +21,7 @@ class BookingsController {
          mode: 'payment',
          customer_email: req.user.email,
          success_url: `${req.protocol}://${req.get('host')}/payment/success?session_id={CHECKOUT_SESSION_ID}`,
-         cancel_url: `${req.protocol}://${req.get('host')}/api/v1/bookings/checkout/failure`,
+         cancel_url: `${req.protocol}://${req.get('host')}/payment/failure`,
          metadata: {
             userId: req.user.id,
             tourId: tour.id,
@@ -50,8 +50,8 @@ class BookingsController {
             {
                const session = event.data.object;
                const newBooking = await bookingRepository.create({
-                  tourId: session.metadata.tourId,
                   ownerId: session.metadata.userId,
+                  tourId: session.metadata.tourId,
                   stripeSessionId: session.id,
                });
                if (session.payment_status === 'paid') {
@@ -79,6 +79,24 @@ class BookingsController {
       }
 
       res.status(200).end();
+   }
+
+   async getMyBookings(req, res) {
+      const bookingsQuery = bookingRepository.getMany({ ownerId: req.user.id });
+      const bookings = await bookingsQuery.populate('tourId').exec();
+      res.status(200).send({
+         status: 'success',
+         data: {
+            bookings,
+         },
+      });
+   }
+
+   async getMyBooking(req, res) {
+      const booking = await bookingRepository.getOne({ tourId });
+      const sessionWithLineItems = await stripe.checkout.sessions.retrieve(booking.stripeSessionId, {
+         expand: ['line_items'],
+      });
    }
 }
 

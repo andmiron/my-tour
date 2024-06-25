@@ -3,39 +3,39 @@ class BaseRepository {
       this.model = model;
    }
 
-   async create(fields) {
+   create(fields) {
       return new this.model(fields);
    }
 
-   async createAndSave(fields) {
+   createAndSave(fields) {
       return this.model.create(fields);
    }
 
-   async getOne(filter) {
+   getOne(filter) {
       return this.model.findOne(filter);
    }
 
-   async getOneById(id) {
+   getOneById(id) {
       return this.model.findById(id);
    }
 
-   async getMany(fields) {
-      return this.model.find(fields);
+   getMany(filter) {
+      return this.model.find(filter);
    }
 
-   async getOneAndUpdate(filter, update) {
+   getOneAndUpdate(filter, update) {
       return this.model.findOneAndUpdate(filter, update);
    }
 
-   async getOneByIdAndUpdate(id, update) {
+   getOneByIdAndUpdate(id, update) {
       return this.model.findByIdAndUpdate(id, update);
    }
 
-   async deleteOne(filter) {
+   deleteOne(filter) {
       return this.model.deleteOne(filter);
    }
 
-   async deleteMany(filter) {
+   deleteMany(filter) {
       return this.model.deleteMany(filter);
    }
 }

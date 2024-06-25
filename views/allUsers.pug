@@ -4,10 +4,11 @@ block content
     #base-map.position-absolute.top-0.bottom-0.w-100.opacity-50
     .container.z-2
         h1.p-3.fw-bold.text-end Guides
-        .row.p-3
+        .row.p-3.gap-3
             each guide in guides
-                .card.align-items-center(style='width: 300px')
+                .card.align-items-center.p-3(style='width: auto')
                     div.position-relative
-                        img.img-fluid.rounded-circle(src= guide.photo alt=`User photo` style='height:5em')
+                        img.card-img-top.img-fluid.rounded-circle(src= guide.photo alt=`User photo` style='height:5em')
                         span.position-absolute.top-0.start-100.translate-middle.badge.rounded-pill.bg-secondary= guide.role
-                    .card-body
+
+                    h6.card-title= guide.email

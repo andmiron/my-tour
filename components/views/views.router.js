@@ -27,7 +27,7 @@ router.get('/forget', renderPage('forgetPassword', 'Forget password'));
 router.get('/reset/:token', renderPage('resetPassword', 'Reset password'));
 router.get('/guides', renderAllUsers);
 router.get('/users/:userId', renderUser);
-router.get('/profile', isAuthenticated, renderPage('profile', 'Profile'));
+router.get('/my-profile', isAuthenticated, renderPage('myAccount', 'Profile'));
 router.get('/my-reviews', isAuthenticated, renderMyReviews);
 router.get('/my-bookings', isAuthenticated, renderMyBookings);
 router.get('/my-tours', isAuthenticated, renderMyTours);

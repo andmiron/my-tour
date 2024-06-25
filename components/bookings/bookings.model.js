@@ -26,7 +26,7 @@ const bookingSchema = new mongoose.Schema(
 );
 
 bookingSchema.post('save', async function (doc, next) {
-   await mongoose.model('User').findByIdAndUpdate(doc.userId, { $push: { bookings: doc._id } });
+   await mongoose.model('User').findByIdAndUpdate(doc.ownerId, { $push: { bookings: doc._id } });
    next();
 });
 

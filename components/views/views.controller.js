@@ -2,7 +2,7 @@ const stripe = require('stripe')(process.env.STRIPE_API_KEY);
 const Tour = require('../tours/tours.model');
 const catchAsync = require('../../utils/catch.async');
 const User = require('../users/users.model');
-const Booking = require('../bookings/bookings.model');
+const bookingRepository = require('../bookings/booking.repository');
 const Review = require('../reviews/reviews.model');
 
 exports.renderPage = function (template, title) {
@@ -53,14 +53,13 @@ exports.renderMyReviews = catchAsync(async (req, res) => {
    res.render('myReviews', { title: 'Reviews', reviews });
 });
 
-exports.renderEditTour = catchAsync(async (req, res) => {});
+exports.renderEditTour = catchAsync(async (req, res) => {
+   res.render('tourEdit', { title: 'Edit tour' });
+});
 
 exports.renderMyBookings = catchAsync(async (req, res) => {
-   const bookingsData = await Booking.find({ ownerId: req.user.id }).exec();
-   const bookings = await Promise.all(
-      bookingsData.map(async (booking) => {
-         return await stripe.checkout.sessions.retrieve(booking.stripeSessionId);
-      }),
-   );
+   const bookingsQuery = bookingRepository.getMany({ ownerId: req.user.id });
+   const bookings = await bookingsQuery.populate('tourId').exec();
+   console.log(bookings);
    res.render('myBookings', { title: 'My Bookings', bookings });
 });
