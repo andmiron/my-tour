@@ -71,7 +71,7 @@ if (loginBtnGoogle) {
             setTimeout(() => location.assign('/'), 1500);
          }
          if (event.data === 'google-failure') {
-            showAlert('warn', 'Google auth failure');
+            showAlert('warning', 'Google auth failure');
             setTimeout(() => location.assign('/login'), 1500);
          }
       });

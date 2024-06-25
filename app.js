@@ -10,13 +10,13 @@ const { connectMongo } = require('./services/mongo');
 const handleError = require('./middlewares/errorHandler');
 const generateRequestId = require('./middlewares/genReqId');
 const morganConfig = require('./services/morgan');
-const authRouter = require('./routes/auth.router');
-const viewRouter = require('./routes/view.router');
-const userRouter = require('./routes/user.router');
-const tourRouter = require('./routes/tour.router');
-const reviewRouter = require('./routes/review.router');
-const bookingRouter = require('./routes/booking.router');
-const { checkoutWebhookHandler } = require('./controllers/booking.controller');
+const authRouter = require('./components/auth/auth.router');
+const viewRouter = require('./components/views/views.router');
+const userRouter = require('./components/users/users.router');
+const tourRouter = require('./components/tours/tours.router');
+const reviewRouter = require('./components/reviews/reviews.router');
+const bookingRouter = require('./components/bookings/bookings.router');
+const BookingsController = require('./components/bookings/bookings.controller');
 
 function build() {
    const app = express();
@@ -25,7 +25,7 @@ function build() {
    app.set('view engine', 'pug');
    app.set('views', path.join(__dirname, 'views'));
    app.use(express.static(path.join(__dirname, 'public')));
-   app.post('/checkout-webhook', express.raw({ type: 'application/json' }), checkoutWebhookHandler);
+   app.post('/checkout-webhook', express.raw({ type: 'application/json' }), BookingsController.checkoutWebhook);
    app.use(express.json());
    app.use(express.urlencoded({ extended: true }));
    app.use(session(sessionOptions));

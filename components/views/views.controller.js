@@ -1,9 +1,9 @@
 const stripe = require('stripe')(process.env.STRIPE_API_KEY);
-const Tour = require('../models/tour.model');
-const catchAsync = require('../utils/catch.async');
-const User = require('../models/user.model');
-const Booking = require('../models/booking.model');
-const Review = require('../models/review.model');
+const Tour = require('../tours/tours.model');
+const catchAsync = require('../../utils/catch.async');
+const User = require('../users/users.model');
+const Booking = require('../bookings/bookings.model');
+const Review = require('../reviews/reviews.model');
 
 exports.renderPage = function (template, title) {
    return function (req, res) {

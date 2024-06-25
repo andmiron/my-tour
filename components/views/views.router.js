@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const { isAuthenticated } = require('../middlewares/isAuthenticated');
+const { isAuthenticated } = require('../../middlewares/isAuthenticated');
 const {
    renderPage,
    renderTours,
@@ -12,7 +12,7 @@ const {
    renderMyBookings,
    renderMyReviews,
    renderEditTour,
-} = require('../controllers/view.controller');
+} = require('./views.controller');
 
 router.use((req, res, next) => {
    if (req.user) res.locals.user = req.user;

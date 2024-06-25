@@ -1,9 +1,12 @@
 const { OpenAI } = require('openai');
 const fs = require('node:fs');
+const path = require('node:path');
 
 const openai = new OpenAI();
 
-const modelText = fs.readFileSync('./models/tour.model.js', { encoding: 'utf8' });
+const modelText = fs.readFileSync(path.resolve(process.cwd(), 'components', 'tours', 'tours.model.js'), {
+   encoding: 'utf8',
+});
 
 const prompt =
    'You need to generate random travel tour data by the following mongoose schema: \n' +

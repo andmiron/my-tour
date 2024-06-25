@@ -26,6 +26,20 @@ bookingSchema.post('save', async function (doc, next) {
    next();
 });
 
+bookingSchema.statics.deleteBooking = async function (bookingId) {
+   const session = await mongoose.startSession();
+   await session.startTransaction();
+   try {
+      await mongoose.model('User').updateOne({ bookings: bookingId }, { $pull: { bookings: bookingId } }, { session });
+      await this.findByIdAndDelete(bookingId);
+      await session.commitTransaction();
+   } catch (err) {
+      await session.abortTransaction();
+   } finally {
+      await session.endSession();
+   }
+};
+
 const Booking = mongoose.model('Booking', bookingSchema);
 
 module.exports = Booking;
