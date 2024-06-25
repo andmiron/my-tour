@@ -5,11 +5,12 @@ const path = require('path');
 const session = require('express-session');
 const passport = require('./services/passport');
 const sessionOptions = require('./config/session.options');
-const AppError = require('./utils/app.error');
+const AppError = require('./common/AppError');
 const { connectMongo } = require('./services/mongo');
 const handleError = require('./middlewares/errorHandler');
 const generateRequestId = require('./middlewares/genReqId');
 const morganConfig = require('./services/morgan');
+const catchAsync = require('./utils/catch.async');
 const authRouter = require('./components/auth/auth.router');
 const viewRouter = require('./components/views/views.router');
 const userRouter = require('./components/users/users.router');
@@ -25,7 +26,11 @@ function build() {
    app.set('view engine', 'pug');
    app.set('views', path.join(__dirname, 'views'));
    app.use(express.static(path.join(__dirname, 'public')));
-   app.post('/checkout-webhook', express.raw({ type: 'application/json' }), BookingsController.checkoutWebhook);
+   app.post(
+      '/checkout-webhook',
+      express.raw({ type: 'application/json' }),
+      catchAsync(BookingsController.checkoutWebhook),
+   );
    app.use(express.json());
    app.use(express.urlencoded({ extended: true }));
    app.use(session(sessionOptions));

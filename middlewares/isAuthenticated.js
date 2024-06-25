@@ -1,4 +1,4 @@
-const AppError = require('../utils/app.error');
+const AppError = require('../common/AppError');
 
 exports.isAuthenticated = (req, res, next) => {
    if (!req.isAuthenticated()) return next(AppError.unauthorized('Please log in!'));

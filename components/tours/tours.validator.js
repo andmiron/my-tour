@@ -6,6 +6,7 @@ class ToursValidator extends BaseValidator {
    constructor() {
       super();
    }
+
    validateGetTour() {
       return [
          param('slug')
@@ -17,6 +18,7 @@ class ToursValidator extends BaseValidator {
             }),
       ];
    }
+
    validateCreateTour() {
       return [
          body('name')

@@ -1,6 +1,6 @@
 const { body, query } = require('express-validator');
 const Tour = require('../tours/tours.model');
-const AppError = require('../../utils/app.error');
+const AppError = require('../../common/AppError');
 const BaseValidator = require('../../common/BaseValidator');
 
 class BookingsValidator extends BaseValidator {

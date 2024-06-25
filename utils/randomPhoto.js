@@ -1,5 +1,5 @@
 const fetch = require('node-fetch');
-const AppError = require('../utils/app.error');
+const AppError = require('../common/AppError');
 
 async function getRandomPhotoBuffer() {
    const randomNumber = Math.floor(Math.random() * 1249) + 1;

@@ -17,7 +17,7 @@ exports.renderTours = catchAsync(async (req, res) => {
 });
 
 exports.renderTour = catchAsync(async (req, res) => {
-   const { tourSlug: slug } = req.params;
+   const { slug } = req.params;
    const tour = await Tour.findOne({ slug })
       .populate({ path: 'ownerId', select: 'email _id' })
       .populate({ path: 'reviews' })

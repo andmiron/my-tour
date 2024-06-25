@@ -25,7 +25,6 @@ mixin tourCard(tour)
                         div
                             i.bi.bi-star.p-3.text-primary.fs-3
                             span.text-uppercase= `${tour.averageRating ? tour.averageRating : 'N/A'}`
-                        //    TODO update rating based on db data
                         div
                             i.bi.bi-people.p-3.text-primary.fs-3
                             span.text-uppercase= tour.maxGroupSize + ' people'
@@ -36,12 +35,6 @@ mixin tourCard(tour)
                                 span.text-uppercase.fs-3= ` ${tour.price - tour.priceDiscount}`
                             else
                                 span.text-uppercase.fs-3= tour.price
-                    .col-6.position-relative
-                        a.position-absolute.top-50.start-50.translate-middle.text-decoration-none.text-secondary(href=`/users/${tour.ownerId.id}`)
-                            div.position-relative
-                                img.img-fluid.rounded-circle(src= tour.ownerId.photo alt=`User photo` style='height:5em')
-                                span.position-absolute.top-0.start-50.translate-middle.badge.rounded-pill.bg-secondary= tour.ownerId.email
-                                span.fs-6.fw-bold Your guide
         a.btn.d-block.rounded-0.rounded-bottom-3.fw-bold.fs-4.text-bg-primary(href=`tours/${tour.slug}`) Details
 
 

@@ -20,12 +20,13 @@ header
                                 img.img-fluid.rounded-circle(src= user.photo alt=`User photo` style="height:2em")
                             ul.dropdown-menu
                                 li
-                                    a.dropdown-item(href="/profile") Profile
-                                    a.dropdown-item(href="/my-tours").
-                                        My tours #[span.badge.text-bg-secondary.align-middle= user.tours.length]
-                                    a.dropdown-item(href="/my-bookings").
+                                    a.dropdown-item.d-flex.flex-row.justify-content-between(href="/profile") Profile
+                                    a.dropdown-item.d-flex.flex-row.justify-content-between(href="/my-tours")
+                                        span My tours
+                                        span.badge.text-bg-secondary.align-middle= user.tours.length
+                                    a.dropdown-item.d-flex.flex-row.justify-content-between(href="/my-bookings").
                                         My bookings #[span.badge.text-bg-secondary.align-middle= user.bookings.length]
-                                    a.dropdown-item(href="/my-reviews").
+                                    a.dropdown-item.d-flex.flex-row.justify-content-between(href="/my-reviews").
                                         My reviews #[span.badge.text-bg-secondary.align-middle= user.reviews.length]
                                 hr
                                 li

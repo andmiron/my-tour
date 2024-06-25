@@ -1,6 +1,6 @@
 const crypto = require('node:crypto');
 const { sendMail } = require('../../services/email');
-const AppError = require('../../utils/app.error');
+const AppError = require('../../common/AppError');
 const User = require('../users/users.model');
 
 class AuthController {

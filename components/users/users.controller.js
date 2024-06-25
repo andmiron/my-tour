@@ -1,7 +1,7 @@
 const sharp = require('sharp');
 const User = require('./users.model');
 const catchAsync = require('../../utils/catch.async');
-const AppError = require('../../utils/app.error');
+const AppError = require('../../common/AppError');
 const { uploadToS3, deleteFromS3 } = require('../../services/clientS3');
 const uploadFile = require('../../services/multer');
 const getRandomPhotoBuffer = require('../../utils/randomPhoto');

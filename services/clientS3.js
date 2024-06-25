@@ -1,5 +1,5 @@
 const { S3Client, PutObjectCommand, DeleteObjectCommand } = require('@aws-sdk/client-s3');
-const AppError = require('../utils/app.error');
+const AppError = require('../common/AppError');
 
 const s3client = new S3Client({
    region: process.env.AWS_S3_REGION,

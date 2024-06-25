@@ -17,6 +17,10 @@ const bookingSchema = new mongoose.Schema(
          ref: 'User',
          required: [true, 'Booking must belong to a User!'],
       },
+      isPaid: {
+         type: Boolean,
+         default: false,
+      },
    },
    { timestamps: true },
 );

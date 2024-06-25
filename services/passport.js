@@ -2,7 +2,7 @@ const passport = require('passport');
 const User = require('../components/users/users.model');
 const LocalStrategy = require('passport-local').Strategy;
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
-const AppError = require('../utils/app.error');
+const AppError = require('../common/AppError');
 
 passport.use(
    new LocalStrategy(

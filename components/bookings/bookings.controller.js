@@ -1,7 +1,7 @@
 const stripe = require('stripe')(process.env.STRIPE_API_KEY);
-const AppError = require('../../utils/app.error');
-const Booking = require('./bookings.model');
-const User = require('../users/users.model');
+const AppError = require('../../common/AppError');
+const bookingRepository = require('./booking.repository');
+const { sendMail } = require('../../services/email');
 
 class BookingsController {
    async createCheckoutSession(req, res) {
@@ -19,11 +19,13 @@ class BookingsController {
       const session = await stripe.checkout.sessions.create({
          line_items: [{ price: tourPrice.id, quantity: 1 }],
          mode: 'payment',
-         customer: req.user.id,
          customer_email: req.user.email,
-         client_reference_id: tour.id,
          success_url: `${req.protocol}://${req.get('host')}/payment/success?session_id={CHECKOUT_SESSION_ID}`,
          cancel_url: `${req.protocol}://${req.get('host')}/api/v1/bookings/checkout/failure`,
+         metadata: {
+            userId: req.user.id,
+            tourId: tour.id,
+         },
       });
 
       res.status(200).send({
@@ -31,31 +33,49 @@ class BookingsController {
       });
    }
 
-   async checkoutWebhook(req, res, next) {
+   async checkoutWebhook(req, res) {
       let event;
       try {
-         constructStripeEvent();
-      } catch (err) {
-         throw AppError.badRequest(`Stripe webhook error: ${err.message}`);
-      }
-
-      if (event.type === 'checkout.session.completed') {
-         await submitPayment();
-      }
-
-      function constructStripeEvent() {
          event = stripe.webhooks.constructEvent(
             req.body,
             req.headers['stripe-signature'],
             process.env.STRIPE_WEBHOOK_SECRET,
          );
+      } catch (err) {
+         throw AppError.badRequest(`Stripe webhook error: ${err.message}`);
       }
 
-      async function submitPayment() {
-         const checkoutSession = await stripe.checkout.sessions.retrieve(event.data.object.id);
-         const { client_reference_id: tourId, customer_email: email, id: stripeSessionId } = checkoutSession;
-         const user = await User.findOne({ email }).exec();
-         await Booking.create({ tourId, ownerId: user.id, stripeSessionId });
+      switch (event.type) {
+         case 'checkout.session.completed':
+            {
+               const session = event.data.object;
+               const newBooking = await bookingRepository.create({
+                  tourId: session.metadata.tourId,
+                  ownerId: session.metadata.userId,
+                  stripeSessionId: session.id,
+               });
+               if (session.payment_status === 'paid') {
+                  newBooking.isPaid = true;
+               }
+               await newBooking.save();
+            }
+            break;
+         case 'checkout.session.async_payment_succeeded':
+            {
+               const session = event.data.object;
+               await bookingRepository.getOneAndUpdate({ stripeSessionId: session.id }, { isPaid: true }).exec();
+            }
+            break;
+         case 'checkout.session.async_payment_failed':
+            {
+               const session = event.data.object;
+               await sendMail(
+                  session.customer_email,
+                  'Payment failed',
+                  'Your payment did not come through! Please try again later.',
+               );
+            }
+            break;
       }
 
       res.status(200).end();
