@@ -31,7 +31,7 @@ router.get('/my-profile', isAuthenticated, renderPage('myAccount', 'Profile'));
 router.get('/my-reviews', isAuthenticated, renderMyReviews);
 router.get('/my-bookings', isAuthenticated, renderMyBookings);
 router.get('/my-tours', isAuthenticated, renderMyTours);
-router.get('/tours/create', isAuthenticated, renderPage('createTour', 'Create tour'));
+router.get('/tours/create', isAuthenticated, renderPage('tourCreate', 'Create tour'));
 router.get('/tours', renderTours);
 router.get(
    '/tours/:slug',
