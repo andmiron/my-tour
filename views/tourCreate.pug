@@ -9,7 +9,7 @@ mixin tourInputField(inputId, labelText, helperId, helperText)
 block content
     .container.p-4
         h1.text-secondary.text-center Create a New Tour
-        form.mt-5.p-3.create-tour-form(action='/tours/create' method='POST')
+        form.mt-5.p-3.create-tour-form
             .row.g-3
                 h3.mb-3.text-secondary General information
                 .row.align-items-center
@@ -36,18 +36,15 @@ block content
                         .mb-3
                             label.form-label(for='duration') Duration (days)
                             select#duration.form-select(required name='duration' aria-describedby='durationHelp' placeholder='Choose number of days')
-                                option(disabled selected)
-                                option(value='1') 1
-                                option(value='2') 2
-                                option(value='3') 3
-                                option(value='4') 4
-                                option(value='5') 5
+                                option(disabled selected) Select duration
+                                each val in [1,2,3,4,5]
+                                    option(value=val)= val
                             p#durationHelp.form-text Consecutive days in the tour.              
                     .col-6 
                         .mb-3
                             label(for="difficulty" class="form-label") Difficulty
                             select#difficulty(required name="difficulty" class="form-select" aria-describedby="difficultyHelp")
-                                option(disabled selected) 
+                                option(disabled selected) Select difficulty
                                 option(value="easy") Easy
                                 option(value="medium") Medium
                                 option(value="difficult") Difficult

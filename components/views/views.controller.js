@@ -54,7 +54,7 @@ exports.renderMyReviews = catchAsync(async (req, res) => {
 });
 
 exports.renderEditTour = catchAsync(async (req, res) => {
-   res.render('tourEdit', { title: 'Edit tour' });
+   res.render('tourEdit', { title: 'Edit tour', tourToEdit: req.body.tourToEdit });
 });
 
 exports.renderMyBookings = catchAsync(async (req, res) => {

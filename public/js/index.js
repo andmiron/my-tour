@@ -12,11 +12,13 @@ const changeEmailForm = document.querySelector('.change-email-form');
 const changePasswordForm = document.querySelector('.change-password-form');
 const startLocationMap = document.getElementById('start-location-map');
 const createTourForm = document.querySelector('.create-tour-form');
+const tourEditForm = document.querySelector('.edit-tour-form');
 const generateGeneralInfoBtn = document.querySelector('.generate-general-info');
 const tourMap = document.getElementById('tour-map');
 const createCheckoutSessionForm = document.querySelector('.create-checkout-session-form');
 const submitReviewForm = document.getElementById('submit-review');
 const baseMap = document.getElementById('base-map');
+const tourEditMap = document.getElementById('tour-edit-map');
 
 if (signupForm) {
    signupForm.addEventListener('submit', async (e) => {
@@ -258,6 +260,39 @@ if (createTourForm) {
    });
 }
 
+if (tourEditForm) {
+   tourEditForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const formData = new FormData();
+      const inputsIds = [
+         'name',
+         'summary',
+         'description',
+         'price',
+         'priceDiscount',
+         'maxGroupSize',
+         'difficulty',
+         'duration',
+         'locDesc',
+      ];
+      inputsIds.forEach((inputId) => {
+         formData.append(inputId, document.getElementById(inputId).value);
+      });
+
+      formData.append('locCoords', [
+         +document.getElementById('locLat').value,
+         +document.getElementById('locLng').value,
+      ]);
+      const { status, data } = await fetchFormData(
+         `/api/v1/tours/${window.location.pathname.split('/').pop()}`,
+         'PATCH',
+         formData,
+      );
+      // TODO finish edit tour on a server (PATCH cannot send form data so it has to be done only with POST)
+      console.log(data);
+   });
+}
+
 if (generateGeneralInfoBtn) {
    generateGeneralInfoBtn.addEventListener('click', async () => {
       const originalText = generateGeneralInfoBtn.innerHTML;
@@ -483,17 +518,11 @@ if (startLocationMap) {
       zoom: 2,
    });
 
-   const marker = new mapboxgl.Marker({
-      draggable: false,
-      color: '#0d6efd',
-   });
-
    const geocoder = new MapboxGeocoder({
       accessToken: mapboxgl.accessToken,
       mapboxgl: mapboxgl,
       placeholder: 'Start typing for location...',
       language: 'en',
-      marker: marker,
    });
 
    const nav = new mapboxgl.NavigationControl();
@@ -531,7 +560,6 @@ if (startLocationMap) {
          },
          'country-label',
       );
-      marker.setLngLat([lng, lat]);
       document.getElementById('locLat').value = lat;
       document.getElementById('locLng').value = lng;
    });
@@ -548,10 +576,112 @@ if (tourMap) {
       zoom: 4,
       interactive: false,
    });
-   const marker = new mapboxgl.Marker({
-      draggable: false,
-      color: '#0d6efd',
+
+   const reverseGeocodeUrl = `https://api.mapbox.com/search/geocode/v6/reverse?longitude=${lng}&latitude=${lat}&types=country&access_token=${mapboxgl.accessToken}`;
+
+   fetch(reverseGeocodeUrl)
+      .then((res) => res.json())
+      .then((data) => {
+         const country_code = data.features[0].properties.context.country.country_code;
+         map.addLayer(
+            {
+               id: 'country-boundaries',
+               source: {
+                  type: 'vector',
+                  url: 'mapbox://mapbox.country-boundaries-v1',
+               },
+               'source-layer': 'country_boundaries',
+               type: 'fill',
+               paint: {
+                  'fill-color': '#1e7ed2',
+                  'fill-opacity': 0.4,
+               },
+               filter: ['==', ['get', 'iso_3166_1'], country_code.toUpperCase()],
+            },
+            'country-label',
+         );
+      })
+      .catch((err) => {
+         console.log(err);
+      });
+}
+
+if (tourEditMap) {
+   mapboxgl.accessToken = 'pk.eyJ1IjoiYW5kbWlyb24iLCJhIjoiY2x2bGRyMmkwMjcxbjJsbnpmOGsyZWprNCJ9.FMjD1-WaO4qXM28NY89C7g';
+   const location = JSON.parse(tourEditMap.dataset.location);
+   let [lat, lng] = location.coordinates;
+   const map = new mapboxgl.Map({
+      container: tourEditMap.attributes.getNamedItem('id').value,
+      style: 'mapbox://styles/andmiron/clddn3zn8000801nw8ooobs0y',
+      center: [30, 50],
+      zoom: 2,
    });
 
-   marker.setLngLat([lng, lat]).addTo(map);
+   const geocoder = new MapboxGeocoder({
+      accessToken: mapboxgl.accessToken,
+      mapboxgl: mapboxgl,
+      placeholder: 'Start typing for location...',
+      language: 'en',
+   });
+
+   const nav = new mapboxgl.NavigationControl();
+
+   map.on('load', async () => {
+      const reverseGeocodeUrl = `https://api.mapbox.com/search/geocode/v6/reverse?longitude=${lng}&latitude=${lat}&types=country&access_token=${mapboxgl.accessToken}`;
+      const existingCountry = await fetch(reverseGeocodeUrl);
+      const existingCountryData = await existingCountry.json();
+      const country_code = existingCountryData.features[0].properties.context.country.country_code;
+      map.addLayer(
+         {
+            id: 'country-boundaries',
+            source: {
+               type: 'vector',
+               url: 'mapbox://mapbox.country-boundaries-v1',
+            },
+            'source-layer': 'country_boundaries',
+            type: 'fill',
+            paint: {
+               'fill-color': '#1e7ed2',
+               'fill-opacity': 0.4,
+            },
+            filter: ['==', ['get', 'iso_3166_1'], country_code.toUpperCase()],
+         },
+         'country-label',
+      );
+      map.setCenter([lng, lat]);
+      map.addControl(geocoder, 'top-left');
+      map.addControl(nav, 'top-right');
+   });
+
+   geocoder.on('clear', function () {
+      if (map.getLayer('country-boundaries')) map.removeLayer('country-boundaries').removeSource('country-boundaries');
+   });
+
+   geocoder.on('result', function (e) {
+      if (map.getLayer('country-boundaries')) map.removeLayer('country-boundaries').removeSource('country-boundaries');
+      const { result } = e;
+      const [lng, lat] = result.center;
+      const countryCode = result.context
+         ? result.context.find((el) => el.id.includes('country')).short_code
+         : result.properties.short_code;
+      map.addLayer(
+         {
+            id: 'country-boundaries',
+            source: {
+               type: 'vector',
+               url: 'mapbox://mapbox.country-boundaries-v1',
+            },
+            'source-layer': 'country_boundaries',
+            type: 'fill',
+            paint: {
+               'fill-color': '#1e7ed2',
+               'fill-opacity': 0.4,
+            },
+            filter: ['==', ['get', 'iso_3166_1'], countryCode.toUpperCase()],
+         },
+         'country-label',
+      );
+      document.getElementById('locLat').value = lat;
+      document.getElementById('locLng').value = lng;
+   });
 }

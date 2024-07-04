@@ -33,17 +33,14 @@ router.get('/my-bookings', isAuthenticated, renderMyBookings);
 router.get('/my-tours', isAuthenticated, renderMyTours);
 router.get('/tours/create', isAuthenticated, renderPage('tourCreate', 'Create tour'));
 router.get('/tours', renderTours);
+router.get('/tours/:slug', ToursValidator.validateGetTour(), ToursValidator.validate, renderTour);
 router.get(
-   '/tours/:slug',
-   (req, res, next) => {
-      console.log(req.params);
-      next();
-   },
-   ToursValidator.validateGetTour(),
+   '/tours/edit/:tourSlug',
+   isAuthenticated,
+   ToursValidator.validateRenderEditTour(),
    ToursValidator.validate,
-   renderTour,
+   renderEditTour,
 );
-router.get('/tours/:tourSlug/edit', isAuthenticated, renderEditTour);
 router.get('/payment/success', renderSuccessCheckout);
 router.get('/payment/failure', renderFailureCheckout);
 

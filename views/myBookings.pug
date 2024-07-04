@@ -2,23 +2,23 @@ extends baseProfile
 
 block profilePage
     if bookings.length
-        each booking in bookings
-            .position-relative.w-25
-                a(href=`/bookings/${booking.id}`)
-                    div.position-relative
-                        img.card-img-top.img-fluid(src= booking.tourId.imageCover style='clip-path: polygon(0 0, 100% 0%, 100% 83%, 0% 98%);')
-                        h3.fw-bold.fs-3.text-white.position-absolute.top-50.start-50.translate-middle.p-1.text-end
-                            span.p-1(style='-webkit-box-decoration-break: clone; box-decoration-break: clone; background-image: linear-gradient(\n' +
-                            '    to bottom right,\n' +
-                            '    rgba(70, 25, 255, 0.85),\n' +
-                            '    rgba(35, 131, 255, 0.85)\n' +
-                            '  );')= booking.tourId.name
-                if booking.isPaid
-                    span.badge.text-bg-success.position-absolute.end-0.top-0.translate-middle Paid
-                else
-                    span.badge.text-bg-warning.position-absolute.end-0.top-0.translate-middle Paid
-                a.btn.btn-secondary.position-absolute.end-0.top-100.translate-middle-y.text-decoration-none(href=`/bookings/${booking.id}`) View
-
+        .row
+            each booking in bookings
+                .position-relative.w-25
+                    a(href=`/bookings/${booking.id}`)
+                        div.position-relative
+                            img.card-img-top.img-fluid(src= booking.tourId.imageCover style='clip-path: polygon(0 0, 100% 0%, 100% 83%, 0% 98%);')
+                            h3.fw-bold.fs-3.text-white.position-absolute.top-50.start-50.translate-middle.p-1.text-end
+                                span.p-1(style='-webkit-box-decoration-break: clone; box-decoration-break: clone; background-image: linear-gradient(\n' +
+                                '    to bottom right,\n' +
+                                '    rgba(70, 25, 255, 0.85),\n' +
+                                '    rgba(35, 131, 255, 0.85)\n' +
+                                '  );')= booking.tourId.name
+                    if booking.isPaid
+                        span.badge.text-bg-success.position-absolute.end-0.top-0.translate-middle Paid
+                    else
+                        span.badge.text-bg-warning.position-absolute.end-0.top-0.translate-middle Paid
+                    a.btn.btn-secondary.position-absolute.end-0.top-100.translate-middle-y.text-decoration-none(href=`/bookings/${booking.id}`) View
     else
         h5 You have not booked a tour yet
         a.btn.btn-secondary.btn-lg.mt-3(href='/tours') Pick a tour

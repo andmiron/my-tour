@@ -1,8 +1,8 @@
 extends baseProfile
 
 block profilePage
-    .row
-        if tours.length
+    if tours.length
+        .row
             each tour in tours
                 .position-relative.w-25
                     a(href=`/tours/${tour.slug}`)
@@ -14,8 +14,8 @@ block profilePage
                                 '    rgba(70, 25, 255, 0.85),\n' +
                                 '    rgba(35, 131, 255, 0.85)\n' +
                                 '  );')= tour.name
-                    a.btn.btn-secondary.position-absolute.end-0.top-100.translate-middle-y.text-decoration-none(href=`/tours/${tour.slug}/edit`) Edit
-        else
-            h5 You have no created tours
-            a.btn.btn-secondary.btn-lg.mt-3(href='/tours/create') Create your first tour
+                    a.btn.btn-secondary.position-absolute.end-0.top-100.translate-middle-y.text-decoration-none(href=`/tours/edit/${tour.slug}`) Edit
+    else
+        h5 You have no created tours
+        a.btn.btn-secondary.btn-lg.mt-3(href='/tours/create') Create your first tour
 

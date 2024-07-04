@@ -16,7 +16,11 @@ router
       ToursValidator.validate,
       catchAsync(ToursController.createTour),
    );
-router.get('/:slug', ToursValidator.validateGetTour(), ToursValidator.validate, catchAsync(ToursController.getTour));
+router
+   .route('/:slug')
+   .get(ToursValidator.validateGetTour(), ToursValidator.validate, catchAsync(ToursController.getTour))
+   .patch(catchAsync(ToursController.editTour));
+
 router.post('/randomInfo', isAuthenticated, catchAsync(ToursController.generateRandomInfo));
 
 module.exports = router;

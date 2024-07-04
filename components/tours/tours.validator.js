@@ -1,6 +1,7 @@
 const { param, body } = require('express-validator');
 const Tour = require('./tours.model');
 const BaseValidator = require('../../common/BaseValidator');
+const AppError = require('../../common/AppError');
 
 class ToursValidator extends BaseValidator {
    constructor() {
@@ -45,6 +46,16 @@ class ToursValidator extends BaseValidator {
             .withMessage('Difficulty is [easy, medium or difficult]'),
          body('locDesc').isString().withMessage('Provide start location description!'),
          body('locCoords').isLatLong().withMessage('Invalid location coordinates!'),
+      ];
+   }
+
+   validateRenderEditTour() {
+      return [
+         param('tourSlug').custom(async (tourSlug, { req }) => {
+            const tour = await Tour.findOne({ slug: tourSlug, ownerId: req.user.id }).exec();
+            if (!tour) return Promise.reject(AppError.forbidden('You can only edit your own tours!'));
+            req.body.tourToEdit = tour;
+         }),
       ];
    }
 }

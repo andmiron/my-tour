@@ -1,4 +1,4 @@
-extends baseProfile
+extends base
 
 mixin tourInputField(inputId, labelText, helperId, helperText)
     .mb-3
@@ -6,33 +6,52 @@ mixin tourInputField(inputId, labelText, helperId, helperText)
         input.form-control(id= inputId name= inputId aria-describedby= helperId)&attributes(attributes)
         p.form-text(id= helperId)= helperText
 
-block profilePage
-    h5.fw-bold Edit my tour
-    form.w-50.mt-5.create-tour-form.text-start(action='/tours/create' method='POST')
-        +tourInputField('name', 'Tour Name', 'nameHelp', 'Must be 10 to 40 characters.')(required type='text' minlength='10' maxlength='40')
-        +tourInputField('summary', 'Summary', 'summaryHelp', 'Describe your tour in one sentence.')(required type='text')
-        +tourInputField('description', 'Description', 'descriptionHelp', 'Give user colorful and interesting information about your tour.')(required type='text')
-        +tourInputField('price', 'Price', 'priceHelp', 'Tour price in USD.')(required type='number' step='1' min='1')
-        +tourInputField('priceDiscount', 'Price Discount', 'priceDiscountHelp', 'You can add discount later in tour details.')(type='number' step='1' min='1')
-        +tourInputField('maxGroupSize', 'Max group size', 'maxGroupSizeHelp', 'Max people to join the tour.')(required type='number' step='1' min='1')
-        .mb-3
-            label.form - label(for='duration') Duration(days)
-            select#duration.form-select(required name='duration' aria-describedby='durationHelp' placeholder='Choose number of days')
-                option(disabled selected)
-                option(value = '1') 1
-                option(value = '2') 2
-                option(value = '3') 3
-                option(value = '4') 4
-                option(value = '5') 5
-            p#durationHelp.form-text Consecutive days in the tour.
-        .mb-3
-            label(for="difficulty" class="form-label") Difficulty
-            select#difficulty(required name="difficulty" class="form-select" aria-describedby="difficultyHelp")
-                option(disabled selected)
-                option(value="easy") Easy
-                option(value="medium") Medium
-                option(value="difficult") Difficult
-            p#difficultyHelp.form-text Difficulty of the tour.
-        +tourInputField('locDesc', 'Start location description', 'startLocDescHelp', 'Describe start location')(required type='text')
-        +tourInputField('locImg', 'Start location image', 'startLocImgHelp', 'Upload one photo')(required type='file' accept='image/*' name='startLocImg')
-        button.btn.btn-primary.btn-lg.ml-auto.text-end.create-tour-btn(type="submit") Create Tour
+block content
+    .container.p-4
+        h1.text-secondary.text-center Edit My Tour
+        form.mt-5.p-3.edit-tour-form
+            .row.g-3
+                .row.border.rounded-3.p-3.my-3
+                    .col-6
+                        +tourInputField('name', 'Tour Name', 'nameHelp', 'Must be 10 to 40 characters.')(type='text' minlength='10' maxlength='40' value= tourToEdit.name)
+                    .col-6
+                        +tourInputField('summary', 'Summary', 'summaryHelp', 'Describe your tour in one sentence.')(type='text' value= tourToEdit.summary)
+                .row.p-3.my-3.border.rounded-3
+                    +tourInputField('description', 'Description', 'descriptionHelp', 'Give user colorful and interesting information about your tour.')(type='text' value= tourToEdit.description)
+                .row.border.rounded-3.p-3.my-3
+                    .col-4
+                        +tourInputField('price', 'Price', 'priceHelp', 'Tour price in USD.')(type='number' step='1' min='1' value= tourToEdit.price)
+                    .col-4
+                        +tourInputField('priceDiscount', 'Price Discount', 'priceDiscountHelp', 'You can add discount later in tour details.')(type='number' step='1' min='1' value= tourToEdit.priceDiscount)
+                    .col-4
+                        +tourInputField('maxGroupSize', 'Max group size', 'maxGroupSizeHelp', 'Max people to join the tour.')(type='number' step='1' min='1' value= tourToEdit.maxGroupSize)
+                .row.border.rounded-3.p-3.my-3
+                    .col-6
+                        .mb-3
+                            label.form-label(for='duration') Duration (days)
+                            select#duration.form-select(name='duration' aria-describedby='durationHelp')
+                                option(disabled) Select duration
+                                each val in ["1","2","3","4","5"]
+                                    option(value=val selected=(val === tourToEdit.duration))= val
+                            p#durationHelp.form-text Consecutive days in the tour.
+                    .col-6
+                        .mb-3
+                            label(for="difficulty" class="form-label") Difficulty
+                            select#difficulty(name="difficulty" class="form-select" aria-describedby="difficultyHelp")
+                                option(disabled) Select difficulty
+                                each difficulty in ['Easy', 'Medium', 'Difficult']
+                                    option(value=difficulty selected=(difficulty === tourToEdit.difficulty))= difficulty
+                            p#difficultyHelp.form-text Difficulty of the tour.
+            .row
+                h3.text-secondary.mt-5 Start Location
+                .row.border.rounded-3.p-3.my-3
+                    .col-6
+                        +tourInputField('locDesc', 'Start location description', 'startLocDescHelp', 'Describe start location')(type='text' value=tourToEdit.location.description)
+                    .col-6
+                        +tourInputField('locImg', 'Start location image', 'startLocImgHelp', 'Upload one photo')(type='file' accept='image/*' name='startLocImg')
+                    .row
+                        .position-relative(style="height:500px")
+                            #tour-edit-map.position-absolute.top-0.bottom-0.w-100.border.rounded-3(data-location =`${JSON.stringify(tourToEdit.location)}`)
+                            input#locLat(hidden type='text')
+                            input#locLng(hidden type='text')
+            input.btn.btn-primary.btn-lg.ml-auto.text-end.edit-tour-btn(type='submit' value='Save changes')

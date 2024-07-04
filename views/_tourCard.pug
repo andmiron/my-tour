@@ -1,13 +1,14 @@
 mixin tourCard(tour)
     .card.text-secondary.h-100
         div.position-relative
-            img.card-img-top.img-fluid(src= tour.imageCover)
-            h3.fw-bold.fs-3.text-white.position-absolute.top-50.start-50.translate-middle.p-1.text-end
-                span.p-1(style='-webkit-box-decoration-break: clone; box-decoration-break: clone; background-image: linear-gradient(\n' +
-            '    to bottom right,\n' +
-            '    rgba(70, 25, 255, 0.85),\n' +
-            '    rgba(35, 131, 255, 0.85)\n' +
-            '  );')= tour.name
+            a(href=`tours/${tour.slug}`)
+                img.card-img-top.img-fluid(src= tour.imageCover)
+                h3.fw-bold.fs-3.text-white.position-absolute.top-50.start-50.translate-middle.p-1.text-end
+                    span.p-1(style='-webkit-box-decoration-break: clone; box-decoration-break: clone; background-image: linear-gradient(\n' +
+                '    to bottom right,\n' +
+                '    rgba(70, 25, 255, 0.85),\n' +
+                '    rgba(35, 131, 255, 0.85)\n' +
+                '  );')= tour.name
         .card-header.h-100
             p.fst-italic= tour.summary
         ul.list-group.list-group-flush

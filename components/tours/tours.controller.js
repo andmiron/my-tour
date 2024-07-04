@@ -20,6 +20,15 @@ class ToursController {
       });
    }
 
+   async editTour(req, res) {
+      res.status(200).send({
+         status: 'Changes saved',
+         data: req.body,
+      });
+   }
+
+   async deleteTour(req, res) {}
+
    async getAllTours(req, res) {
       const tours = await Tour.find().populate({ path: 'reviews' }).exec();
       res.status(200).send({
