@@ -333,6 +333,7 @@ if (generateGeneralInfoBtn) {
          'maxGroupSize',
          'difficulty',
          'duration',
+         'locDesc',
       ];
 
       const response = await fetch('/api/v1/tours/randomInfo', {
@@ -363,10 +364,11 @@ if (submitReviewForm) {
       e.preventDefault();
       const text = document.getElementById('reviewText').value;
       const rating = document.querySelector('input[name="rating"]:checked').value;
+      const tourId = submitReviewForm.dataset.tour;
       if (!rating) {
          return showAlert('danger', 'Rate the tour!');
       }
-      const { status, data } = await sendJSON('/api/v1/reviews', 'POST', { text, rating });
+      const { status, data } = await sendJSON('/api/v1/reviews', 'POST', { text, rating, tourId });
       if (status === 'error') return showAlert('danger', data);
       showAlert('success', status);
       window.setTimeout(() => {

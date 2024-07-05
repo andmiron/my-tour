@@ -20,7 +20,7 @@ exports.renderTour = catchAsync(async (req, res) => {
    const { slug } = req.params;
    const tour = await Tour.findOne({ slug })
       .populate({ path: 'ownerId', select: 'email _id' })
-      .populate({ path: 'reviews' })
+      .populate({ path: 'reviews', populate: { path: 'ownerId', select: 'photo email' } })
       .exec();
    res.render('tour', { title: tour.name, tour });
 });
@@ -60,6 +60,5 @@ exports.renderEditTour = catchAsync(async (req, res) => {
 exports.renderMyBookings = catchAsync(async (req, res) => {
    const bookingsQuery = bookingRepository.getMany({ ownerId: req.user.id });
    const bookings = await bookingsQuery.populate('tourId').exec();
-   console.log(bookings);
    res.render('myBookings', { title: 'My Bookings', bookings });
 });
