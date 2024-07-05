@@ -49,7 +49,9 @@ exports.renderFailureCheckout = catchAsync(async (req, res) => {
 });
 
 exports.renderMyReviews = catchAsync(async (req, res) => {
-   const reviews = await Review.find({ ownerId: req.user.id }).exec();
+   const reviews = await Review.find({ ownerId: req.user.id })
+      .populate({ path: 'ownerId', select: 'email photo' })
+      .exec();
    res.render('myReviews', { title: 'Reviews', reviews });
 });
 

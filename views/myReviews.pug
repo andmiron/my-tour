@@ -2,8 +2,20 @@ extends baseProfile
 
 block profilePage
     if reviews.length
-       each review in reviews
-          p= review
+        each review in reviews
+            .d-flex.flex-row.align-items-center.gap-5.my-3.p-4.bg-white
+                .position-relative
+                   img.rounded-circle(src=review.ownerId.photo alt="User Image" width="50" height="50")
+                   span.position-absolute.translate-middle.start-50.top-50.badge.text-bg-secondary= review.ownerId.email
+                a
+                p.mb-0.mx-auto.text-wrap= review.text
+                - let stars = review.rating
+                span
+                    while stars > 0
+                        i.bi.text-primary.fs-4.p-1.bi-star
+                        - stars--
+                button.btn.btn-danger.delete-review-btn.ms-auto Delete review
+    //todo finish delete review
     else
         h5 You have no reviews for now
         a.btn.btn-secondary.btn-lg.mt-3(href='/tours') Pick a tour to leave a review
