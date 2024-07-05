@@ -79,6 +79,16 @@ class ToursValidator extends BaseValidator {
       ];
    }
 
+   validateDeleteTour() {
+      return [
+         param('slug').custom(async (slug, { req }) => {
+            const tour = await Tour.findOne({ slug }).exec();
+            if (!tour) return Promise.reject('There is no such tour!');
+            req.body.deleteId = tour.id;
+         }),
+      ];
+   }
+
    validateRenderEditTour() {
       return [
          param('tourSlug').custom(async (tourSlug, { req }) => {

@@ -19,6 +19,7 @@ const createCheckoutSessionForm = document.querySelector('.create-checkout-sessi
 const submitReviewForm = document.getElementById('submit-review');
 const baseMap = document.getElementById('base-map');
 const tourEditMap = document.getElementById('tour-edit-map');
+const deleteTourBtns = document.querySelectorAll('.delete-tour-btn');
 
 if (signupForm) {
    signupForm.addEventListener('submit', async (e) => {
@@ -297,6 +298,22 @@ if (tourEditForm) {
       window.setTimeout(() => {
          window.location.href = '/my-tours';
       }, 1000);
+   });
+}
+
+if (deleteTourBtns) {
+   deleteTourBtns.forEach((btn) => {
+      btn.addEventListener('click', async (e) => {
+         const response = await fetch(`/api/v1/tours/${btn.dataset.tour}`, {
+            method: 'DELETE',
+         });
+         const { status, data } = await response.json();
+         if (status === 'error') return showAlert('danger', data);
+         showAlert('success', status);
+         window.setTimeout(() => {
+            location.assign('/my-tours');
+         }, 1000);
+      });
    });
 }
 

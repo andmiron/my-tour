@@ -39,7 +39,13 @@ class ToursController {
       });
    }
 
-   async deleteTour(req, res) {}
+   async deleteTour(req, res) {
+      await Tour.deleteTour(req.body.deleteId);
+      res.status(200).send({
+         status: 'Tour deleted',
+         data: null,
+      });
+   }
 
    async getAllTours(req, res) {
       const tours = await Tour.find().populate({ path: 'reviews' }).exec();

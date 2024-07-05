@@ -96,22 +96,35 @@ tourSchema.virtual('numberOfReviews').get(function () {
 
 tourSchema.pre('save', function (next) {
    this.slug = slugify(this.name, { lower: true });
+   this.$locals.isNew = this.isNew;
    next();
 });
 
 tourSchema.post('save', async function (doc) {
-   if (this.isNew) await mongoose.model('User').findByIdAndUpdate(doc.ownerId, { $push: { tours: doc._id } });
+   if (doc.$locals.isNew) await mongoose.model('User').findByIdAndUpdate(doc.ownerId, { $push: { tours: doc._id } });
 });
 
 tourSchema.statics.deleteTour = async function (tourId) {
    const session = await mongoose.startSession();
    await session.startTransaction();
    try {
-      await mongoose.model('User').updateMany({ tours: tourId }, { $pull: { tours: tourId } }, { session });
-      await mongoose.model('Review').deleteMany(tourId, { session });
+      const bookings = await mongoose.model('Booking').find({ tourId }).session(session).exec();
+      const bookingIds = bookings.map((booking) => booking._id);
+
+      await mongoose
+         .model('User')
+         .updateMany({ tours: tourId }, { $pull: { tours: tourId } }, { session })
+         .exec();
+      await mongoose
+         .model('User')
+         .updateMany({ bookings: { $in: bookingIds } }, { $pull: { bookingsId: { $in: bookingIds } } }, { session });
+      await mongoose.model('Review').deleteMany({ tourId }, { session }).exec();
+      await mongoose.model('Booking').deleteMany({ tourId }, { session });
+
       await this.findByIdAndDelete(tourId);
       await session.commitTransaction();
    } catch (err) {
+      console.log(err);
       await session.abortTransaction();
    } finally {
       await session.endSession();

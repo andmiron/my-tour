@@ -25,5 +25,11 @@ router.post(
    catchAsync(ToursController.editTour),
 );
 router.get('/:slug', ToursValidator.validateGetTour(), ToursValidator.validate, catchAsync(ToursController.getTour));
+router.delete(
+   '/:slug',
+   ToursValidator.validateDeleteTour(),
+   ToursValidator.validate,
+   catchAsync(ToursController.deleteTour),
+);
 
 module.exports = router;
