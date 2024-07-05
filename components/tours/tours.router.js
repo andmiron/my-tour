@@ -6,6 +6,7 @@ const upload = multer();
 const catchAsync = require('../../utils/catch.async');
 const ToursValidator = require('./tours.validator');
 
+router.post('/randomInfo', isAuthenticated, catchAsync(ToursController.generateRandomInfo));
 router
    .route('/')
    .get(catchAsync(ToursController.getAllTours))
@@ -16,11 +17,13 @@ router
       ToursValidator.validate,
       catchAsync(ToursController.createTour),
    );
-router
-   .route('/:slug')
-   .get(ToursValidator.validateGetTour(), ToursValidator.validate, catchAsync(ToursController.getTour))
-   .patch(catchAsync(ToursController.editTour));
-
-router.post('/randomInfo', isAuthenticated, catchAsync(ToursController.generateRandomInfo));
+router.post(
+   '/edit/:slug',
+   upload.single('locImg'),
+   ToursValidator.validateEditTour(),
+   ToursValidator.validate,
+   catchAsync(ToursController.editTour),
+);
+router.get('/:slug', ToursValidator.validateGetTour(), ToursValidator.validate, catchAsync(ToursController.getTour));
 
 module.exports = router;

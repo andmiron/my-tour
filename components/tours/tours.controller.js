@@ -21,9 +21,21 @@ class ToursController {
    }
 
    async editTour(req, res) {
+      const location = {
+         description: req.body.locDesc,
+         coordinates: req.body.locCoords.split(','),
+      };
+      const { locCoords, locDesc, ...rest } = req.body;
+      const tour = await Tour.findOne({ slug: req.params.slug }).exec();
+      tour.set({ location, ...rest });
+      if (req.file) {
+         const resizedPhotoBuffer = await sharp(req.file.buffer).resize(2000, 1333).jpeg().toBuffer();
+         tour.imageCover = await uploadToS3(resizedPhotoBuffer, `tour-${tour.id}.jpeg`, 'image/jpeg');
+      }
+      await tour.save();
       res.status(200).send({
          status: 'Changes saved',
-         data: req.body,
+         data: tour,
       });
    }
 

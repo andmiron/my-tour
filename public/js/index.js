@@ -283,13 +283,20 @@ if (tourEditForm) {
          +document.getElementById('locLat').value,
          +document.getElementById('locLng').value,
       ]);
+      formData.append('locImg', document.getElementById('locImg').files[0]);
+
       const { status, data } = await fetchFormData(
-         `/api/v1/tours/${window.location.pathname.split('/').pop()}`,
-         'PATCH',
+         `/api/v1/tours/edit/${window.location.pathname.split('/').pop()}`,
+         'POST',
          formData,
       );
-      // TODO finish edit tour on a server (PATCH cannot send form data so it has to be done only with POST)
-      console.log(data);
+      if (status === 'error') {
+         return showAlert('danger', data);
+      }
+      showAlert('success', status);
+      window.setTimeout(() => {
+         window.location.href = '/my-tours';
+      }, 1000);
    });
 }
 
@@ -523,6 +530,7 @@ if (startLocationMap) {
       mapboxgl: mapboxgl,
       placeholder: 'Start typing for location...',
       language: 'en',
+      marker: false,
    });
 
    const nav = new mapboxgl.NavigationControl();
@@ -610,6 +618,10 @@ if (tourEditMap) {
    mapboxgl.accessToken = 'pk.eyJ1IjoiYW5kbWlyb24iLCJhIjoiY2x2bGRyMmkwMjcxbjJsbnpmOGsyZWprNCJ9.FMjD1-WaO4qXM28NY89C7g';
    const location = JSON.parse(tourEditMap.dataset.location);
    let [lat, lng] = location.coordinates;
+   const latEl = document.getElementById('locLat');
+   const lngEl = document.getElementById('locLng');
+   latEl.value = lat;
+   lngEl.value = lng;
    const map = new mapboxgl.Map({
       container: tourEditMap.attributes.getNamedItem('id').value,
       style: 'mapbox://styles/andmiron/clddn3zn8000801nw8ooobs0y',
@@ -622,6 +634,7 @@ if (tourEditMap) {
       mapboxgl: mapboxgl,
       placeholder: 'Start typing for location...',
       language: 'en',
+      marker: false,
    });
 
    const nav = new mapboxgl.NavigationControl();
@@ -681,7 +694,7 @@ if (tourEditMap) {
          },
          'country-label',
       );
-      document.getElementById('locLat').value = lat;
-      document.getElementById('locLng').value = lng;
+      latEl.value = lat;
+      lngEl.value = lng;
    });
 }

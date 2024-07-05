@@ -49,6 +49,36 @@ class ToursValidator extends BaseValidator {
       ];
    }
 
+   validateEditTour() {
+      return [
+         body('name')
+            .optional()
+            .isLength({ min: 10, max: 40 })
+            .withMessage('Tour name must be minimum 10 and maximum 40 characters!')
+            .custom(async (name) => {
+               const tour = await Tour.findOne({ name }).exec();
+               if (tour) return Promise.reject('Name is already occupied!');
+            }),
+         body('summary').optional().isString().withMessage('Tour must have a summary!'),
+         body('description').optional().isString().withMessage('Tour must have a description!'),
+         body('price').optional().isInt({ min: 1 }).withMessage('Invalid price!'),
+         body('priceDiscount')
+            .optional()
+            .custom((value, { req }) => {
+               return value < req.body.price;
+            })
+            .withMessage('Discount must be lower than the price!'),
+         body('duration').optional().isInt().withMessage('Invalid tour duration!'),
+         body('maxGroupSize').optional().isInt().withMessage('Invalid tour group size!'),
+         body('difficulty')
+            .optional()
+            .isIn(['easy', 'medium', 'difficult'])
+            .withMessage('Difficulty is [easy, medium or difficult]'),
+         body('locDesc').optional().isString().withMessage('Provide start location description!'),
+         body('locCoords').optional().isLatLong().withMessage('Invalid location coordinates!'),
+      ];
+   }
+
    validateRenderEditTour() {
       return [
          param('tourSlug').custom(async (tourSlug, { req }) => {

@@ -13,23 +13,23 @@ block content
             .row.g-3
                 .row.border.rounded-3.p-3.my-3
                     .col-6
-                        +tourInputField('name', 'Tour Name', 'nameHelp', 'Must be 10 to 40 characters.')(type='text' minlength='10' maxlength='40' value= tourToEdit.name)
+                        +tourInputField('name', 'Tour Name', 'nameHelp', 'Must be 10 to 40 characters.')(required type='text' minlength='10' maxlength='40' value= tourToEdit.name)
                     .col-6
-                        +tourInputField('summary', 'Summary', 'summaryHelp', 'Describe your tour in one sentence.')(type='text' value= tourToEdit.summary)
+                        +tourInputField('summary', 'Summary', 'summaryHelp', 'Describe your tour in one sentence.')(required type='text' value= tourToEdit.summary)
                 .row.p-3.my-3.border.rounded-3
-                    +tourInputField('description', 'Description', 'descriptionHelp', 'Give user colorful and interesting information about your tour.')(type='text' value= tourToEdit.description)
+                    +tourInputField('description', 'Description', 'descriptionHelp', 'Give user colorful and interesting information about your tour.')(required type='text' value= tourToEdit.description)
                 .row.border.rounded-3.p-3.my-3
                     .col-4
-                        +tourInputField('price', 'Price', 'priceHelp', 'Tour price in USD.')(type='number' step='1' min='1' value= tourToEdit.price)
+                        +tourInputField('price', 'Price', 'priceHelp', 'Tour price in USD.')(required type='number' step='1' min='1' value= tourToEdit.price)
                     .col-4
                         +tourInputField('priceDiscount', 'Price Discount', 'priceDiscountHelp', 'You can add discount later in tour details.')(type='number' step='1' min='1' value= tourToEdit.priceDiscount)
                     .col-4
-                        +tourInputField('maxGroupSize', 'Max group size', 'maxGroupSizeHelp', 'Max people to join the tour.')(type='number' step='1' min='1' value= tourToEdit.maxGroupSize)
+                        +tourInputField('maxGroupSize', 'Max group size', 'maxGroupSizeHelp', 'Max people to join the tour.')(required type='number' step='1' min='1' value= tourToEdit.maxGroupSize)
                 .row.border.rounded-3.p-3.my-3
                     .col-6
                         .mb-3
                             label.form-label(for='duration') Duration (days)
-                            select#duration.form-select(name='duration' aria-describedby='durationHelp')
+                            select#duration.form-select(required name='duration' aria-describedby='durationHelp')
                                 option(disabled) Select duration
                                 each val in ["1","2","3","4","5"]
                                     option(value=val selected=(val === tourToEdit.duration))= val
@@ -37,16 +37,16 @@ block content
                     .col-6
                         .mb-3
                             label(for="difficulty" class="form-label") Difficulty
-                            select#difficulty(name="difficulty" class="form-select" aria-describedby="difficultyHelp")
+                            select#difficulty(required name="difficulty" class="form-select" aria-describedby="difficultyHelp")
                                 option(disabled) Select difficulty
                                 each difficulty in ['Easy', 'Medium', 'Difficult']
-                                    option(value=difficulty selected=(difficulty === tourToEdit.difficulty))= difficulty
+                                    option(value=difficulty.toLowerCase() selected=(difficulty === tourToEdit.difficulty))= difficulty
                             p#difficultyHelp.form-text Difficulty of the tour.
             .row
                 h3.text-secondary.mt-5 Start Location
                 .row.border.rounded-3.p-3.my-3
                     .col-6
-                        +tourInputField('locDesc', 'Start location description', 'startLocDescHelp', 'Describe start location')(type='text' value=tourToEdit.location.description)
+                        +tourInputField('locDesc', 'Start location description', 'startLocDescHelp', 'Describe start location')(required type='text' value=tourToEdit.location.description)
                     .col-6
                         +tourInputField('locImg', 'Start location image', 'startLocImgHelp', 'Upload one photo')(type='file' accept='image/*' name='startLocImg')
                     .row

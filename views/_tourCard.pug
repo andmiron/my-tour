@@ -2,7 +2,7 @@ mixin tourCard(tour)
     .card.text-secondary.h-100
         div.position-relative
             a(href=`tours/${tour.slug}`)
-                img.card-img-top.img-fluid(src= tour.imageCover)
+                img.card-img-top.img-fluid(src=`${tour.imageCover}?v=${tour.updatedAt.getTime()}`)
                 h3.fw-bold.fs-3.text-white.position-absolute.top-50.start-50.translate-middle.p-1.text-end
                     span.p-1(style='-webkit-box-decoration-break: clone; box-decoration-break: clone; background-image: linear-gradient(\n' +
                 '    to bottom right,\n' +

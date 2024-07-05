@@ -100,7 +100,7 @@ tourSchema.pre('save', function (next) {
 });
 
 tourSchema.post('save', async function (doc) {
-   await mongoose.model('User').findByIdAndUpdate(doc.ownerId, { $push: { tours: doc._id } });
+   if (this.isNew) await mongoose.model('User').findByIdAndUpdate(doc.ownerId, { $push: { tours: doc._id } });
 });
 
 tourSchema.statics.deleteTour = async function (tourId) {

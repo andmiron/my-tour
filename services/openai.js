@@ -9,7 +9,7 @@ const modelText = fs.readFileSync(path.resolve(process.cwd(), 'components', 'tou
 });
 
 const prompt =
-   'You need to generate random travel tour data by the following mongoose schema: \n' +
+   'You need to generate random travel tour data by the following mongoose schema: use different name every time\n' +
    '```\n' +
    modelText +
    '```\n' +
