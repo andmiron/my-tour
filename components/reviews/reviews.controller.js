@@ -1,17 +1,25 @@
-const catchAsync = require('../../utils/catch.async');
 const Review = require('./reviews.model');
 
 class ReviewsController {
-   async submitReviewHandler(req, res) {
-      const { tourId, rating, text } = req.body;
-      const { _id: ownerId } = req.user;
-      const newReview = await Review.create({ tourId, rating, text, ownerId });
+   async createReview(req, res) {
+      const { text, rating, tourId } = req.body;
+      const ownerId = req.user.id;
+      const newReview = await Review.create({ text, rating, tourId, ownerId });
       res.status(201).send({
-         status: 'Review submitted',
+         status: 'Review created',
          data: newReview,
       });
-      //    TODO finish updating tours average ratings
    }
+
+   async getAllReviews(req, res) {
+      const reviews = await Review.find().exec();
+      res.status(200).send({
+         status: 'Success',
+         data: reviews,
+      });
+   }
+
+   async getReview(req, res) {}
 }
 
 module.exports = new ReviewsController();

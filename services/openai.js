@@ -9,7 +9,7 @@ const modelText = fs.readFileSync(path.resolve(process.cwd(), 'components', 'tou
 });
 
 const prompt =
-   'You need to generate random travel tour data by the following mongoose schema: use different name every time\n' +
+   'You need to generate random travel/museum/action tour data by the following mongoose schema (use different name every time):\n' +
    '```\n' +
    modelText +
    '```\n' +
@@ -21,7 +21,8 @@ const prompt =
    '- priceDiscount;\n' +
    '- duration (must not be more than 5);\n' +
    '- maxGroupSize;\n' +
-   '- difficulty;\n';
+   '- difficulty;\n' +
+   '- locDesc (location.description);\n';
 
 module.exports = async function () {
    const chatCompletion = await openai.chat.completions.create({

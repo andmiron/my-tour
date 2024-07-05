@@ -7,9 +7,9 @@ const catchAsync = require('../../utils/catch.async');
 router.post(
    '/',
    isAuthenticated,
-   ReviewsValidator.validateSubmitReview(),
+   ReviewsValidator.validateCreateReview(),
    ReviewsValidator.validate,
-   catchAsync(ReviewsController.submitReviewHandler),
+   catchAsync(ReviewsController.createReview),
 );
 
 module.exports = router;

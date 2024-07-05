@@ -21,7 +21,7 @@ block content
                     +tourItem('Description', 'bi-body-text', tour.description)
                     +tourItem('Location', 'bi-pin-map-fill', tour.location.description)
                     +tourItem('Duration','bi-clock-fill', `${tour.duration} ${tour.duration === '1' ? 'day' : 'days'}`)
-                    +tourItem('Difficulty','bi-bar-chart-fill', tour.difficulty)
+                    +tourItem('Difficulty','bi-bar-chart-fill', tour.difficulty.toUpperCase())
                     +tourItem('Participants','bi-people', tour.maxGroupSize + ' people')
                     +tourItem('Rating','bi-star', `${tour.averageRating ? tour.averageRating : 'N/A'}`)
                     +tourItem('Price','bi-currency-dollar', tour.price)
@@ -43,12 +43,25 @@ block content
                     '    rgba(70, 25, 255, 0.85),\n' +
                     '    rgba(35, 131, 255, 0.85)\n' +
                     '  );')= tour.name
+    if tour.reviews && tour.reviews.length
+        section.container-sm.text-secondary.bg-light.p-3.mt-5
+            each review in tour.reviews
+                .d-flex.flex-row.align-items-center.gap-5.my-3.p-1
+                    .position-relative
+                        img.rounded-circle(src=review.ownerId.photo alt="User Image" width="50" height="50")
+                        span.position-absolute.translate-middle.start-50.top-50.badge.text-bg-secondary= review.ownerId.email
+                    p.mb-0= review.text
+                    - let stars = review.rating
+                    span
+                        while stars > 0
+                            i.bi.text-primary.fs-4.p-1.bi-star
+                            - stars--
     section.container-sm.my-5.text-secondary.bg-light.p-3
         if user && user.id === tour.ownerId.id
             h3.
                 You can not review your own tour!
         else if user
-            form.form-group#submit-review
+            form.form-group#submit-review(data-tour=tour.id)
                 .row.gap-3
                     .col
                         h3 Leave a review
@@ -57,18 +70,10 @@ block content
                     .col
                         h3.m-0 Rate this tour
                         .star-rating
-                            +ratingStar('star-5','5')
-                            +ratingStar('star-4','4')
-                            +ratingStar('star-3','3')
-                            +ratingStar('star-2','2')
-                            +ratingStar('star-1','1')
+                            each val in ["5","4","3","2","1"]
+                               +ratingStar(`star-${val}`, val)
                     .row
                         .col-4
-                            button.btn.btn-lg.btn-primary(type='submit') Submit a review
-        else
-            .row
-                h3.
-                    To leave a review please #[a(href='/login') Log in]
-        // TODO list all tour reviews
+                            input.btn.btn-lg.btn-primary(type='submit' value='Submit review')
 
 

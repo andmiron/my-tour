@@ -1,5 +1,6 @@
-const { body } = require('express-validator');
+const { body, param } = require('express-validator');
 const Tour = require('../tours/tours.model');
+const Review = require('../reviews/reviews.model');
 const BaseValidator = require('../../common/BaseValidator');
 
 class ReviewsValidator extends BaseValidator {
@@ -7,11 +8,11 @@ class ReviewsValidator extends BaseValidator {
       super();
    }
 
-   validateSubmitReview() {
+   validateCreateReview() {
       return [
          body('text').isLength({ min: 10 }).withMessage('Review text must be at least 10 characters!'),
          body('rating').isIn([1, 2, 3, 4, 5]).withMessage('Rating must be between 1 and 5!'),
-         body('tour')
+         body('tourId')
             .isMongoId()
             .custom(async (tourId, { req }) => {
                const tour = await Tour.findById(tourId).exec();
@@ -20,6 +21,22 @@ class ReviewsValidator extends BaseValidator {
                req.body.tourId = tour.id;
             }),
       ];
+   }
+
+   validateGetReview() {
+      return [
+         param('id')
+            .isMongoId()
+            .withMessage('Invalid review id!')
+            .custom(async (id) => {
+               const review = await Review.findById(id).exec();
+               if (!review) return Promise.reject('There is no such review!');
+            }),
+      ];
+   }
+
+   validateDeleteReview() {
+      return [param('id')];
    }
 }
 
