@@ -12,4 +12,12 @@ router.post(
    catchAsync(ReviewsController.createReview),
 );
 
+router.delete(
+   '/:reviewId',
+   isAuthenticated,
+   ReviewsValidator.validateDeleteReview(),
+   ReviewsValidator.validate,
+   ReviewsController.deleteReview,
+);
+
 module.exports = router;

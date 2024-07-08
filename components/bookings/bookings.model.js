@@ -27,6 +27,7 @@ const bookingSchema = new mongoose.Schema(
 
 bookingSchema.post('save', async function (doc, next) {
    await mongoose.model('User').findByIdAndUpdate(doc.ownerId, { $push: { bookings: doc._id } });
+   await mongoose.model('Tour').findByIdAndUpdate(doc.tourId, { $push: { bookings: doc._id } });
    next();
 });
 
@@ -35,6 +36,7 @@ bookingSchema.statics.deleteBooking = async function (bookingId) {
    await session.startTransaction();
    try {
       await mongoose.model('User').updateOne({ bookings: bookingId }, { $pull: { bookings: bookingId } }, { session });
+      await mongoose.model('Tour').updateOne({ bookings: bookingId }, { $pull: { bookings: bookingId } }, { session });
       await this.findByIdAndDelete(bookingId);
       await session.commitTransaction();
    } catch (err) {

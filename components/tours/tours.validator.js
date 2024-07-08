@@ -55,9 +55,12 @@ class ToursValidator extends BaseValidator {
             .optional()
             .isLength({ min: 10, max: 40 })
             .withMessage('Tour name must be minimum 10 and maximum 40 characters!')
-            .custom(async (name) => {
-               const tour = await Tour.findOne({ name }).exec();
-               if (tour) return Promise.reject('Name is already occupied!');
+            .custom(async (name, { req }) => {
+               const existingTour = await Tour.findById(req.params.tourId).exec();
+               if (!existingTour) return Promise.reject('There is no such tour!');
+               if (name === existingTour.name) return true;
+               const tourWithTheSameName = await Tour.findOne({ name }).exec();
+               if (tourWithTheSameName) return Promise.reject('Name is already occupied!');
             }),
          body('summary').optional().isString().withMessage('Tour must have a summary!'),
          body('description').optional().isString().withMessage('Tour must have a description!'),
@@ -91,8 +94,8 @@ class ToursValidator extends BaseValidator {
 
    validateRenderEditTour() {
       return [
-         param('tourSlug').custom(async (tourSlug, { req }) => {
-            const tour = await Tour.findOne({ slug: tourSlug, ownerId: req.user.id }).exec();
+         param('tourId').custom(async (tourId, { req }) => {
+            const tour = await Tour.findOne({ _id: tourId, ownerId: req.user.id }).exec();
             if (!tour) return Promise.reject(AppError.forbidden('You can only edit your own tours!'));
             req.body.tourToEdit = tour;
          }),

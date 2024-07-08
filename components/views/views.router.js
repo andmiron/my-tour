@@ -35,7 +35,7 @@ router.get('/tours/create', isAuthenticated, renderPage('tourCreate', 'Create to
 router.get('/tours', renderTours);
 router.get('/tours/:slug', ToursValidator.validateGetTour(), ToursValidator.validate, renderTour);
 router.get(
-   '/tours/edit/:tourSlug',
+   '/tours/edit/:tourId',
    isAuthenticated,
    ToursValidator.validateRenderEditTour(),
    ToursValidator.validate,

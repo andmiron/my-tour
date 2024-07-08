@@ -12,5 +12,13 @@ router.post(
    catchAsync(BookingsController.createCheckoutSession),
 );
 router.get('/', isAuthenticated, BookingsController.getMyBookings);
+router.get('/:bookingId', isAuthenticated);
+router.delete(
+   '/:bookingId',
+   isAuthenticated,
+   BookingsValidator.validateDeleteBooking(),
+   BookingsValidator.validate,
+   BookingsController.deleteBooking,
+);
 
 module.exports = router;

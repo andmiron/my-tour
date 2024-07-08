@@ -19,17 +19,11 @@ mixin tourCard(tour)
                 i.bi.bi-bar-chart-fill.p-3.text-primary.fs-3
                 span.text-uppercase= tour.difficulty
             li.list-group-item
-                i.bi.bi-pin-map-fill.p-3.text-primary.fs-3
-                span.text-uppercase= tour.location.description
-            li.list-group-item
-                i.bi.bi-bar-chart-fill.p-3.text-primary.fs-3
-                span.text-uppercase= tour.difficulty
-            li.list-group-item
                 i.bi.bi-clock-fill.p-3.text-primary.fs-3
-                span.text-uppercase= `${tour.duration} ${tour.duration === '1' ? 'day' : 'days'}`
+                span.text-uppercase= `${tour.duration} ${tour.duration.toString() === '1' ? 'day' : 'days'}`
             li.list-group-item
                 i.bi.bi-star.p-3.text-primary.fs-3
-                span.text-uppercase= `${tour.averageRating ? tour.averageRating : 'N/A'}`
+                span.text-uppercase= `${tour.averageRating ? tour.averageRating.toString() : 'N/A'}`
             li.list-group-item
                 i.bi.bi-people.p-3.text-primary.fs-3
                 span.text-uppercase= tour.maxGroupSize + ' people'

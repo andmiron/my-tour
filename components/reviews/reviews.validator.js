@@ -36,7 +36,15 @@ class ReviewsValidator extends BaseValidator {
    }
 
    validateDeleteReview() {
-      return [param('id')];
+      return [
+         param('reviewId')
+            .isMongoId()
+            .custom(async (id, { req }) => {
+               const review = await Review.findById(id).populate('ownerId', '_id').exec();
+               if (!review) return Promise.reject('There is no such review!');
+               if (review.ownerId.id !== req.user.id) return Promise.reject('You can only delete your own review!');
+            }),
+      ];
    }
 }
 

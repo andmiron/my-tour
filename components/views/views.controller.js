@@ -12,7 +12,7 @@ exports.renderPage = function (template, title) {
 };
 
 exports.renderTours = catchAsync(async (req, res) => {
-   const tours = await Tour.find().populate({ path: 'ownerId' }).exec();
+   const tours = await Tour.find().exec();
    res.render('allTours', { title: 'All tours', tours });
 });
 
@@ -21,6 +21,7 @@ exports.renderTour = catchAsync(async (req, res) => {
    const tour = await Tour.findOne({ slug })
       .populate({ path: 'ownerId', select: 'email _id' })
       .populate({ path: 'reviews', populate: { path: 'ownerId', select: 'photo email' } })
+      .populate({ path: 'bookings', populate: { path: 'ownerId', select: 'photo' } })
       .exec();
    res.render('tour', { title: tour.name, tour });
 });
@@ -51,6 +52,7 @@ exports.renderFailureCheckout = catchAsync(async (req, res) => {
 exports.renderMyReviews = catchAsync(async (req, res) => {
    const reviews = await Review.find({ ownerId: req.user.id })
       .populate({ path: 'ownerId', select: 'email photo' })
+      .populate('tourId', 'name slug')
       .exec();
    res.render('myReviews', { title: 'Reviews', reviews });
 });

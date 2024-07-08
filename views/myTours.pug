@@ -2,33 +2,23 @@ extends baseProfile
 
 block profilePage
     if tours.length
-        .row.gap-3.g-3
-            each tour in tours
-                .position-relative(style='width:30%')
-                    a(href=`/tours/${tour.slug}`)
-                        div.position-relative
-                            img.card-img-top.img-fluid(src=`${tour.imageCover}?v=${tour.updatedAt.getTime()}` style='clip-path: polygon(0 0, 100% 0%, 100% 83%, 0% 98%);')
-                            h3.fw-bold.fs-3.text-white.position-absolute.top-50.start-50.translate-middle.p-1.text-end
-                                span.p-1(style='-webkit-box-decoration-break: clone; box-decoration-break: clone; background-image: linear-gradient(\n' +
-                                '    to bottom right,\n' +
-                                '    rgba(70, 25, 255, 0.85),\n' +
-                                '    rgba(35, 131, 255, 0.85)\n' +
-                                '  );')= tour.name
-                    a.btn.btn-secondary.position-absolute.end-0.top-100.translate-middle-y.text-decoration-none(href=`/tours/edit/${tour.slug}`) Edit
-                    button.badge.btn.btn-danger.badge.position-absolute.top-0.end-0(type='button' data-bs-toggle='modal' data-bs-target=`#deleteTourModal-${tour.slug}`) Delete
-                .modal.fade(id=`deleteTourModal-${tour.slug}` tabindex='-1' aria-labelledby=`deleteTourModal-${tour.slug}` aria-hidden='true')
-                    .modal-dialog.modal-dialog-centered
-                        .modal-content
-                            .modal-header
-                                h1.modal-title.fs-5(id=`deleteTourModalLabel-${tour.slug}`) Delete tour?
-                                button.btn-close( type='button' data-bs-dismiss='modal' aria-label='Close')
-                            .modal-body
-                                p You can not revert this action.
-                            .modal-footer
-                                button.btn.btn-secondary(type='button' data-bs-dismiss='modal') Close
-                                button.btn.btn-danger.delete-tour-btn(data-tour=tour.slug type='button') Delete tour
-
-
+        each tour in tours
+            .d-flex.flex-row.align-items-center.gap-5.my-3.p-4.bg-white
+                a.me-auto(href=`/tours/${tour.slug}`)
+                    h5.fw-bold.p-1.text-end= tour.name
+                a.btn.btn-secondary.text-decoration-none(href=`/tours/edit/${tour.id}`) Edit
+                button.btn.btn-danger(type='button' data-bs-toggle='modal' data-bs-target=`#deleteTourModal-${tour.slug}`) Delete
+            .modal.fade(id=`deleteTourModal-${tour.slug}` tabindex='-1' aria-labelledby=`deleteTourModal-${tour.slug}` aria-hidden='true')
+                .modal-dialog.modal-dialog-centered
+                    .modal-content
+                        .modal-header
+                            h1.modal-title.fs-5(id=`deleteTourModalLabel-${tour.slug}`) Delete tour?
+                            button.btn-close( type='button' data-bs-dismiss='modal' aria-label='Close')
+                        .modal-body
+                            p You can not revert this action.
+                        .modal-footer
+                            button.btn.btn-secondary(type='button' data-bs-dismiss='modal') Close
+                            button.btn.btn-danger.delete-tour-btn(data-tour=tour.slug type='button') Delete tour
     else
         h5 You have no created tours
         a.btn.btn-secondary.btn-lg.mt-3(href='/tours/create') Create your first tour

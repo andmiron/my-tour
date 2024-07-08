@@ -44,6 +44,7 @@ const tourSchema = new mongoose.Schema(
       maxGroupSize: {
          type: Number,
          min: 1,
+         max: 10,
          required: [true, 'A tour must have a group size!'],
       },
       difficulty: {
@@ -76,6 +77,16 @@ const tourSchema = new mongoose.Schema(
             ref: 'Review',
          },
       ],
+      bookings: [
+         {
+            type: mongoose.Schema.ObjectId,
+            ref: 'Booking',
+            validate: function () {
+               return this.bookings <= this.maxGroupSize;
+            },
+            message: 'The tour already full with people!',
+         },
+      ],
    },
    {
       toJSON: { virtuals: true },
@@ -88,7 +99,6 @@ tourSchema.virtual('averageRating').get(function () {
    if (this.reviews.length === 0) return 0;
    const sum = this.reviews.reduce((sum, review) => sum + review.rating, 0);
    return sum / this.reviews.length;
-   //    TODO fix null value
 });
 
 tourSchema.virtual('numberOfReviews').get(function () {

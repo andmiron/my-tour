@@ -9,7 +9,7 @@ mixin tourInputField(inputId, labelText, helperId, helperText)
 block content
     .container.p-4
         h1.text-secondary.text-center Edit My Tour
-        form.mt-5.p-3.edit-tour-form
+        form.mt-5.p-3.edit-tour-form(data-tour_id=tourToEdit.id)
             .row.g-3
                 .row.border.rounded-3.p-3.my-3
                     .col-6
@@ -32,7 +32,10 @@ block content
                             select#duration.form-select(required name='duration' aria-describedby='durationHelp')
                                 option(disabled) Select duration
                                 each val in ["1","2","3","4","5"]
-                                    option(value=val selected=(val === tourToEdit.duration))= val
+                                    if val == tourToEdit.duration
+                                        option(value=val selected=val)= val
+                                    else
+                                        option(value=val)= val
                             p#durationHelp.form-text Consecutive days in the tour.
                     .col-6
                         .mb-3
@@ -40,7 +43,10 @@ block content
                             select#difficulty(required name="difficulty" class="form-select" aria-describedby="difficultyHelp")
                                 option(disabled) Select difficulty
                                 each difficulty in ['Easy', 'Medium', 'Difficult']
-                                    option(value=difficulty.toLowerCase() selected=(difficulty === tourToEdit.difficulty))= difficulty
+                                    if difficulty.toLowerCase() === tourToEdit.difficulty
+                                        option(value=difficulty.toLowerCase() selected=difficulty)= difficulty
+                                    else
+                                        option(value=difficulty.toLowerCase())= difficulty
                             p#difficultyHelp.form-text Difficulty of the tour.
             .row
                 h3.text-secondary.mt-5 Start Location

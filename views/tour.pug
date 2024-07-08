@@ -22,20 +22,27 @@ block content
                     +tourItem('Location', 'bi-pin-map-fill', tour.location.description)
                     +tourItem('Duration','bi-clock-fill', `${tour.duration} ${tour.duration === '1' ? 'day' : 'days'}`)
                     +tourItem('Difficulty','bi-bar-chart-fill', tour.difficulty.toUpperCase())
-                    +tourItem('Participants','bi-people', tour.maxGroupSize + ' people')
+                    h4 Participants
+                    p.align-middle
+                        i.bi.text-primary.fs-4.p-1(class= 'bi-people')
+                        | #{tour.maxGroupSize + ' people'}
+                        each booking in tour.bookings
+                            img.img-fluid(src=booking.ownerId.photo style='width:30px;border-radius:50%;')
                     +tourItem('Rating','bi-star', `${tour.averageRating ? tour.averageRating : 'N/A'}`)
-                    +tourItem('Price','bi-currency-dollar', tour.price)
+                    +tourItem('Price','bi-currency-dollar', `${tour.price - tour.priceDiscount}`)
                     h4 Guide
                     a.text-decoration-none.text-secondary(href=`/users/${tour.ownerId.id}`)
                         i.bi.bi-person-walking.fs-4.p-1.text-primary
                         | #{tour.ownerId.email}
                     div.ms-auto
-                        if user
+                        if (user && tour.bookings.length < tour.maxGroupSize)
                             form.create-checkout-session-form
                                 button.btn.btn-lg.btn-primary(type='submit') Book a tour
-                        else
+                        else if !user
                             p.m-0.
                                 To book a tour please #[a(href='/login') Log in]
+                        else
+                            p Tour is full!
             .col-6
                 h1.fw-bold.text-white.text-end
                     span.p-1(style='-webkit-box-decoration-break: clone; box-decoration-break: clone; background-image: linear-gradient(\n' +
@@ -46,11 +53,10 @@ block content
     if tour.reviews && tour.reviews.length
         section.container-sm.text-secondary.bg-light.p-3.mt-5
             each review in tour.reviews
-                .d-flex.flex-row.align-items-center.gap-5.my-3.p-1
-                    .position-relative
-                        img.rounded-circle(src=review.ownerId.photo alt="User Image" width="50" height="50")
-                        span.position-absolute.translate-middle.start-50.top-50.badge.text-bg-secondary= review.ownerId.email
-                    p.mb-0= review.text
+                .d-flex.flex-row.align-items-center.gap-5.my-3.p-1.justify-content-center
+                    img.rounded-circle(src=review.ownerId.photo alt="User Image" width="50" height="50")
+                    span.badge.text-bg-secondary= review.ownerId.email
+                    p.mb-0.me-auto= review.text
                     - let stars = review.rating
                     span
                         while stars > 0
@@ -58,9 +64,8 @@ block content
                             - stars--
     section.container-sm.my-5.text-secondary.bg-light.p-3
         if user && user.id === tour.ownerId.id
-            h3.
-                You can not review your own tour!
-        else if user
+            h3 You can not review your own tour!
+        else
             form.form-group#submit-review(data-tour=tour.id)
                 .row.gap-3
                     .col

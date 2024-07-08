@@ -1,6 +1,7 @@
 const stripe = require('stripe')(process.env.STRIPE_API_KEY);
 const AppError = require('../../common/AppError');
 const bookingRepository = require('./booking.repository');
+const Booking = require('../bookings/bookings.model');
 const { sendMail } = require('../../services/email');
 
 class BookingsController {
@@ -13,7 +14,7 @@ class BookingsController {
       });
       const tourPrice = await stripe.prices.create({
          product: tourProduct.id,
-         unit_amount: tour.price * 100,
+         unit_amount: (tour.price - tour.priceDiscount) * 100,
          currency: 'usd',
       });
       const session = await stripe.checkout.sessions.create({
@@ -96,6 +97,14 @@ class BookingsController {
       const booking = await bookingRepository.getOne({ tourId });
       const sessionWithLineItems = await stripe.checkout.sessions.retrieve(booking.stripeSessionId, {
          expand: ['line_items'],
+      });
+   }
+
+   async deleteBooking(req, res) {
+      await Booking.deleteBooking(req.params.bookingId);
+      res.status(200).send({
+         status: 'Booking deleted',
+         data: null,
       });
    }
 }

@@ -18,7 +18,7 @@ router
       catchAsync(ToursController.createTour),
    );
 router.post(
-   '/edit/:slug',
+   '/edit/:tourId',
    upload.single('locImg'),
    ToursValidator.validateEditTour(),
    ToursValidator.validate,

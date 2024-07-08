@@ -20,6 +20,14 @@ class ReviewsController {
    }
 
    async getReview(req, res) {}
+
+   async deleteReview(req, res) {
+      await Review.deleteReview(req.params.reviewId);
+      res.status(200).send({
+         status: 'Review deleted',
+         data: null,
+      });
+   }
 }
 
 module.exports = new ReviewsController();

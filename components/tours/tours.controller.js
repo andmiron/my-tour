@@ -26,7 +26,7 @@ class ToursController {
          coordinates: req.body.locCoords.split(','),
       };
       const { locCoords, locDesc, ...rest } = req.body;
-      const tour = await Tour.findOne({ slug: req.params.slug }).exec();
+      const tour = await Tour.findById(req.params.tourId).exec();
       tour.set({ location, ...rest });
       if (req.file) {
          const resizedPhotoBuffer = await sharp(req.file.buffer).resize(2000, 1333).jpeg().toBuffer();

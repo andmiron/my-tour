@@ -20,6 +20,8 @@ const submitReviewForm = document.getElementById('submit-review');
 const baseMap = document.getElementById('base-map');
 const tourEditMap = document.getElementById('tour-edit-map');
 const deleteTourBtns = document.querySelectorAll('.delete-tour-btn');
+const deleteReviewBtn = document.querySelector('.delete-review-btn');
+const deleteBookingBtn = document.querySelector('.delete-booking-btn');
 
 if (signupForm) {
    signupForm.addEventListener('submit', async (e) => {
@@ -287,7 +289,7 @@ if (tourEditForm) {
       formData.append('locImg', document.getElementById('locImg').files[0]);
 
       const { status, data } = await fetchFormData(
-         `/api/v1/tours/edit/${window.location.pathname.split('/').pop()}`,
+         `/api/v1/tours/edit/${tourEditForm.dataset.tour_id}`,
          'POST',
          formData,
       );
@@ -369,6 +371,32 @@ if (submitReviewForm) {
          return showAlert('danger', 'Rate the tour!');
       }
       const { status, data } = await sendJSON('/api/v1/reviews', 'POST', { text, rating, tourId });
+      if (status === 'error') return showAlert('danger', data);
+      showAlert('success', status);
+      window.setTimeout(() => {
+         location.reload();
+      }, 1000);
+   });
+}
+
+if (deleteReviewBtn) {
+   deleteReviewBtn.addEventListener('click', async (e) => {
+      const reviewId = deleteReviewBtn.dataset.review_id;
+      const response = await fetch(`/api/v1/reviews/${reviewId}`, { method: 'DELETE' });
+      const { status, data } = await response.json();
+      if (status === 'error') return showAlert('danger', data);
+      showAlert('success', status);
+      window.setTimeout(() => {
+         location.reload();
+      }, 1000);
+   });
+}
+
+if (deleteBookingBtn) {
+   deleteBookingBtn.addEventListener('click', async () => {
+      const bookingId = deleteBookingBtn.dataset.booking_id;
+      const response = await fetch(`/api/v1/bookings/${bookingId}`, { method: 'DELETE' });
+      const { status, data } = await response.json();
       if (status === 'error') return showAlert('danger', data);
       showAlert('success', status);
       window.setTimeout(() => {
