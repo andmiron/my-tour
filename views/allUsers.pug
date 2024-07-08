@@ -3,12 +3,9 @@ extends base
 block content
     #base-map.position-absolute.top-0.bottom-0.w-100.opacity-50
     .container.z-2
-        h1.p-3.fw-bold.text-end Guides
-        .row.p-3.gap-3
-            each guide in guides
-                .card.align-items-center.p-3(style='width: auto')
-                    div.position-relative
-                        img.card-img-top.img-fluid.rounded-circle(src= guide.photo alt=`User photo` style='height:5em')
-                        span.position-absolute.top-0.start-100.translate-middle.badge.rounded-pill.bg-secondary= guide.role
-
-                    h6.card-title= guide.email
+        h1.p-3.fw-bold.text-center Guides
+        each guide in guides
+            .d-flex.flex-row.align-items-center.gap-5.my-3.p-4.bg-white
+                img.img-fluid(src=guide.photo style='border-radius:50%;width:100px')
+                p= guide.email
+                p.ms-auto Tours: #{guide.tours.length} Reviews: #{guide.reviews.length} Bookings: #{guide.bookings.length}

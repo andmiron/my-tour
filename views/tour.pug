@@ -63,13 +63,16 @@ block content
                             i.bi.text-primary.fs-4.p-1.bi-star
                             - stars--
     section.container-sm.my-5.text-secondary.bg-light.p-3
+        h3 Leave a review
         if user && user.id === tour.ownerId.id
-            h3 You can not review your own tour!
+            p You can not review your own tour!
+        else if !user
+            p.m-0.
+                To leave a review please #[a(href='/login') Log in]
         else
             form.form-group#submit-review(data-tour=tour.id)
                 .row.gap-3
                     .col
-                        h3 Leave a review
                         input#reviewText.form-control(required type='text' name='review' minlength='10')
                         label.form-label(for='reviewText') Must be at least 10 characters
                     .col

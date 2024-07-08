@@ -22,9 +22,6 @@ mixin tourCard(tour)
                 i.bi.bi-clock-fill.p-3.text-primary.fs-3
                 span.text-uppercase= `${tour.duration} ${tour.duration.toString() === '1' ? 'day' : 'days'}`
             li.list-group-item
-                i.bi.bi-star.p-3.text-primary.fs-3
-                span.text-uppercase= `${tour.averageRating ? tour.averageRating.toString() : 'N/A'}`
-            li.list-group-item
                 i.bi.bi-people.p-3.text-primary.fs-3
                 span.text-uppercase= tour.maxGroupSize + ' people'
             li.list-group-item

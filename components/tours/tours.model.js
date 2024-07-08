@@ -97,7 +97,7 @@ const tourSchema = new mongoose.Schema(
 
 tourSchema.virtual('averageRating').get(function () {
    if (this.reviews.length === 0) return 0;
-   const sum = this.reviews.reduce((sum, review) => sum + review.rating, 0);
+   const sum = this.reviews.reduce((sum, review) => sum + Number(review.rating), 0);
    return sum / this.reviews.length;
 });
 
