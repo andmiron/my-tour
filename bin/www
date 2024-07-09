@@ -1,0 +1,19 @@
+#!/usr/bin/env node
+
+const app = require('../app')
+const http = require('node:http')
+
+
+app.set('port', process.env.PORT || '3000')
+
+const server = http.createServer(app)
+server.listen(app.get('port'))
+server.on('listening', () =>{
+   const addr = server.address();
+   const bind = typeof addr === 'string' ? 'pipe ' + addr : 'port ' + addr.port;
+   console.log(`server on ${bind}`)
+})
+server.on('error', (err) => {
+   console.error(err)
+   process.exit(1);
+})

@@ -1,7 +1,10 @@
 require('dotenv').config();
 const express = require('express');
 const morgan = require('morgan');
+const helmet = require('helmet');
 const path = require('path');
+const rateLimit = require('express-rate-limit');
+const mongoSanitize = require('express-mongo-sanitize');
 const session = require('express-session');
 const passport = require('./services/passport');
 const sessionOptions = require('./config/session.options');
@@ -9,7 +12,7 @@ const AppError = require('./common/AppError');
 const { connectMongo } = require('./services/mongo');
 const handleError = require('./middlewares/errorHandler');
 const generateRequestId = require('./middlewares/genReqId');
-const morganConfig = require('./services/morgan');
+// const morganConfig = require('./services/morgan');
 const catchAsync = require('./utils/catch.async');
 const authRouter = require('./components/auth/auth.router');
 const viewRouter = require('./components/views/views.router');
@@ -22,10 +25,22 @@ const BookingsController = require('./components/bookings/bookings.controller');
 function build() {
    const app = express();
    connectMongo(process.env.MONGO_CONNECTION_STRING);
-   app.set('port', process.env.PORT || 3000);
+   app.use(generateRequestId);
+   app.use(morgan('dev'));
+   app.use(
+      helmet({
+         contentSecurityPolicy: false,
+      }),
+   );
+   app.use(
+      rateLimit({
+         windowMs: 15 * 60 * 1000,
+         max: 100,
+      }),
+   );
+   app.use(express.static(path.join(__dirname, 'public')));
    app.set('view engine', 'pug');
    app.set('views', path.join(__dirname, 'views'));
-   app.use(express.static(path.join(__dirname, 'public')));
    app.post(
       '/checkout-webhook',
       express.raw({ type: 'application/json' }),
@@ -34,8 +49,7 @@ function build() {
    app.use(express.json());
    app.use(express.urlencoded({ extended: true }));
    app.use(session(sessionOptions));
-   app.use(generateRequestId);
-   app.use(morgan(morganConfig));
+   app.use(mongoSanitize());
    app.use(passport.initialize());
    app.use(passport.session());
    app.use('/', viewRouter);
@@ -48,9 +62,8 @@ function build() {
       next(AppError.notFound(`Resource not found!: ${req.originalUrl}`));
    });
    app.use(handleError);
-   app.listen(app.get('port'), () => {
-      console.log(`Express on port ${app.get('port')}`);
-   });
+
+   return app;
 }
 
-build();
+module.exports = build();
