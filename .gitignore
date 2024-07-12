@@ -1,5 +1,7 @@
+/.serverless
 .idea/
 node_modules/
 package-lock.json
 .env
 .vscode
+.vercel
