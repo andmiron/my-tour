@@ -2,8 +2,7 @@
    "name": "my-tour",
    "version": "1.0.0",
    "scripts": {
-      "start": "nodemon app.js",
-      "start:prod": "node ./bin/www"
+      "start": "node ./bin/www"
    },
    "keywords": [],
    "author": "Andrii Myronenko",
