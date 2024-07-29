@@ -33,6 +33,6 @@ I was more focused on the backend part so the frontend part are mostly badly wri
 
 It is up and running on github pages so you can check it up by the link:
 
-https://my-tour-b2fs.onrender.com
+mytourapp.azurewebsites.net
 
 (It is deployed on Render with a free tier and it may take around 1 minute to spin up the machine after a long inactive time)
