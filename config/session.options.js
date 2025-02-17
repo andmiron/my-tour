@@ -1,9 +1,10 @@
 const MongoStore = require('connect-mongo');
+const config = require('./config');
 
 module.exports = {
-   name: process.env.SESSION_NAME,
-   secret: process.env.SESSION_SECRET,
-   store: new MongoStore({ mongoUrl: process.env.MONGO_CONNECTION_STRING }),
+   name: config.get('session.name'),
+   secret: config.get('session.secret'),
+   store: new MongoStore({ mongoUrl: config.get('mongo') }),
    resave: true,
    saveUninitialized: true,
    rolling: true,

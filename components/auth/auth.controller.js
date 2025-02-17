@@ -2,6 +2,7 @@ const crypto = require('node:crypto');
 const { sendMail } = require('../../services/email');
 const AppError = require('../../common/AppError');
 const User = require('../users/users.model');
+const config = require('../../config/config');
 
 class AuthController {
    async signup(req, res) {
@@ -12,16 +13,18 @@ class AuthController {
          data: user.email,
       });
    }
+
    async login(req, res) {
       res.status(200).send({
          status: 'Logged in',
          data: req.user,
       });
    }
+
    logout(req, res, next) {
       req.logout((err) => {
          if (err) return next(err);
-         res.status(200).clearCookie(process.env.SESSION_NAME).send({
+         res.status(200).clearCookie(config.get('session.name')).send({
             status: 'Logged out',
             data: null,
          });

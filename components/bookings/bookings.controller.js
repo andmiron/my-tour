@@ -1,6 +1,6 @@
-const stripe = require('stripe')(process.env.STRIPE_API_KEY);
+const config = require('../../config/config');
+const stripe = require('stripe')(config.get('stripe.apiKey'));
 const AppError = require('../../common/AppError');
-const bookingRepository = require('./booking.repository');
 const Booking = require('../bookings/bookings.model');
 const { sendMail } = require('../../services/email');
 
@@ -40,7 +40,7 @@ class BookingsController {
          event = stripe.webhooks.constructEvent(
             req.body,
             req.headers['stripe-signature'],
-            process.env.STRIPE_WEBHOOK_SECRET,
+            config.get('stripe.webhookSecret'),
          );
       } catch (err) {
          throw AppError.badRequest(`Stripe webhook error: ${err.message}`);
@@ -50,7 +50,7 @@ class BookingsController {
          case 'checkout.session.completed':
             {
                const session = event.data.object;
-               const newBooking = await bookingRepository.create({
+               const newBooking = await Booking.create({
                   ownerId: session.metadata.userId,
                   tourId: session.metadata.tourId,
                   stripeSessionId: session.id,
@@ -64,7 +64,7 @@ class BookingsController {
          case 'checkout.session.async_payment_succeeded':
             {
                const session = event.data.object;
-               await bookingRepository.getOneAndUpdate({ stripeSessionId: session.id }, { isPaid: true }).exec();
+               await Booking.getOneAndUpdate({ stripeSessionId: session.id }, { isPaid: true }).exec();
             }
             break;
          case 'checkout.session.async_payment_failed':
@@ -83,7 +83,7 @@ class BookingsController {
    }
 
    async getMyBookings(req, res) {
-      const bookingsQuery = bookingRepository.getMany({ ownerId: req.user.id });
+      const bookingsQuery = await Booking.getMany({ ownerId: req.user.id });
       const bookings = await bookingsQuery.populate('tourId').exec();
       res.status(200).send({
          status: 'success',
@@ -94,7 +94,7 @@ class BookingsController {
    }
 
    async getMyBooking(req, res) {
-      const booking = await bookingRepository.getOne({ tourId });
+      const booking = await Booking.findOne({ tourId });
       const sessionWithLineItems = await stripe.checkout.sessions.retrieve(booking.stripeSessionId, {
          expand: ['line_items'],
       });

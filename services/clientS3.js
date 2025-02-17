@@ -1,25 +1,26 @@
 const { S3Client, PutObjectCommand, DeleteObjectCommand } = require('@aws-sdk/client-s3');
 const AppError = require('../common/AppError');
+const config = require('../config/config');
 
 const s3client = new S3Client({
-   region: process.env.AWS_S3_REGION,
+   region: config.get('S3.region'),
    credentials: {
-      accessKeyId: process.env.AWS_S3_ACCESS_KEY,
-      secretAccessKey: process.env.AWS_S3_SECRET_ACCESS_KEY,
+      accessKeyId: config.get('S3.accessKey'),
+      secretAccessKey: config.get('S3.secretKey'),
    },
 });
 
 async function uploadToS3(buffer, fileName, contentType) {
    const uploadParams = {
       Key: fileName,
-      Bucket: process.env.AWS_S3_BUCKET_NAME,
+      Bucket: config.get('S3.bucketName'),
       Body: buffer,
       ContentType: contentType,
    };
    const command = new PutObjectCommand(uploadParams);
    try {
       await s3client.send(command);
-      return `https://${process.env.AWS_S3_BUCKET_NAME}.s3.${process.env.AWS_S3_REGION}.amazonaws.com/${fileName}`;
+      return `https://${config.get('S3.bucketName')}.s3.${config.get('S3.region')}.amazonaws.com/${fileName}`;
    } catch (err) {
       throw AppError.internal('S3 upload error!');
    }
@@ -27,7 +28,7 @@ async function uploadToS3(buffer, fileName, contentType) {
 
 async function deleteFromS3(fileName) {
    const deleteParams = {
-      Bucket: process.env.AWS_S3_BUCKET_NAME,
+      Bucket: config.get('S3.bucketName'),
       Key: fileName,
    };
    const command = new DeleteObjectCommand(deleteParams);

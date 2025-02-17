@@ -3,33 +3,27 @@ const router = require('express').Router();
 const multer = require('multer');
 const { isAuthenticated } = require('../../middlewares/isAuthenticated');
 const upload = multer();
-const catchAsync = require('../../utils/catch.async');
 const ToursValidator = require('./tours.validator');
 
-router.post('/randomInfo', isAuthenticated, catchAsync(ToursController.generateRandomInfo));
+router.post('/randomInfo', isAuthenticated, ToursController.generateRandomInfo);
 router
    .route('/')
-   .get(catchAsync(ToursController.getAllTours))
+   .get(ToursController.getAllTours)
    .post(
       isAuthenticated,
       upload.single('locImg'),
       ToursValidator.validateCreateTour(),
       ToursValidator.validate,
-      catchAsync(ToursController.createTour),
+      ToursController.createTour,
    );
 router.post(
    '/edit/:tourId',
    upload.single('locImg'),
    ToursValidator.validateEditTour(),
    ToursValidator.validate,
-   catchAsync(ToursController.editTour),
+   ToursController.editTour,
 );
-router.get('/:slug', ToursValidator.validateGetTour(), ToursValidator.validate, catchAsync(ToursController.getTour));
-router.delete(
-   '/:slug',
-   ToursValidator.validateDeleteTour(),
-   ToursValidator.validate,
-   catchAsync(ToursController.deleteTour),
-);
+router.get('/:slug', ToursValidator.validateGetTour(), ToursValidator.validate, ToursController.getTour);
+router.delete('/:slug', ToursValidator.validateDeleteTour(), ToursValidator.validate, ToursController.deleteTour);
 
 module.exports = router;

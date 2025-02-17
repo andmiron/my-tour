@@ -3,6 +3,7 @@ const User = require('../components/users/users.model');
 const LocalStrategy = require('passport-local').Strategy;
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const AppError = require('../common/AppError');
+const config = require('../config/config');
 
 passport.use(
    new LocalStrategy(
@@ -27,9 +28,9 @@ passport.use(
 passport.use(
    new GoogleStrategy(
       {
-         clientID: process.env.GOOGLE_CLIENT_ID,
-         clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-         callbackURL: process.env.GOOGLE_CALLBACK_URL,
+         clientID: config.get('googleAuth.clientId'),
+         clientSecret: config.get('googleAuth.clientSecret'),
+         callbackURL: config.get('googleAuth.callbackURL'),
       },
       async function verifyGoogle(accessToken, refreshToken, profile, done) {
          const { value: email } = profile.emails.find((email) => email.verified === true);

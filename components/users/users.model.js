@@ -10,10 +10,6 @@ const userSchema = new mongoose.Schema(
          required: [true, 'Email is required!'],
          lowercase: true,
       },
-      emailConfirmed: {
-         type: Boolean,
-         default: false,
-      },
       password: {
          type: String,
          minLength: 6,
@@ -26,14 +22,6 @@ const userSchema = new mongoose.Schema(
       },
       passwordResetExpires: {
          type: Number,
-         select: false,
-      },
-      emailConfirmToken: {
-         type: String,
-         select: false,
-      },
-      emailConfirmExpires: {
-         type: String,
          select: false,
       },
       provider: {
@@ -83,13 +71,6 @@ userSchema.methods.createResetToken = function () {
    return hashData;
 };
 
-userSchema.methods.createEmailToken = function () {
-   const hashData = crypto.randomBytes(32).toString('hex');
-   this.emailConfirmToken = crypto.createHash('sha256').update(hashData).digest('hex');
-   this.emailConfirmExpires = Date.now() + 10 * 60 * 1000;
-   return hashData;
-};
-
 userSchema.statics.deleteUser = async function (userId) {
    const session = await mongoose.startSession();
    const ownerId = userId;
@@ -98,7 +79,7 @@ userSchema.statics.deleteUser = async function (userId) {
       await mongoose.model('Tour').deleteMany({ ownerId }, { session });
       await mongoose.model('Review').deleteMany({ ownerId }, { session });
       await mongoose.model('Booking').deleteMany({ ownerId }, { session });
-      await this.findByIdAndDelete(userId);
+      await this.findByIdAndDelete(userId, { session });
       await session.commitTransaction();
    } catch (err) {
       await session.abortTransaction();

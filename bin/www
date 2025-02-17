@@ -2,9 +2,10 @@
 
 const app = require('../app')
 const http = require('node:http')
+const config = require('../config/config');
 
 
-app.set('port', process.env.PORT || '3000')
+app.set('port', config.get('port'))
 
 const server = http.createServer(app)
 server.listen(app.get('port'))

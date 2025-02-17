@@ -14,10 +14,14 @@ class AuthValidator extends BaseValidator {
             .isEmail()
             .withMessage('Email is not valid!')
             .custom(async (email) => {
-               const user = await User.findOne({ email }).exec();
+               const user = await User.findOne({ email });
                if (user) return Promise.reject('User already exists!');
             }),
-         body('password').isLength({ min: 6 }).withMessage('Password must be at least 6 characters long!'),
+         body('password')
+            .isString()
+            .trim()
+            .isLength({ min: 6 })
+            .withMessage('Password must be at least 6 characters long!'),
       ];
    }
 
@@ -34,7 +38,7 @@ class AuthValidator extends BaseValidator {
             .isEmail()
             .withMessage('Email is not valid!')
             .custom(async (email) => {
-               const user = await User.findOne({ email }).exec();
+               const user = await User.findOne({ email });
                if (!user) return Promise.reject('No user with this email!');
                if (user.provider === 'google') return Promise.reject('Try login with google!');
             }),
@@ -53,7 +57,7 @@ class AuthValidator extends BaseValidator {
                   passwordResetExpires: {
                      $gt: Date.now(),
                   },
-               }).exec();
+               });
                if (!user) return Promise.reject('Token is invalid or expired!');
             }),
          body('password').isString().isLength({ min: 6 }).withMessage('Password must be at least 6 characters long!'),
