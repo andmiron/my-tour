@@ -96,6 +96,12 @@ const config = convict({
    },
 });
 
+config.getMongoURI = function () {
+   const isEnvTest = this.get('env') === 'test';
+   const testMongoURI = config.get('mongo').replace('mytour', 'mytour_test');
+   return isEnvTest ? testMongoURI : this.get('mongo');
+};
+
 config.validate({ allowed: 'strict' });
 
 module.exports = config;

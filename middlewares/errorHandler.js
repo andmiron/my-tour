@@ -10,6 +10,7 @@ function handleError(err, req, res, next) {
             data: err.message,
          });
       }
+      console.log(err);
       return res.status(500).json({
          status: 'error',
          data: 'Something went wrong!',

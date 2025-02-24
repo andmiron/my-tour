@@ -4,7 +4,6 @@ const morgan = require('morgan');
 const helmet = require('helmet');
 const path = require('path');
 const rateLimit = require('express-rate-limit');
-const mongoSanitize = require('express-mongo-sanitize');
 const session = require('express-session');
 const passport = require('./services/passport');
 const sessionOptions = require('./config/session.options');
@@ -21,7 +20,7 @@ const BookingsController = require('./components/bookings/bookings.controller');
 const config = require('./config/config');
 
 function bootstrap() {
-   connectMongo(config.get('mongo'));
+   connectMongo(config.getMongoURI());
    return express()
       .disable('x-powered-by')
       .use(morgan('dev'))
@@ -43,7 +42,6 @@ function bootstrap() {
       .use(express.json())
       .use(express.urlencoded({ extended: true }))
       .use(session(sessionOptions))
-      .use(mongoSanitize())
       .use(passport.initialize())
       .use(passport.session())
       .use('/', viewRouter)

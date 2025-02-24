@@ -14,7 +14,7 @@ class AuthController {
       });
    }
 
-   async login(req, res) {
+   login(req, res) {
       res.status(200).send({
          status: 'Logged in',
          data: req.user,
@@ -30,9 +30,10 @@ class AuthController {
          });
       });
    }
+
    async forgetPassword(req, res, next) {
       const { email } = req.body;
-      const user = await User.findOne({ email }).exec();
+      const user = await User.findOne({ email });
       const resetToken = user.createResetToken();
       await user.save({ validateBeforeSave: false });
       try {
@@ -49,6 +50,7 @@ class AuthController {
          return next(AppError.internal('Sending email error! Try again.'));
       }
    }
+
    async resetPassword(req, res) {
       const hashedToken = crypto.createHash('sha256').update(req.params.token).digest('hex');
       const user = await User.findOne({ passwordResetToken: hashedToken }).select('+password').exec();
@@ -61,9 +63,11 @@ class AuthController {
          data: user.email,
       });
    }
+
    successfulGoogleLogin(req, res) {
       res.render('googleAuthSuccess');
    }
+
    failedGoogleLogin(req, res) {
       res.render('googleAuthFailure');
    }

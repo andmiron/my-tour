@@ -4,7 +4,7 @@ const AuthController = require('./auth.controller');
 const AuthValidator = require('../auth/auth.validator');
 const { isAuthenticated } = require('../../middlewares/isAuthenticated');
 
-router.post('/signup', AuthValidator.validateSignup, AuthValidator.validate, AuthController.signup);
+router.post('/signup', AuthValidator.validateSignup(), AuthValidator.validate, AuthController.signup);
 router.post(
    '/login',
    AuthValidator.validateLogin(),
@@ -16,8 +16,8 @@ router.get('/login/google', passport.authenticate('google', { scope: ['email', '
 router.get(
    '/google/callback',
    passport.authenticate('google', {
-      successRedirect: '/api/v1/auth/google/success',
-      failureRedirect: '/api/v1/auth/google/failure',
+      successRedirect: '/',
+      failureRedirect: '/',
    }),
 );
 router.get('/google/success', isAuthenticated, AuthController.successfulGoogleLogin);

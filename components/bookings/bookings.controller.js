@@ -64,7 +64,7 @@ class BookingsController {
          case 'checkout.session.async_payment_succeeded':
             {
                const session = event.data.object;
-               await Booking.getOneAndUpdate({ stripeSessionId: session.id }, { isPaid: true }).exec();
+               await Booking.findOneAndUpdate({ stripeSessionId: session.id }, { isPaid: true }).exec();
             }
             break;
          case 'checkout.session.async_payment_failed':
@@ -83,20 +83,13 @@ class BookingsController {
    }
 
    async getMyBookings(req, res) {
-      const bookingsQuery = await Booking.getMany({ ownerId: req.user.id });
+      const bookingsQuery = Booking.find({ ownerId: req.user.id });
       const bookings = await bookingsQuery.populate('tourId').exec();
       res.status(200).send({
          status: 'success',
          data: {
             bookings,
          },
-      });
-   }
-
-   async getMyBooking(req, res) {
-      const booking = await Booking.findOne({ tourId });
-      const sessionWithLineItems = await stripe.checkout.sessions.retrieve(booking.stripeSessionId, {
-         expand: ['line_items'],
       });
    }
 

@@ -62,7 +62,7 @@ exports.renderEditTour = async (req, res) => {
 };
 
 exports.renderMyBookings = async (req, res) => {
-   const bookingsQuery = await Booking.find({ ownerId: req.user.id });
+   const bookingsQuery = Booking.find({ ownerId: req.user.id });
    const bookings = await bookingsQuery.populate('tourId');
    res.render('myBookings', { title: 'My Bookings', bookings });
 };
