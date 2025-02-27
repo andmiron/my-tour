@@ -1,10 +1,9 @@
 const sharp = require('sharp');
 const User = require('./users.model');
-const catchAsync = require('../../utils/catch.async');
 const AppError = require('../../common/AppError');
 const { uploadToS3, deleteFromS3 } = require('../../services/clientS3');
 const uploadFile = require('../../services/multer');
-const getRandomPhotoBuffer = require('../../utils/randomPhoto');
+const config = require('../../config/config');
 
 class UsersController {
    async uploadUserPhoto(req, res) {
@@ -13,17 +12,6 @@ class UsersController {
       const updatedUser = await User.findByIdAndUpdate(req.user._id, { photo: uploadedFileURL }, { new: true }).exec();
       res.status(200).send({
          status: 'Photo uploaded',
-         data: updatedUser.photo,
-      });
-   }
-
-   async generatePhoto(req, res) {
-      const randomPhotoBuffer = await getRandomPhotoBuffer();
-      const resizedPhotoBuffer = await sharp(randomPhotoBuffer).resize(300, 300).jpeg().toBuffer();
-      const uploadedFileURL = await uploadToS3(resizedPhotoBuffer, `user-${req.user.id}.jpeg`, 'image/jpeg');
-      const updatedUser = await User.findByIdAndUpdate(req.user._id, { photo: uploadedFileURL }, { new: true }).exec();
-      res.status(200).send({
-         status: 'Photo generated',
          data: updatedUser.photo,
       });
    }
@@ -68,7 +56,7 @@ class UsersController {
       req.logout((err) => {
          if (err) return next(err);
          req.session.destroy(() => {
-            res.clearCookie(process.env.SESSION_NAME).status(200).send({
+            res.clearCookie(config.get('session.name')).status(200).send({
                status: 'User deleted',
                data: null,
             });

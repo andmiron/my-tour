@@ -1,17 +1,18 @@
 const nodemailer = require('nodemailer');
+const config = require('../config/config');
 
 const transport = nodemailer.createTransport({
-   host: process.env.MAIL_HOST,
-   port: process.env.MAIL_PORT,
+   host: config.get('mailer.host'),
+   port: config.get('mailer.port'),
    auth: {
-      user: process.env.MAIL_USER,
-      pass: process.env.MAIL_PASS,
+      user: config.get('mailer.user'),
+      pass: config.get('mailer.password'),
    },
 });
 
 exports.sendMail = async function (to, subject, text) {
    const info = transport.sendMail({
-      from: process.env.MAIL_HOST,
+      from: config.get('mailer.host'),
       to,
       subject,
       text,

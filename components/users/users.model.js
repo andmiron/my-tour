@@ -6,18 +6,26 @@ const userSchema = new mongoose.Schema(
    {
       email: {
          type: String,
-         unique: true,
-         required: [true, 'Email is required!'],
+         trim: true,
+         unique: [true, 'This email is already in use'],
          lowercase: true,
-      },
-      emailConfirmed: {
-         type: Boolean,
-         default: false,
+         validate: {
+            validator: function (value) {
+               return /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(value);
+            },
+            message: '{VALUE} is not a valid email address',
+         },
+         required: [true, 'Email is required!'],
       },
       password: {
          type: String,
          minLength: 6,
-         required: [() => this.provider === 'local', 'Password is required!'],
+         required: [
+            function () {
+               return this.provider === 'local';
+            },
+            'Password is required!',
+         ],
          select: false,
       },
       passwordResetToken: {
@@ -28,14 +36,6 @@ const userSchema = new mongoose.Schema(
          type: Number,
          select: false,
       },
-      emailConfirmToken: {
-         type: String,
-         select: false,
-      },
-      emailConfirmExpires: {
-         type: String,
-         select: false,
-      },
       provider: {
          type: String,
          enum: ['local', 'google'],
@@ -43,7 +43,7 @@ const userSchema = new mongoose.Schema(
       },
       photo: {
          type: String,
-         default: 'https://my-tour-app.s3.eu-north-1.amazonaws.com/default_user.jpg',
+         default: '/avatar.jpg',
       },
       role: {
          type: String,
@@ -83,13 +83,6 @@ userSchema.methods.createResetToken = function () {
    return hashData;
 };
 
-userSchema.methods.createEmailToken = function () {
-   const hashData = crypto.randomBytes(32).toString('hex');
-   this.emailConfirmToken = crypto.createHash('sha256').update(hashData).digest('hex');
-   this.emailConfirmExpires = Date.now() + 10 * 60 * 1000;
-   return hashData;
-};
-
 userSchema.statics.deleteUser = async function (userId) {
    const session = await mongoose.startSession();
    const ownerId = userId;
@@ -98,10 +91,13 @@ userSchema.statics.deleteUser = async function (userId) {
       await mongoose.model('Tour').deleteMany({ ownerId }, { session });
       await mongoose.model('Review').deleteMany({ ownerId }, { session });
       await mongoose.model('Booking').deleteMany({ ownerId }, { session });
-      await this.findByIdAndDelete(userId);
+      const deletedUser = await this.findByIdAndDelete(userId, { session });
+      console.log(deletedUser);
       await session.commitTransaction();
+      return deletedUser;
    } catch (err) {
       await session.abortTransaction();
+      throw new Error(err);
    } finally {
       await session.endSession();
    }

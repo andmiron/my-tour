@@ -1,7 +1,8 @@
 const passport = require('passport');
-const User = require('../components/users/users.model');
+const config = require('../config/config');
 const LocalStrategy = require('passport-local').Strategy;
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
+const User = require('../components/users/users.model');
 const AppError = require('../common/AppError');
 
 passport.use(
@@ -12,9 +13,10 @@ passport.use(
       },
       async function localVerify(email, password, done) {
          try {
-            const user = await User.findOne({ email }).select('+password').exec();
+            const user = await User.findOne({ email }).select('+password');
             if (!user) return done(AppError.unauthorized('Incorrect email or password!'));
-            if (user.provider === 'google') return done(AppError.unauthorized('Try log in with google!'));
+            if (user.provider === 'google')
+               return done(AppError.unauthorized('This email is already associated with google account!'));
             const isPasswordValid = await user.isPasswordValid(password);
             return isPasswordValid ? done(null, user.id) : done(AppError.unauthorized('Incorrect email or password!'));
          } catch (err) {
@@ -27,14 +29,14 @@ passport.use(
 passport.use(
    new GoogleStrategy(
       {
-         clientID: process.env.GOOGLE_CLIENT_ID,
-         clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-         callbackURL: process.env.GOOGLE_CALLBACK_URL,
+         clientID: config.get('googleAuth.clientId'),
+         clientSecret: config.get('googleAuth.clientSecret'),
+         callbackURL: config.get('googleAuth.callbackURL'),
       },
       async function verifyGoogle(accessToken, refreshToken, profile, done) {
          const { value: email } = profile.emails.find((email) => email.verified === true);
          try {
-            let user = await User.findOne({ email }).exec();
+            let user = await User.findOne({ email });
             if (!user) user = await User.create({ email, provider: profile.provider });
             return done(null, user.id);
          } catch (err) {
@@ -49,7 +51,7 @@ passport.serializeUser((userId, done) => {
 });
 
 passport.deserializeUser(async (userId, done) => {
-   const user = await User.findById(userId).exec();
+   const user = await User.findById(userId);
    return user ? done(null, user) : done(null, false, AppError.unauthorized('Log in with valid user!'));
 });
 

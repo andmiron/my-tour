@@ -2,6 +2,7 @@ const crypto = require('node:crypto');
 const { sendMail } = require('../../services/email');
 const AppError = require('../../common/AppError');
 const User = require('../users/users.model');
+const config = require('../../config/config');
 
 class AuthController {
    async signup(req, res) {
@@ -12,24 +13,27 @@ class AuthController {
          data: user.email,
       });
    }
-   async login(req, res) {
+
+   login(req, res) {
       res.status(200).send({
          status: 'Logged in',
          data: req.user,
       });
    }
+
    logout(req, res, next) {
       req.logout((err) => {
          if (err) return next(err);
-         res.status(200).clearCookie(process.env.SESSION_NAME).send({
+         res.status(200).clearCookie(config.get('session.name')).send({
             status: 'Logged out',
             data: null,
          });
       });
    }
+
    async forgetPassword(req, res, next) {
       const { email } = req.body;
-      const user = await User.findOne({ email }).exec();
+      const user = await User.findOne({ email });
       const resetToken = user.createResetToken();
       await user.save({ validateBeforeSave: false });
       try {
@@ -46,6 +50,7 @@ class AuthController {
          return next(AppError.internal('Sending email error! Try again.'));
       }
    }
+
    async resetPassword(req, res) {
       const hashedToken = crypto.createHash('sha256').update(req.params.token).digest('hex');
       const user = await User.findOne({ passwordResetToken: hashedToken }).select('+password').exec();
@@ -58,9 +63,11 @@ class AuthController {
          data: user.email,
       });
    }
+
    successfulGoogleLogin(req, res) {
       res.render('googleAuthSuccess');
    }
+
    failedGoogleLogin(req, res) {
       res.render('googleAuthFailure');
    }

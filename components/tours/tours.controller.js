@@ -1,4 +1,3 @@
-const request = require('../../services/openai');
 const Tour = require('./tours.model');
 const sharp = require('sharp');
 const { uploadToS3 } = require('../../services/clientS3');
